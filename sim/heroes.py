@@ -11,12 +11,13 @@ class Team:
             h.pos = i
 
         aura = Aura(heroes) # aura
-        compute_aura(aura)
+        self.compute_aura(aura)
+
+        for h in self.heroes:
+            h.hp_max = h.hp
 
     def compute_aura(self, aura):
         for h in self.heroes:
-            h.pos = i
-
             h.atk *= (1 + aura.atk_bonus)
             h.hp *= (1 + aura.hp_bonus)
             h.dodge += aura.dodge
@@ -132,7 +133,7 @@ class Hero:
             self.skill_damage += guild_tech[4][4] / 100
 
     def turn(self, own_team, op_team):
-        if energy >= 100:
+        if self.energy >= 100:
             self.skill(own_team, op_team)
         else:
             self.attack(own_team, op_team)
@@ -153,7 +154,7 @@ class Hero:
             
             op_armor = target.armor - self.armor_break
             damage_reduction_from_armor = 0.011 * op_armor + 0.12
-            dmg = power * (1 - damage_reduction_from_armor) * (1 + crit_damage) 
+            dmg = power * (1 - damage_reduction_from_armor) * (1 + crit_damage) \
                         * (1 + self.true_damage) * (1 - target.damage_reduction)
 
             target.hp -= dmg
