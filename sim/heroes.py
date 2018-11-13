@@ -81,13 +81,30 @@ class Hero:
         self.dodge += rune.dodge
         self.crit_rate += rune.crit_rate
         self.crit_damage += rune.crit_damage
-        self.hp += artifact.hp # artifact
+        self.energy += artifact.energy # artifact
         self.atk += artifact.atk
+        self.hp += artifact.hp
+        self.speed += artifact.speed
+        self.hit_rate += artifact.hit_rate
+        self.true_damage += artifact.true_damage
+        self.damage_reduction += artifact.damage_reduction
         self.damage_to_warriors += artifact.damage_to_warriors
         self.damage_to_assassins += artifact.damage_to_assassins
         self.damage_to_wanderers += artifact.damage_to_wanderers
         self.damage_to_clerics += artifact.damage_to_clerics
         self.damage_to_mages += artifact.damage_to_mages
+        if self.faction == Faction.ALLIANCE:
+            self.skill_damage += artifact.skill_damage_if_alliance
+        if self.faction == Faction.UNDEAD:
+            self.skill_damage += artifact.skill_damage_if_undead
+        if self.faction == Faction.HELL:
+            self.skill_damage += artifact.skill_damage_if_hell
+        if self.faction == Faction.HORDE:
+            self.crit_rate += artifact.crit_rate_if_horde
+        if self.faction == Faction.ELF:
+            self.crit_rate += artifact.crit_rate_if_elf
+        if self.faction == Faction.HEAVE?:
+            self.true_damage += artifact.true_damage_if_heaven
         self.atk *= (1 + equipment.atk_bonus)
         self.hp *= (1 + equipment.hp_bonus)
         self.atk *= (1 + rune.atk_bonus)

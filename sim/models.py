@@ -21,7 +21,63 @@ class HeroType(Enum):
 
 
 class HeroName(Enum):
+    SIR_CONRAD = 'Sir Conrad'
+    LONE_HERO = 'Lone Hero' 
+    OLIVIA = 'Olivia'
+    KING_LIONHEART = 'King Lionheart'
+    TESLA = 'Tesla'
+    MULAN = 'Mulan'
+    SAW_MACHINE = 'Saw Machine'
+    ULTIMA = 'Ultima'
+    VIVIENNE = 'Vivienne'
+    MARTIN = 'Martin'
+    SAMURAI = 'Samurai'
+
+    KHALIL = 'Khalil'
+    RLYEH = 'Rlyeh'
+    WOLF_RIDER = 'Wolf Rider'
+    ABYSS_LORD = 'Abyss Lord'
+    MEDUSA = 'Medusa'
+    EAGLE_EYE_SHAMAN = 'Eagle-eye Shaman'
+    SWORD_MASTER = 'Sword Master'
     SCARLET = 'Scarlet'
+    MINOTAUR = 'Minotaur'
+    BLOOD_TOOTH = 'Blood Tooth'
+    LEXAR = 'Lexar'
+
+    MEGAW = 'Megaw'
+    WEREWORF = 'Werewolf'
+    CENTAUR = 'Centaur'
+    TIGER_KING = 'Tiger King'
+    DEMON_FIGHTER = 'Demon Fighter'
+    GRAND = 'Grand'
+    FOREST_HEALER = 'Forest Healer'
+    ORPHEE = 'Orphee'
+    LUNA = 'Luna'
+    VEGVISIR = 'Vegvisir'
+
+    FORREN = 'Forren'
+    PUPPET_MAID = 'Puppet Maid'
+    EXDEATH = 'Exdeath'
+    HESTER = 'Hester'
+    DZIEWONA =  'Dziewona'
+    WOLNIR = 'Wolnir'
+    CURSED_ONE = 'Cursed One'
+    GERALD = 'Gerald'
+    REAPER = 'Reaper'
+    RIPPER = 'Ripper'
+    ADEN = 'Aden'
+    SHUDDE_M_ELL = "Shudde M'ell"
+
+    HEAVEN_JUDGE = 'Heaven Judge'
+    NAMELESS_KING = 'Nameless King'
+    VERTHANDI = 'Verthandi'
+    MARS = 'Mars'
+
+    DARK_JUDGE = 'Dark Judge'
+    FREYA = 'Freya'
+    MONKEY_KING = 'Monkey King'
+    CHESSIA = 'Chessia'
 
 
 ## Equipment
