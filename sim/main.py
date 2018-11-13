@@ -1,4 +1,4 @@
-from sim.heroes import set_team, Scarlet
+from heroes import set_team, Scarlet
 
 guild_tech = [[0, 0, 0, 0, 0], 
               [0, 0, 0, 0, 0], 
