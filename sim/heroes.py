@@ -1,4 +1,4 @@
-from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura
+from models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura
 
 
 def set_team(heroes, guild_tech):
