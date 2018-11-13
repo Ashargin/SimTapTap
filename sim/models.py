@@ -1962,3 +1962,7 @@ class Aura:
         elif min([horde_count, undead_count, hell_count]) == 2:
             self.atk_bonus = 0.13
             self.hp_bonus = 0.11
+
+
+## Effects
+# add Up and Down effect objects with tick method
