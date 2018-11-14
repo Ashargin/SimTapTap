@@ -132,8 +132,68 @@ class Hero:
             self.hit_rate += guild_tech[3][4] / 200
             self.skill_damage += guild_tech[4][4] / 100
 
+    def faction_bonus(self, target):
+        faction_bonus = False
+        if self.faction == Faction.ALLIANCE and target.faction == Faction.HORDE:
+            faction_bonus = True
+        elif self.faction == Faction.HORDE and target.faction == Faction.ELF:
+            faction_bonus = True
+        elif self.faction == Faction.ELF and target.faction == Faction.UNDEAD:
+            faction_bonus = True
+        elif self.faction == Faction.UNDEAD and target.faction == Faction.ALLIANCE:
+            faction_bonus = True
+        elif self.faction == Faction.HEAVEN and target.faction == Faction.HELL:
+            faction_bonus = True
+        elif self.faction == Faction.HELL and target.faction == Faction.HEAVEN:
+            faction_bonus = True
+
+        return faction_bonus
+
+    def type_damage(self, target):
+        if target.type == HeroType.WARRIOR:
+            return self.damage_to_warriors
+        elif target.type == HeroType.ASSASSIN:
+            return self.damage_to_assassins
+        elif target.type == HeroType.WANDERER:
+            return self.damage_to_wanderers
+        elif target.type == HeroType.CLERIC:
+            return self.damage_to_clerics
+        elif target.type == HeroType.MAGE:
+            return self.damage_to_mages
+
+    def compute_damage(self, target, power):
+        faction_damage = 0
+        if self.faction_bonus(target):
+            faction_damage = 0.3
+
+        type_damage = self.type_damage(target)
+
+        crit_damage = 0
+        if rd.random() <= self.crit_rate:
+            crit_damage = self.crit_damage
+
+        op_armor = target.armor - self.armor_break # check armor break behaviour
+        damage_reduction_from_armor = 0.011 * op_armor + 0.12
+        dmg = power * (1 - damage_reduction_from_armor) * (1 + crit_damage) \
+                    * (1 + self.true_damage) * (1 - target.damage_reduction) \
+                    * (1 + faction_damage) * (1 + type_damage) 
+                    # check faction damage behaviour
+                    # check type damage behaviour
+
+        return dmg
+
+    def compute_dodge(self, target):
+        dodged = False
+        hit_rate = self.hit_rate
+        if self.faction_bonus(target):
+            hit_rate += 0.15
+        if rd.random() <= target.dodge - hit_rate: # check dodge behaviour
+            dodged = True
+
+        return dodged
+
     def turn(self, own_team, op_team):
-        if self.energy >= 100:
+        if self.energy == 100:
             self.skill(own_team, op_team)
         else:
             self.attack(own_team, op_team)
@@ -144,18 +204,9 @@ class Hero:
         if power is None:
             power = self.atk
 
-        dodged = False
-        if rd.random() <= target.dodge - self.hit_rate: # compute dodge/hit rate
-            dodged = True
+        dodged = self.compute_dodge(target)
         if not dodged:
-            crit_damage = 0
-            if rd.random() <= self.crit_rate:
-                crit_damage = self.crit_damage
-            
-            op_armor = target.armor - self.armor_break
-            damage_reduction_from_armor = 0.011 * op_armor + 0.12
-            dmg = power * (1 - damage_reduction_from_armor) * (1 + crit_damage) \
-                        * (1 + self.true_damage) * (1 - target.damage_reduction)
+            dmg = self.compute_damage(target, power=power)
 
             target.hp -= dmg
             target.has_taken_damage(self, op_team, own_team)
@@ -216,6 +267,9 @@ class Scarlet(Hero):
         if tier < 6:
             raise NotImplementedError
 
+        self.star = star
+        self.tier = tier
+        self.level = level
         self.hp = 177925.38 # should depend on the level
         self.atk = 18157.38 # should depend on the level
         self.armor = 9 # should depend on the level
@@ -228,7 +282,7 @@ class Scarlet(Hero):
 
     def on_death(self, attacker, own_team, op_team):
         atk_perc = 0
-        if star >= 8:
+        if self.star >= 8:
             atk_perc = 0.85
         else:
             atk_perc = 0.63
