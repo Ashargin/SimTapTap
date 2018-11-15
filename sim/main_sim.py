@@ -9,9 +9,17 @@ team_1 = Team([HeroList.reaper(), HeroList.reaper(), HeroList.reaper(),
 team_2 = Team([HeroList.reaper(), HeroList.reaper(), HeroList.reaper(), 
             HeroList.reaper(), HeroList.reaper(), HeroList.reaper()])
 
-game = Game(team_1, team_2)
-game.process()
-print(game.log)
+c0 = 0
+c1 = 0
+for i in range(1000):
+    game = Game(team_1, team_2)
+    game.process()
+    if game.winner == 0:
+        c0 += 1
+    else :
+        c1 += 1
+    # print(game.log)
+print('Team 1 winrate : {}%'.format(10 * c0))
 
 # for i in range(20):
 #     target = team_2.next_target()

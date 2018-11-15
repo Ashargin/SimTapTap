@@ -6,8 +6,8 @@ import copy
 class Game:
     def __init__(self, team_1, team_2):
         self.log = ''
-        self.team_1 = team_1 # deepcopies?
-        self.team_2 = team_2
+        self.team_1 = copy.deepcopy(team_1) # deepcopies?
+        self.team_2 = copy.deepcopy(team_2)
         for h in self.team_1.heroes:
             h.op_team = self.team_2
             h.str_id = '{}_{}_{}'.format(h.name.value, 1, h.pos + 1)
