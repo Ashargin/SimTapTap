@@ -19,7 +19,7 @@ class Game:
             h.game = self
 
     def turn(self):
-        self.log += '\n### Turn {} ###\n'.format(self.round)
+        self.log += '\n### Turn {} ###'.format(self.round)
 
         for h in self.heroes:
             if not h.is_dead:
@@ -29,7 +29,7 @@ class Game:
 
         while any([h.can_attack for h in self.heroes]) and not self.is_finished():
             max_speed = max([h.speed for h in self.heroes])
-            fastest_heroes = [h for h in self.heroes if h.can_attack]
+            fastest_heroes = [h for h in self.heroes if h.speed == max_speed and h.can_attack]
             fastest = fastest_heroes[rd.randint(0, len(fastest_heroes) - 1)]
             self.log += "\n\n# {}'s turn #".format(fastest.str_id)
             fastest.turn()

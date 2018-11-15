@@ -37,31 +37,31 @@ class Team:
 
 
 class Hero:
-    armor_break = 0
-    skill_damage = 0
-    hit_rate = 0
-    dodge = 0
-    crit_rate = 0
-    crit_damage = 0.5
-    true_damage = 0
-    damage_reduction = 0
-    control_immune = 0
-    damage_to_warriors = 0
-    damage_to_assassins = 0
-    damage_to_wanderers = 0
-    damage_to_clerics = 0
-    damage_to_mages = 0
-
-    own_team = None
-    op_team = None
-    game = None
-    pos = None
-    is_dead = False
-    can_attack = True
-
     def __init__(self, armor, helmet, weapon, pendant, rune, artifact, guild_tech):
         self.energy = 50
+        self.armor_break = 0
+        self.skill_damage = 0
+        self.hit_rate = 0
+        self.dodge = 0
+        self.crit_rate = 0
+        self.crit_damage = 0.5
+        self.true_damage = 0
+        self.damage_reduction = 0
+        self.control_immune = 0
+        self.damage_to_warriors = 0
+        self.damage_to_assassins = 0
+        self.damage_to_wanderers = 0
+        self.damage_to_clerics = 0
+        self.damage_to_mages = 0
+    
+        self.own_team = None
+        self.op_team = None
+        self.game = None
+        self.pos = None
+        self.is_dead = False
+        self.can_attack = True
         self.effects = []
+
         self.compute_items(armor, helmet, weapon, pendant, rune, artifact)
         self.compute_guild_tech(guild_tech)
 
@@ -217,7 +217,7 @@ class Hero:
         return dodged
 
     def turn(self):
-        if self.energy == 100:
+        if self.energy == 100 and not self.is_silenced():
             self.skill()
         else:
             self.attack()
@@ -259,6 +259,18 @@ class Hero:
             target.effects.append(poison)
             poison.tick()
 
+    def silence(self, target, turns, name=''):
+        if not target.is_dead:
+            silence = Effect.Silence(self, target, turns, name=name)
+            target.effects.append(silence)
+            silence.tick()
+
+    def is_poisoned(self):
+        return True if any([isinstance(e, Effect.poison) for e in self.effects]) else False
+
+    def is_silenced(self):
+        return True if any([isinstance(e, Effect.silence) for e in self.effects]) else False
+
     def has_taken_damage(self, attacker):
         if self.hp <= 0:
             self.kill()
@@ -281,7 +293,14 @@ class Hero:
         pass
 
     def on_death(self, attacker):
-        pass
+        for h in self.own_team.heroes:
+            if isinstance(h, Reaper) and not h.is_dead:
+                if h.star < 7:
+                    h.armor_break += 6
+                    h.atk *= 1.15
+                else:
+                    h.armor_break += 8.4
+                    h.atk *= 1.2
 
     def print_stats(self):
         stats = [self.hp, self.atk, self.armor, self.speed, 
@@ -360,11 +379,40 @@ class Reaper(Hero):
         self.atk = 16276.31 # should depend on the level
         self.armor = 8 # should depend on the level
         self.speed = 984 # should depend on the level
-        self.armor_break = 9.6
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
                             rune=rune, artifact=artifact, guild_tech=guild_tech)
-        self.hp *= 1.3
-        self.atk *= 1.3
+
+        if self.star < 8:
+            self.armor_break += 9.6
+            self.hp *= 1.25
+            self.atk *= 1.25
+        else:
+            self.armor_break += 9.6
+            self.hp *= 1.3
+            self.atk *= 1.3
+
+    def skill(self):
+        name = 'Fatal Wave'
+        for target in self.op_team.heroes:
+            dodged = self.compute_dodge(target)
+            if not dodged:
+                power = self.atk * 0.84
+
+                self.hit(target, power=power, skill=True, on_hit=True, name=name)
+
+                if target.type == HeroType.WARRIOR and rd.random() <= 0.75 - target.control_immune: # check control immune behaviour
+                    self.silence(target, turns=2, name=name)
+        super().skill()
+
+    def on_death(self, attacker):
+        pass
+        # name = 'Pit Of Malice'
+        # power = self.atk * 0.6
+        # if self.star >= 9:
+        #     power = self.atk * 1.05
+        # for h in self.op_team.heroes:
+        #     self.hit(h, power=power, name=name)
+        # super().on_death(attacker)
 
 
 class Scarlet(Hero):
@@ -376,7 +424,7 @@ class Scarlet(Hero):
                     armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
                     rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O5, 
                     guild_tech=guild_tech_maxed):
-        if tier < 6:
+        if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star

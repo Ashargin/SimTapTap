@@ -4,10 +4,10 @@ from heroes import Team, HeroList
 from models import Armor, Helmet, Weapon, Pendant, Rune, Artifact
 from sim import Game
 
-team_1 = Team([HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet(), 
-            HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet()])
-team_2 = Team([HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet(), 
-            HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet()])
+team_1 = Team([HeroList.reaper(), HeroList.reaper(), HeroList.reaper(), 
+            HeroList.reaper(), HeroList.reaper(), HeroList.reaper()])
+team_2 = Team([HeroList.reaper(), HeroList.reaper(), HeroList.reaper(), 
+            HeroList.reaper(), HeroList.reaper(), HeroList.reaper()])
 
 game = Game(team_1, team_2)
 game.process()

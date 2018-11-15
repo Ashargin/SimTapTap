@@ -2001,6 +2001,25 @@ class Poison(BaseEffect):
             self.holder.has_taken_damage(self.source)
 
 
+class Silence(BaseEffect):
+    def __init__(self, source, holder, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.turns = turns
+        self.name = name
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            self.turns -= 1
+            log_text = '\n{} is silenced by {} ({}), {} turns left)' \
+                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+            self.source.game.log += log_text
+            self.holder.has_taken_damage(self.source)
+
+
 @dataclass
 class Effect:
     poison = Poison
+    silence = Silence
