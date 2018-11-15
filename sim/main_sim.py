@@ -4,7 +4,7 @@ from heroes import Team, HeroList
 from models import Armor, Helmet, Weapon, Pendant, Rune, Artifact
 from sim import Sim, Game
 
-team_1 = Team([HeroList.centaur(), HeroList.centaur(), HeroList.centaur(), 
+team_1 = Team([HeroList.scarlet(), HeroList.centaur(), HeroList.centaur(), 
             HeroList.centaur(), HeroList.centaur(), HeroList.centaur()])
 team_2 = Team([HeroList.centaur(), HeroList.centaur(), HeroList.centaur(), 
             HeroList.centaur(), HeroList.centaur(), HeroList.centaur()])

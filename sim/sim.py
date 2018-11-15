@@ -47,7 +47,7 @@ class Game:
                 e.tick()
 
         while any([h.can_attack for h in self.heroes]) and not self.is_finished():
-            max_speed = max([h.speed for h in self.heroes])
+            max_speed = max([h.speed for h in self.heroes if h.can_attack])
             fastest_heroes = [h for h in self.heroes if h.speed == max_speed and h.can_attack]
             fastest = fastest_heroes[rd.randint(0, len(fastest_heroes) - 1)]
             self.log += "\n\n# {}'s turn #".format(fastest.str_id)
