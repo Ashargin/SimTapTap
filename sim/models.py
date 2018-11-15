@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 ## Heroes names, types and factions
 class Faction(Enum):
+    EMPTY = 'EMPTY'
     ALLIANCE = 'ALLIANCE'
     HORDE = 'HORDE'
     ELF = 'ELF'
@@ -13,6 +14,7 @@ class Faction(Enum):
 
 
 class HeroType(Enum):
+    EMPTY = 'EMPTY'
     WARRIOR = 'WARRIOR'
     ASSASSIN = 'ASSASSIN'
     WANDERER = 'WANDERER'
@@ -21,6 +23,8 @@ class HeroType(Enum):
 
 
 class HeroName(Enum):
+    EMPTY = 'Empty Hero'
+
     SIR_CONRAD = 'Sir Conrad'
     LONE_HERO = 'Lone Hero' 
     OLIVIA = 'Olivia'
@@ -1965,4 +1969,38 @@ class Aura:
 
 
 ## Effects
-# add Up and Down effect objects with tick method
+class BaseEffect:
+    def kill(self):
+        self.holder.effects = [e for e in self.holder.effects if e.turns > 0]
+
+
+class Poison(BaseEffect):
+    def __init__(self, source, holder, power, turns, skill=False, name=''):
+        self.source = source
+        self.holder = holder
+        self.power = power
+        self.turns = turns
+        self.skill = skill
+        self.name = name
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            damage_components = self.source.compute_damage \
+                        (self.holder, self.power, skill=self.skill) # check if armor applies to poison
+            dmg = damage_components['Total damage']
+            crit = True if damage_components['Crit damage'] > 0 else False
+            crit_str = ', crit' if crit else ''
+
+            self.holder.hp -= dmg
+            self.turns -= 1
+            log_text = '\n{} takes {} damage (poison from {} ({}{}), {} turns left)' \
+                        .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+            self.source.game.log += log_text
+            self.holder.has_taken_damage(self.source)
+
+
+@dataclass
+class Effect:
+    poison = Poison

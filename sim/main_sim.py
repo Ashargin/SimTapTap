@@ -1,16 +1,46 @@
-from heroes import Team, Scarlet
+import numpy as np
 
-scarlet_1 = Scarlet()
-team_1 = Team([scarlet_1, Scarlet(), Scarlet(), Scarlet(), Scarlet(), Scarlet()])
+from heroes import Team, HeroList
+from models import Armor, Helmet, Weapon, Pendant, Rune, Artifact
+from sim import Game
 
-scarlet_2 = Scarlet()
-team_2 = Team([scarlet_2, Scarlet(), Scarlet(), Scarlet(), Scarlet(), Scarlet()])
+team_1 = Team([HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet(), 
+            HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet()])
+team_2 = Team([HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet(), 
+            HeroList.scarlet(), HeroList.scarlet(), HeroList.scarlet()])
 
-for i in range(20):
-    target = team_2.next_target()
-    last_hp = target.hp
-    scarlet_1.turn(team_1, team_2)
-    print('{} was attacked by {} and lost {} hp. She has {} hp left.'
-        .format(target.name.value, scarlet_1.name.value, 
-        round(last_hp - target.hp), 
-        round(target.hp)))
+game = Game(team_1, team_2)
+game.process()
+print(game.log)
+
+# for i in range(20):
+#     target = team_2.next_target()
+#     last_hp = target.hp
+#     scarlet_1.turn(team_1, team_2)
+#     print('{} was attacked by {} and lost {} hp. She has {} hp left.'
+#         .format(target.name.value, scarlet_1.name.value, 
+#         round(last_hp - target.hp), 
+#         round(target.hp)))
+#     print(np.array([[team_1.heroes[0].hp, team_1.heroes[1].hp, team_1.heroes[2].hp], 
+#                     [team_1.heroes[3].hp, team_1.heroes[4].hp, team_1.heroes[5].hp]]).astype(int))
+#     print(np.array([[team_2.heroes[0].hp, team_2.heroes[1].hp, team_2.heroes[2].hp], 
+#                     [team_2.heroes[3].hp, team_2.heroes[4].hp, team_2.heroes[5].hp]]).astype(int))
+#     print()
+# 
+# reaper = HeroList.reaper(armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
+#                     rune=Rune.hp.P3, artifact=Artifact.soul_torrent.O5)
+# centaur = HeroList.centaur(armor=Armor.empty, helmet=Helmet.empty, weapon=Weapon.empty, pendant=Pendant.empty, 
+#                     rune=Rune.crit_damage.O1, artifact=Artifact.empty)
+# stonecutter = HeroList.stonecutter()
+# 
+# team_1 = Team([centaur, HeroList.empty, HeroList.empty, 
+#             HeroList.empty, HeroList.empty, HeroList.empty])
+# team_2 = Team([stonecutter, HeroList.empty, HeroList.empty, 
+#             HeroList.empty, HeroList.empty, HeroList.empty])
+# 
+# reaper.turn(team_1, team_2)
+# print(np.array([[team_1.heroes[0].hp, team_1.heroes[1].hp, team_1.heroes[2].hp], 
+#                 [team_1.heroes[3].hp, team_1.heroes[4].hp, team_1.heroes[5].hp]]).astype(int))
+# print(np.array([[team_2.heroes[0].hp, team_2.heroes[1].hp, team_2.heroes[2].hp], 
+#                 [team_2.heroes[3].hp, team_2.heroes[4].hp, team_2.heroes[5].hp]]).astype(int))
+# print()
