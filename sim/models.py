@@ -1974,23 +1974,50 @@ class BaseEffect:
         self.holder.effects = [e for e in self.holder.effects if e.turns > 0]
 
 
-class Poison(BaseEffect):
+class Dot(BaseEffect):
     def __init__(self, source, holder, power, turns, skill=False, name=''):
         self.source = source
         self.holder = holder
-        self.power = power
+        damage_components = self.source.compute_base_damage(self.holder, power, skill=skill)
+        self.dmg = damage_components['Total damage']
         self.turns = turns
-        self.skill = skill
         self.name = name
 
     def tick(self):
         if self.turns == 0:
             self.kill()
         elif not self.holder.is_dead:
-            damage_components = self.source.compute_damage \
-                        (self.holder, self.power, skill=self.skill) # check if armor applies to poison
-            dmg = damage_components['Total damage']
-            crit = True if damage_components['Crit damage'] > 0 else False
+            crit = self.source.compute_crit(self.holder)
+            dmg = self.dmg
+            if crit:
+                dmg = self.dmg * (1 + self.source.crit_damage)
+            crit_str = ', crit' if crit else ''
+
+            self.holder.hp -= dmg
+            self.turns -= 1
+            log_text = '\n{} takes {} damage (dot from {} ({}{}), {} turns left)' \
+                        .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+            self.source.game.log += log_text
+            self.holder.has_taken_damage(self.source)
+
+
+class Poison(BaseEffect):
+    def __init__(self, source, holder, power, turns, skill=False, name=''):
+        self.source = source
+        self.holder = holder
+        damage_components = self.source.compute_base_damage(self.holder, power, skill=skill)
+        self.dmg = damage_components['Total damage']
+        self.turns = turns
+        self.name = name
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            crit = self.source.compute_crit(self.holder)
+            dmg = self.dmg
+            if crit:
+                dmg = self.dmg * (1 + self.source.crit_damage)
             crit_str = ', crit' if crit else ''
 
             self.holder.hp -= dmg
@@ -2021,5 +2048,6 @@ class Silence(BaseEffect):
 
 @dataclass
 class Effect:
+    dot = Dot
     poison = Poison
     silence = Silence

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Effect
 from settings import guild_tech_maxed, guild_tech_empty
+from utils import targets_at_random
 
 
 class Team:
@@ -53,6 +54,7 @@ class Hero:
         self.damage_to_wanderers = 0
         self.damage_to_clerics = 0
         self.damage_to_mages = 0
+        self.damage_to_poisoned = 0
     
         self.own_team = None
         self.op_team = None
@@ -169,16 +171,12 @@ class Hero:
         elif target.type == HeroType.MAGE:
             return self.damage_to_mages
 
-    def compute_damage(self, target, power, skill=False):
+    def compute_base_damage(self, target, power, skill=False):
         faction_damage = 0
         if self.faction_bonus(target):
             faction_damage = 0.3
 
         type_damage = self.type_damage(target)
-
-        crit_damage = 0
-        if rd.random() <= self.crit_rate:
-            crit_damage = self.crit_damage
 
         op_armor = target.armor - self.armor_break # check armor break behaviour
         damage_reduction_from_armor = (op_armor + 11) / 91 # check armor behaviour
@@ -187,16 +185,21 @@ class Hero:
         if skill:
             skill_damage = self.skill_damage
 
-        dmg = power * (1 - damage_reduction_from_armor) * (1 + crit_damage) \
+        poisoned_extra_damage = 0
+        if target.is_poisoned():
+            poisoned_extra_damage = self.damage_to_poisoned
+
+        dmg = power * (1 - damage_reduction_from_armor) \
                     * (1 + self.true_damage) * (1 - target.damage_reduction) \
-                    * (1 + faction_damage) * (1 + type_damage) * (1 + skill_damage)
+                    * (1 + faction_damage) * (1 + type_damage) * (1 + skill_damage) \
+                    * (1 + poisoned_extra_damage)
                     # check faction damage behaviour
                     # check type damage behaviour
                     # check skill damage behaviour
+                    # check extra damage to poisoned behaviour
 
         damage_components = {'Power': power, 
                             'Damage reduction from armor': damage_reduction_from_armor, 
-                            'Crit damage': crit_damage, 
                             'True damage': self.true_damage, 
                             'Damage reduction': target.damage_reduction, 
                             'Faction damage': faction_damage, 
@@ -216,6 +219,13 @@ class Hero:
 
         return dodged
 
+    def compute_crit(self, target):
+        crit = False
+        if rd.random() <= self.crit_rate and not target.is_dead:
+            crit = True
+
+        return crit
+
     def turn(self):
         if self.energy == 100 and not self.is_silenced():
             self.skill()
@@ -231,16 +241,18 @@ class Hero:
 
         dodged = self.compute_dodge(target)
         if not dodged:
-            self.hit(target, power=power, on_attack=True, on_hit=True, name='attack')
+            self.hit(target, power=power, active=True, on_attack=True, name='attack')
 
     def skill(self):
         self.energy = 0
 
-    def hit(self, target, power, skill=False, on_attack=False, on_hit=False, name=''):
+    def hit(self, target, power, skill=False, active=False, on_attack=False, name=''):
         if not target.is_dead:
-            damage_components = self.compute_damage(target, power, skill=skill)
+            damage_components = self.compute_base_damage(target, power, skill=skill)
             dmg = damage_components['Total damage']
-            crit = True if damage_components['Crit damage'] > 0 else False
+            crit = self.compute_crit(target)
+            if crit:
+                dmg *= (1 + self.crit_damage)
             crit_str = ', crit' if crit else ''
 
             target.hp -= dmg
@@ -250,8 +262,16 @@ class Hero:
             target.has_taken_damage(self)
             if on_attack:
                 self.on_attack(target)
-            if on_hit:
+            if active and crit:
+                self.on_crit(target)
+            if active:
                 target.on_hit(self)
+
+    def dot(self, target, power, turns, skill=False, name=''):
+        if not target.is_dead:
+            dot = Effect.dot(self, target, power, turns, skill=skill, name=name)
+            target.effects.append(dot)
+            dot.tick()
 
     def poison(self, target, power, turns, skill=False, name=''):
         if not target.is_dead:
@@ -285,6 +305,9 @@ class Hero:
 
     def on_attack(self, target):
         self.energy = min(self.energy + 50, 100)
+
+    def on_crit(self, target):
+        pass
 
     def on_hit(self, attacker):
         self.energy = min(self.energy + 10, 100)
@@ -344,7 +367,7 @@ class Centaur(Hero):
                     armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
                     rune=Rune.attack.R2, artifact=Artifact.queens_crown.O5, 
                     guild_tech=guild_tech_maxed):
-        if tier < 6:
+        if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
@@ -354,10 +377,41 @@ class Centaur(Hero):
         self.atk = 15053.54 # should depend on the level
         self.armor = 10 # should depend on the level
         self.speed = 983 # should depend on the level
-        self.crit_rate += 0.4
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
                             rune=rune, artifact=artifact, guild_tech=guild_tech)
-        self.atk *= 1.3
+
+        if self.star < 7:
+            self.crit_rate += 0.3
+            self.atk *= 1.25
+        else:
+            self.crit_rate += 0.4
+            self.atk *= 1.3
+
+        if self.star < 9:
+            self.damage_to_poisoned += 0.5
+        else:
+            self.damage_to_poisoned += 0.6
+
+    def on_crit(self, target):
+        name = 'Toxic Blade'
+        power = self.atk * 0.66
+        if self.star >= 8:
+            power = self.atk * 0.78
+        self.poison(target, power=power, turns=2, name=name)
+
+    def skill(self):
+        name = 'Dual Throwing Axe'
+        targets = targets_at_random(self.op_team, 4)
+        for target in targets:
+            dodged = self.compute_dodge(target)
+            if not dodged:
+                hit_power = self.atk * 0.8
+                dot_power = self.atk * 0.3
+
+                self.hit(target, power=hit_power, skill=True, active=True, name=name)
+                self.dot(target, power=dot_power, turns=2, skill=True, name=name)
+                
+        super().skill()
 
 
 class Reaper(Hero):
@@ -369,7 +423,7 @@ class Reaper(Hero):
                     armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
                     rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O5, 
                     guild_tech=guild_tech_maxed):
-        if tier < 6:
+        if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
@@ -398,21 +452,20 @@ class Reaper(Hero):
             if not dodged:
                 power = self.atk * 0.84
 
-                self.hit(target, power=power, skill=True, on_hit=True, name=name)
+                self.hit(target, power=power, skill=True, active=True, name=name)
 
                 if target.type == HeroType.WARRIOR and rd.random() <= 0.75 - target.control_immune: # check control immune behaviour
                     self.silence(target, turns=2, name=name)
         super().skill()
 
     def on_death(self, attacker):
-        pass
-        # name = 'Pit Of Malice'
-        # power = self.atk * 0.6
-        # if self.star >= 9:
-        #     power = self.atk * 1.05
-        # for h in self.op_team.heroes:
-        #     self.hit(h, power=power, name=name)
-        # super().on_death(attacker)
+        name = 'Pit Of Malice'
+        power = self.atk * 0.6
+        if self.star >= 9:
+            power = self.atk * 1.05
+        for h in self.op_team.heroes:
+            self.hit(h, power=power, name=name) # active?
+        super().on_death(attacker)
 
 
 class Scarlet(Hero):
@@ -445,7 +498,7 @@ class Scarlet(Hero):
                 hit_power = self.atk * 0.42
                 poison_power = self.atk * 0.6
 
-                self.hit(target, power=hit_power, skill=True, on_hit=True, name=name) # sequence order?
+                self.hit(target, power=hit_power, skill=True, active=True, name=name) # sequence order?
                 self.poison(target, power=poison_power, turns=3, skill=True, name=name)
         super().skill()
 
@@ -458,7 +511,7 @@ class Scarlet(Hero):
             self.poison(target, power=power, turns=2, name=name)
         super().on_attack(target)
 
-    def on_hit(self, attacker):
+    def on_hit(self, attacker): # check : triggered by any damage?
         name = 'Corrosive Skin'
         power = self.atk * 0.54
         if self.star >= 9:
@@ -473,31 +526,8 @@ class Scarlet(Hero):
         if self.star >= 8:
             power = self.atk * 0.85
         for h in self.op_team.heroes:
-            self.poison(h, power=power, turns=3, name=name)
+            self.poison(h, power=power, turns=3, name=name) # triggers on-hit?
         super().on_death(attacker)
-
-
-class Stonecutter(Hero):
-    name = 'Stonecutter'    
-    faction = Faction.ALLIANCE
-    type = HeroType.WANDERER
-
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.empty, helmet=Helmet.empty, weapon=Weapon.empty, pendant=Pendant.empty, 
-                    rune=Rune.empty, artifact=Artifact.empty, 
-                    guild_tech=guild_tech_empty):
-        if tier < 6:
-            raise NotImplementedError
-
-        self.star = star
-        self.tier = tier
-        self.level = level
-        self.hp = 162 # should depend on the level
-        self.atk = 39 # should depend on the level
-        self.armor = 7 # should depend on the level
-        self.speed = 118 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech)
 
 
 @dataclass
@@ -506,4 +536,3 @@ class HeroList:
     centaur = Centaur
     reaper = Reaper
     scarlet = Scarlet
-    stonecutter = Stonecutter

@@ -3,6 +3,25 @@ import random as rd
 import copy
 
 
+class Sim:
+    def __init__(self, team_1, team_2, n_sim=1000):
+        self.team_1 = team_1
+        self.team_2 = team_2
+        self.wins = 0
+        self.n_sim = n_sim
+
+    def process(self):
+        for i in range(self.n_sim):
+            game = Game(self.team_1, self.team_2)
+            game.process()
+            winner = game.winner
+            if winner == 0:
+                self.wins += 1
+
+    def print_winrate(self):
+        print('Team 1 winrate : {}%'.format(100 * self.wins / self.n_sim))
+
+
 class Game:
     def __init__(self, team_1, team_2):
         self.log = ''
