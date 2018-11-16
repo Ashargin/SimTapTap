@@ -1227,26 +1227,29 @@ class EmptyArtifact(BaseArtifact):
 
 
 class WarriorArtifactG1(BaseArtifact):
-    atk = 0
-    damage_to_warriors = 0
+    atk = 150
+    damage_to_warriors = 0.05
 class WarriorArtifactG2(BaseArtifact):
-    atk = 0
-    damage_to_warriors = 0
+    atk = 195
+    damage_to_warriors = 0.065
+class WarriorArtifactG3(BaseArtifact):
+    atk = 240
+    damage_to_warriors = 0.08
+class WarriorArtifactG4(BaseArtifact):
+    atk = 300
+    damage_to_warriors = 0.1
 class WarriorArtifactB1(BaseArtifact):
-    atk = 0
-    damage_to_warriors = 0
+    atk = 240
+    damage_to_warriors = 0.08
 class WarriorArtifactB2(BaseArtifact):
-    atk = 0
-    damage_to_warriors = 0
-class WarriorArtifactY1(BaseArtifact):
-    atk = 0
-    damage_to_warriors = 0
-class WarriorArtifactY2(BaseArtifact):
-    atk = 0
-    damage_to_warriors = 0
-class WarriorArtifactY3(BaseArtifact):
-    atk = 0
-    damage_to_warriors = 0
+    atk = 300
+    damage_to_warriors = 0.1
+class WarriorArtifactB3(BaseArtifact):
+    atk = 360
+    damage_to_warriors = 0.12
+class WarriorArtifactB4(BaseArtifact):
+    atk = 450
+    damage_to_warriors = 0.15
 class WarriorArtifactP1(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
@@ -1259,6 +1262,9 @@ class WarriorArtifactP3(BaseArtifact):
 class WarriorArtifactP4(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+class WarriorArtifactP5(BaseArtifact):
+    atk = 840
+    damage_to_warriors = 0.28
 class WarriorArtifactO1(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
@@ -1272,31 +1278,37 @@ class WarriorArtifactO4(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
 class WarriorArtifactO5(BaseArtifact):
+    atk = 0
+    damage_to_warriors = 0
+class WarriorArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_warriors = 0.42
 
 
 class AssassinArtifactG1(BaseArtifact):
-    atk = 0
-    damage_to_assassins = 0
+    atk = 150
+    damage_to_assassins = 0.05
 class AssassinArtifactG2(BaseArtifact):
-    atk = 0
-    damage_to_assassins = 0
+    atk = 195
+    damage_to_assassins = 0.065
+class AssassinArtifactG3(BaseArtifact):
+    atk = 240
+    damage_to_assassins = 0.08
+class AssassinArtifactG4(BaseArtifact):
+    atk = 300
+    damage_to_assassins = 0.1
 class AssassinArtifactB1(BaseArtifact):
-    atk = 0
-    damage_to_assassins = 0
+    atk = 240
+    damage_to_assassins = 0.08
 class AssassinArtifactB2(BaseArtifact):
-    atk = 0
-    damage_to_assassins = 0
-class AssassinArtifactY1(BaseArtifact):
-    atk = 0
-    damage_to_assassins = 0
-class AssassinArtifactY2(BaseArtifact):
-    atk = 0
-    damage_to_assassins = 0
-class AssassinArtifactY3(BaseArtifact):
-    atk = 0
-    damage_to_assassins = 0
+    atk = 300
+    damage_to_assassins = 0.1
+class AssassinArtifactB3(BaseArtifact):
+    atk = 360
+    damage_to_assassins = 0.12
+class AssassinArtifactB4(BaseArtifact):
+    atk = 450
+    damage_to_assassins = 0.15
 class AssassinArtifactP1(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
@@ -1309,6 +1321,9 @@ class AssassinArtifactP3(BaseArtifact):
 class AssassinArtifactP4(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+class AssassinArtifactP5(BaseArtifact):
+    atk = 840
+    damage_to_assassins = 0.28
 class AssassinArtifactO1(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
@@ -1322,31 +1337,37 @@ class AssassinArtifactO4(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
 class AssassinArtifactO5(BaseArtifact):
+    atk = 0
+    damage_to_assassins = 0
+class AssassinArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_assassins = 0.42
 
 
 class WandererArtifactG1(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
+    atk = 150
+    damage_to_wanderers = 0.05
 class WandererArtifactG2(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
+    atk = 195
+    damage_to_wanderers = 0.065
+class WandererArtifactG3(BaseArtifact):
+    atk = 240
+    damage_to_wanderers = 0.08
+class WandererArtifactG4(BaseArtifact):
+    atk = 300
+    damage_to_wanderers = 0.1
 class WandererArtifactB1(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
+    atk = 240
+    damage_to_wanderers = 0.08
 class WandererArtifactB2(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-class WandererArtifactY1(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-class WandererArtifactY2(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-class WandererArtifactY3(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
+    atk = 300
+    damage_to_wanderers = 0.1
+class WandererArtifactB3(BaseArtifact):
+    atk = 360
+    damage_to_wanderers = 0.12
+class WandererArtifactB4(BaseArtifact):
+    atk = 450
+    damage_to_wanderers = 0.15
 class WandererArtifactP1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
@@ -1359,6 +1380,9 @@ class WandererArtifactP3(BaseArtifact):
 class WandererArtifactP4(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+class WandererArtifactP5(BaseArtifact):
+    atk = 840
+    damage_to_wanderers = 0.28
 class WandererArtifactO1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
@@ -1372,31 +1396,37 @@ class WandererArtifactO4(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
 class WandererArtifactO5(BaseArtifact):
+    atk = 0
+    damage_to_wanderers = 0
+class WandererArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_wanderers = 0.42
 
 
 class ClericArtifactG1(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
+    atk = 150
+    damage_to_clerics = 0.05
 class ClericArtifactG2(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
+    atk = 195
+    damage_to_clerics = 0.065
+class ClericArtifactG3(BaseArtifact):
+    atk = 240
+    damage_to_clerics = 0.08
+class ClericArtifactG4(BaseArtifact):
+    atk = 300
+    damage_to_clerics = 0.1
 class ClericArtifactB1(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
+    atk = 240
+    damage_to_clerics = 0.08
 class ClericArtifactB2(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-class ClericArtifactY1(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-class ClericArtifactY2(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-class ClericArtifactY3(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
+    atk = 300
+    damage_to_clerics = 0.1
+class ClericArtifactB3(BaseArtifact):
+    atk = 360
+    damage_to_clerics = 0.12
+class ClericArtifactB4(BaseArtifact):
+    atk = 450
+    damage_to_clerics = 0.15
 class ClericArtifactP1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
@@ -1409,6 +1439,9 @@ class ClericArtifactP3(BaseArtifact):
 class ClericArtifactP4(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+class ClericArtifactP5(BaseArtifact):
+    atk = 840
+    damage_to_clerics = 0.28
 class ClericArtifactO1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
@@ -1422,31 +1455,37 @@ class ClericArtifactO4(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
 class ClericArtifactO5(BaseArtifact):
+    atk = 0
+    damage_to_clerics = 0
+class ClericArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_clerics = 0.42
 
 
 class MageArtifactG1(BaseArtifact):
-    atk = 0
-    damage_to_mages = 0
+    atk = 150
+    damage_to_mages = 0.05
 class MageArtifactG2(BaseArtifact):
-    atk = 0
-    damage_to_mages = 0
+    atk = 195
+    damage_to_mages = 0.065
+class MageArtifactG3(BaseArtifact):
+    atk = 240
+    damage_to_mages = 0.08
+class MageArtifactG4(BaseArtifact):
+    atk = 300
+    damage_to_mages = 0.1
 class MageArtifactB1(BaseArtifact):
-    atk = 0
-    damage_to_mages = 0
+    atk = 240
+    damage_to_mages = 0.08
 class MageArtifactB2(BaseArtifact):
-    atk = 0
-    damage_to_mages = 0
-class MageArtifactY1(BaseArtifact):
-    atk = 0
-    damage_to_mages = 0
-class MageArtifactY2(BaseArtifact):
-    atk = 0
-    damage_to_mages = 0
-class MageArtifactY3(BaseArtifact):
-    atk = 0
-    damage_to_mages = 0
+    atk = 300
+    damage_to_mages = 0.1
+class MageArtifactB3(BaseArtifact):
+    atk = 360
+    damage_to_mages = 0.12
+class MageArtifactB4(BaseArtifact):
+    atk = 450
+    damage_to_mages = 0.15
 class MageArtifactP1(BaseArtifact):
     atk = 0
     damage_to_mages = 0
@@ -1459,6 +1498,9 @@ class MageArtifactP3(BaseArtifact):
 class MageArtifactP4(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+class MageArtifactP5(BaseArtifact):
+    atk = 840
+    damage_to_mages = 0.28
 class MageArtifactO1(BaseArtifact):
     atk = 0
     damage_to_mages = 0
@@ -1472,6 +1514,9 @@ class MageArtifactO4(BaseArtifact):
     atk = 0
     damage_to_mages = 0
 class MageArtifactO5(BaseArtifact):
+    atk = 0
+    damage_to_mages = 0
+class MageArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_mages = 0.42
 
@@ -1489,6 +1534,9 @@ class EyeOfHeavenO4(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
 class EyeOfHeavenO5(BaseArtifact):
+    atk_bonus = 0
+    hit_rate = 0
+class EyeOfHeavenO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
 
@@ -1506,6 +1554,9 @@ class WindWalkerO4(BaseArtifact):
     speed = 0
     hp_bonus = 0
 class WindWalkerO5(BaseArtifact):
+    speed = 0
+    hp_bonus = 0
+class WindWalkerO6(BaseArtifact):
     speed = 42
     hp_bonus = 0.1
 
@@ -1523,6 +1574,9 @@ class ScorchingSunO4(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
 class ScorchingSunO5(BaseArtifact):
+    hp_bonus = 0
+    damage_reduction = 0
+class ScorchingSunO6(BaseArtifact):
     hp_bonus = 0.08
     damage_reduction = 0.12
 
@@ -1540,6 +1594,9 @@ class DragonbloodO4(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
 class DragonbloodO5(BaseArtifact):
+    atk_bonus = 0
+    true_damage = 0
+class DragonbloodO6(BaseArtifact):
     atk_bonus = 0.08
     true_damage = 0.12
 
@@ -1557,6 +1614,9 @@ class SoundStepO4(BaseArtifact):
     energy = 0
     atk = 0
 class SoundStepO5(BaseArtifact):
+    energy = 0
+    atk = 0
+class SoundStepO6(BaseArtifact):
     energy = 240
     atk = 240
 
@@ -1578,6 +1638,10 @@ class KnightsVowO4(BaseArtifact):
     damage_to_clerics = 0
     skill_damage_if_alliance = 0
 class KnightsVowO5(BaseArtifact):
+    atk = 0
+    damage_to_clerics = 0
+    skill_damage_if_alliance = 0
+class KnightsVowO6(BaseArtifact):
     atk = 1280
     damage_to_clerics = 0.42
     skill_damage_if_alliance = 0.25
@@ -1600,6 +1664,10 @@ class PrimevalSoulO4(BaseArtifact):
     damage_to_wanderers = 0
     crit_rate_if_horde = 0
 class PrimevalSoulO5(BaseArtifact):
+    atk = 0
+    damage_to_wanderers = 0
+    crit_rate_if_horde = 0
+class PrimevalSoulO6(BaseArtifact):
     atk = 1280
     damage_to_wanderers = 0.42
     crit_rate_if_horde = 0.09
@@ -1622,6 +1690,10 @@ class QueensCrownO4(BaseArtifact):
     hp_bonus = 0
     crit_rate_if_elf = 0
 class QueensCrownO5(BaseArtifact):
+    speed = 0
+    hp_bonus = 0
+    crit_rate_if_elf = 0
+class QueensCrownO6(BaseArtifact):
     speed = 42
     hp_bonus = 0.1
     crit_rate_if_elf = 0.09
@@ -1644,6 +1716,10 @@ class SoulTorrentO4(BaseArtifact):
     hit_rate = 0
     skill_damage_if_undead = 0
 class SoulTorrentO5(BaseArtifact):
+    atk_bonus = 0
+    hit_rate = 0
+    skill_damage_if_undead = 0
+class SoulTorrentO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
     skill_damage_if_undead = 0.25
@@ -1666,6 +1742,10 @@ class GiftOfCreationO4(BaseArtifact):
     damage_reduction = 0
     true_damage_if_heaven = 0
 class GiftOfCreationO5(BaseArtifact):
+    hp_bonus = 0
+    damage_reduction = 0
+    true_damage_if_heaven = 0
+class GiftOfCreationO6(BaseArtifact):
     hp_bonus = 0.1
     damage_reduction = 0.15
     true_damage_if_heaven = 0.12
@@ -1688,6 +1768,10 @@ class EternalCurseO4(BaseArtifact):
     hit_rate = 0
     skill_damage_if_hell = 0
 class EternalCurseO5(BaseArtifact):
+    atk_bonus = 0
+    hit_rate = 0
+    skill_damage_if_hell = 0
+class EternalCurseO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
     skill_damage_if_hell = 0.25
@@ -1697,100 +1781,115 @@ class EternalCurseO5(BaseArtifact):
 class WarriorArtifact:
     G1 = WarriorArtifactG1()
     G2 = WarriorArtifactG2()
+    G3 = WarriorArtifactG3()
+    G4 = WarriorArtifactG4()
     B1 = WarriorArtifactB1()
     B2 = WarriorArtifactB2()
-    Y1 = WarriorArtifactY1()
-    Y2 = WarriorArtifactY2()
-    Y3 = WarriorArtifactY3()
+    B3 = WarriorArtifactB3()
+    B4 = WarriorArtifactB4()
     P1 = WarriorArtifactP1()
     P2 = WarriorArtifactP2()
     P3 = WarriorArtifactP3()
     P4 = WarriorArtifactP4()
+    P5 = WarriorArtifactP5()
     O1 = WarriorArtifactO1()
     O2 = WarriorArtifactO2()
     O3 = WarriorArtifactO3()
     O4 = WarriorArtifactO4()
     O5 = WarriorArtifactO5()
+    O6 = WarriorArtifactO6()
 
 
 @dataclass
 class AssassinArtifact:
     G1 = AssassinArtifactG1()
     G2 = AssassinArtifactG2()
+    G3 = AssassinArtifactG3()
+    G4 = AssassinArtifactG4()
     B1 = AssassinArtifactB1()
     B2 = AssassinArtifactB2()
-    Y1 = AssassinArtifactY1()
-    Y2 = AssassinArtifactY2()
-    Y3 = AssassinArtifactY3()
+    B3 = AssassinArtifactB3()
+    B4 = AssassinArtifactB4()
     P1 = AssassinArtifactP1()
     P2 = AssassinArtifactP2()
     P3 = AssassinArtifactP3()
     P4 = AssassinArtifactP4()
+    P5 = AssassinArtifactP5()
     O1 = AssassinArtifactO1()
     O2 = AssassinArtifactO2()
     O3 = AssassinArtifactO3()
     O4 = AssassinArtifactO4()
     O5 = AssassinArtifactO5()
+    O6 = AssassinArtifactO6()
 
 
 @dataclass
 class WandererArtifact:
     G1 = WandererArtifactG1()
     G2 = WandererArtifactG2()
+    G3 = WandererArtifactG3()
+    G4 = WandererArtifactG4()
     B1 = WandererArtifactB1()
     B2 = WandererArtifactB2()
-    Y1 = WandererArtifactY1()
-    Y2 = WandererArtifactY2()
-    Y3 = WandererArtifactY3()
+    B3 = WandererArtifactB3()
+    B4 = WandererArtifactB4()
     P1 = WandererArtifactP1()
     P2 = WandererArtifactP2()
     P3 = WandererArtifactP3()
     P4 = WandererArtifactP4()
+    P5 = WandererArtifactP5()
     O1 = WandererArtifactO1()
     O2 = WandererArtifactO2()
     O3 = WandererArtifactO3()
     O4 = WandererArtifactO4()
     O5 = WandererArtifactO5()
+    O6 = WandererArtifactO6()
 
 
 @dataclass
 class ClericArtifact:
     G1 = ClericArtifactG1()
     G2 = ClericArtifactG2()
+    G3 = ClericArtifactG3()
+    G4 = ClericArtifactG4()
     B1 = ClericArtifactB1()
     B2 = ClericArtifactB2()
-    Y1 = ClericArtifactY1()
-    Y2 = ClericArtifactY2()
-    Y3 = ClericArtifactY3()
+    B3 = ClericArtifactB3()
+    B4 = ClericArtifactB4()
     P1 = ClericArtifactP1()
     P2 = ClericArtifactP2()
     P3 = ClericArtifactP3()
     P4 = ClericArtifactP4()
+    P5 = ClericArtifactP5()
     O1 = ClericArtifactO1()
     O2 = ClericArtifactO2()
     O3 = ClericArtifactO3()
     O4 = ClericArtifactO4()
     O5 = ClericArtifactO5()
+    O6 = ClericArtifactO6()
 
 
 @dataclass
 class MageArtifact:
     G1 = MageArtifactG1()
     G2 = MageArtifactG2()
+    G3 = MageArtifactG3()
+    G4 = MageArtifactG4()
     B1 = MageArtifactB1()
     B2 = MageArtifactB2()
-    Y1 = MageArtifactY1()
-    Y2 = MageArtifactY2()
-    Y3 = MageArtifactY3()
+    B3 = MageArtifactB3()
+    B4 = MageArtifactB4()
     P1 = MageArtifactP1()
     P2 = MageArtifactP2()
     P3 = MageArtifactP3()
     P4 = MageArtifactP4()
+    P5 = MageArtifactP5()
     O1 = MageArtifactO1()
     O2 = MageArtifactO2()
     O3 = MageArtifactO3()
     O4 = MageArtifactO4()
     O5 = MageArtifactO5()
+    O6 = MageArtifactO6()
 
 
 @dataclass
@@ -1800,6 +1899,7 @@ class EyeOfHeaven:
     O3 = EyeOfHeavenO3()
     O4 = EyeOfHeavenO4()
     O5 = EyeOfHeavenO5()
+    O6 = EyeOfHeavenO6()
 
 
 @dataclass
@@ -1809,6 +1909,7 @@ class WindWalker:
     O3 = WindWalkerO3()
     O4 = WindWalkerO4()
     O5 = WindWalkerO5()
+    O6 = WindWalkerO6()
 
 
 @dataclass
@@ -1818,6 +1919,7 @@ class ScorchingSun:
     O3 = ScorchingSunO3()
     O4 = ScorchingSunO4()
     O5 = ScorchingSunO5()
+    O6 = ScorchingSunO6()
 
 
 @dataclass
@@ -1827,6 +1929,7 @@ class Dragonblood:
     O3 = DragonbloodO3()
     O4 = DragonbloodO4()
     O5 = DragonbloodO5()
+    O6 = DragonbloodO6()
 
 
 @dataclass
@@ -1836,6 +1939,7 @@ class SoundStep:
     O3 = SoundStepO3()
     O4 = SoundStepO4()
     O5 = SoundStepO5()
+    O6 = SoundStepO6()
 
 
 @dataclass
@@ -1845,6 +1949,7 @@ class KnightsVow:
     O3 = KnightsVowO3()
     O4 = KnightsVowO4()
     O5 = KnightsVowO5()
+    O6 = KnightsVowO6()
 
 
 @dataclass
@@ -1854,6 +1959,7 @@ class PrimevalSoul:
     O3 = PrimevalSoulO3()
     O4 = PrimevalSoulO4()
     O5 = PrimevalSoulO5()
+    O6 = PrimevalSoulO6()
 
 
 @dataclass
@@ -1863,6 +1969,7 @@ class QueensCrown:
     O3 = QueensCrownO3()
     O4 = QueensCrownO4()
     O5 = QueensCrownO5()
+    O6 = QueensCrownO6()
 
 
 @dataclass
@@ -1872,6 +1979,7 @@ class SoulTorrent:
     O3 = SoulTorrentO3()
     O4 = SoulTorrentO4()
     O5 = SoulTorrentO5()
+    O6 = SoulTorrentO6()
 
 
 @dataclass
@@ -1881,6 +1989,7 @@ class GiftOfCreation:
     O3 = GiftOfCreationO3()
     O4 = GiftOfCreationO4()
     O5 = GiftOfCreationO5()
+    O6 = GiftOfCreationO6()
 
 
 @dataclass
@@ -1890,6 +1999,7 @@ class EternalCurse:
     O3 = EternalCurseO3()
     O4 = EternalCurseO4()
     O5 = EternalCurseO5()
+    O6 = EternalCurseO6()
 
 
 @dataclass
@@ -1978,19 +2088,18 @@ class Dot(BaseEffect):
     def __init__(self, source, holder, power, turns, skill=False, name=''):
         self.source = source
         self.holder = holder
-        damage_components = self.source.compute_base_damage(self.holder, power, skill=skill)
-        self.dmg = damage_components['Total damage']
+        self.power = power
         self.turns = turns
+        self.skill = skill
         self.name = name
 
     def tick(self):
         if self.turns == 0:
             self.kill()
         elif not self.holder.is_dead:
-            crit = self.source.compute_crit(self.holder)
-            dmg = self.dmg
-            if crit:
-                dmg = self.dmg * (1 + self.source.crit_damage)
+            damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+            dmg = damage_components['Total damage']
+            crit = True if damage_components['Crit damage'] > 0 else False
             crit_str = ', crit' if crit else ''
 
             self.holder.hp -= dmg
@@ -2001,12 +2110,11 @@ class Dot(BaseEffect):
             self.holder.has_taken_damage(self.source)
 
 
-class Poison(BaseEffect):
-    def __init__(self, source, holder, power, turns, skill=False, name=''):
+class Hot(BaseEffect):
+    def __init__(self, source, holder, power, turns, name=''):
         self.source = source
         self.holder = holder
-        damage_components = self.source.compute_base_damage(self.holder, power, skill=skill)
-        self.dmg = damage_components['Total damage']
+        self.power = power
         self.turns = turns
         self.name = name
 
@@ -2014,10 +2122,31 @@ class Poison(BaseEffect):
         if self.turns == 0:
             self.kill()
         elif not self.holder.is_dead:
-            crit = self.source.compute_crit(self.holder)
-            dmg = self.dmg
-            if crit:
-                dmg = self.dmg * (1 + self.source.crit_damage)
+            self.holder.hp = min(self.holder.hp + self.power, self.holder.hp_max)
+            self.turns -= 1
+            log_text = '\n{} is healed {} (hot from {} ({}), {} turns left)' \
+                        .format(self.holder.str_id, round(self.power), 
+                        self.source.str_id, self.name, self.turns)
+            self.source.game.log += log_text
+            self.holder.has_taken_damage(self.source)
+
+
+class Poison(BaseEffect):
+    def __init__(self, source, holder, power, turns, skill=False, name=''):
+        self.source = source
+        self.holder = holder
+        self.power = power
+        self.turns = turns
+        self.skill = skill
+        self.name = name
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+            dmg = damage_components['Total damage']
+            crit = True if damage_components['Crit damage'] > 0 else False
             crit_str = ', crit' if crit else ''
 
             self.holder.hp -= dmg
@@ -2040,14 +2169,126 @@ class Silence(BaseEffect):
             self.kill()
         elif not self.holder.is_dead:
             self.turns -= 1
-            log_text = '\n{} is silenced by {} ({}), {} turns left)' \
+            log_text = '\n{} is silenced by {} ({}), {} turns left' \
                         .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
             self.source.game.log += log_text
-            self.holder.has_taken_damage(self.source)
+
+
+class AttackUp(BaseEffect):
+    def __init__(self, source, holder, up, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.up = up
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.atk *= 1 + self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = "\n{}'s attack is increased by {}% by {} ({}), {} turns left" \
+                        .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                        self.name, self.turns)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.atk /= 1 + self.up
+
+
+class AttackDown(BaseEffect):
+    def __init__(self, source, holder, down, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.down = down
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.atk *= 1 - self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = "\n{}'s attack is reduced by {}% by {} ({}), {} turns left" \
+                        .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                        self.name, self.turns)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.atk /= 1 - self.down
+
+
+class CritRateUp(BaseEffect):
+    def __init__(self, source, holder, up, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.up = up
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.crit_rate += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = "\n{}'s crit rate is increased by {}% by {} ({}), {} turns left" \
+                        .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                        self.name, self.turns)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.crit_rate -= self.up
+
+
+class CritRateDown(BaseEffect):
+    def __init__(self, source, holder, down, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.down = down
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.crit_rate -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = "\n{}'s crit rate is reduced by {}% by {} ({}), {} turns left" \
+                        .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                        self.name, self.turns)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.atk += self.down
 
 
 @dataclass
 class Effect:
     dot = Dot
+    hot = Hot
     poison = Poison
     silence = Silence
+    attack_down = AttackDown
+    attack_up = AttackUp
+    crit_rate_up = CritRateUp
+    crit_rate_down = CritRateDown

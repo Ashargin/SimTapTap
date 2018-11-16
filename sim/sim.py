@@ -7,7 +7,9 @@ class Sim:
     def __init__(self, team_1, team_2, n_sim=1000):
         self.team_1 = team_1
         self.team_2 = team_2
-        self.wins = 0
+        self.wins_1 = 0
+        self.wins_2 = 0
+        self.ties = 0
         self.n_sim = n_sim
 
     def process(self):
@@ -15,11 +17,17 @@ class Sim:
             game = Game(self.team_1, self.team_2)
             game.process()
             winner = game.winner
-            if winner == 0:
-                self.wins += 1
+            if winner == 1:
+                self.wins_1 += 1
+            elif winner == -1:
+                self.wins_2 += 1
+            else:
+                self.ties += 1
 
     def print_winrate(self):
-        print('Team 1 winrate : {}%'.format(100 * self.wins / self.n_sim))
+        print('Team 1 winrate : {}%'.format(100 * self.wins_1 / self.n_sim))
+        print('Team 2 winrate : {}%'.format(100 * self.wins_2 / self.n_sim))
+        print('Ties : {}%'.format(100 * self.ties / self.n_sim))
 
 
 class Game:
@@ -80,9 +88,14 @@ class Game:
         self.log += '\n### Final state ###\n'
         self.log += '\n\n{}'.format(self.state())
 
-        if self.team_2.is_dead() and not self.team_1.is_dead():
+        if self.team_2.is_dead() and self.team_1.is_dead():
             self.winner = 0
-        else:
+        elif self.team_2.is_dead():
             self.winner = 1
+        else:
+            self.winner = -1
 
-        self.log += '\n\nWinner : team {}'.format(self.winner + 1)
+        if self.winner != 0:
+            self.log += '\n\nWinner : team {}'.format(1 if self.winner == 1 else 2)
+        else:
+            self.log += '\n\nTie'.format(1 if self.winner == 1 else 2)
