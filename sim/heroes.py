@@ -1,23 +1,28 @@
 import random as rd
 from dataclasses import dataclass
 
-from models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Effect
+from models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Familiar, Effect
 from settings import guild_tech_maxed, guild_tech_empty
 from utils import targets_at_random
 
 
+## Team
 class Team:
-    def __init__(self, heroes):   
+    def __init__(self, heroes, pet=Familiar.raphael(160, 61, 10, 10, 1)):   
         self.heroes = heroes
+        self.pet = pet
         for i, h in enumerate(self.heroes):
             h.pos = i
 
         aura = Aura(heroes) # aura
         self.compute_aura(aura)
 
+        self.compute_pet(pet) # familiar
+
         for h in self.heroes:
             h.hp_max = h.hp
             h.own_team = self
+        self.pet.own_team = self
 
     def compute_aura(self, aura):
         for h in self.heroes:
@@ -28,6 +33,16 @@ class Team:
             h.control_immune += aura.control_immune
             h.armor_break *= (1 + aura.armor_break_bonus)
 
+    def compute_pet(self, pet):
+        for h in self.heroes:
+            h.crit_rate += pet.crit_rate
+            h.crit_damage += pet.crit_damage
+            h.skill_damage += pet.skill_damage
+            h.hit_rate += pet.hit_rate
+            h.true_damage += pet.true_damage
+            h.dodge += pet.dodge
+            h.speed += pet.speed
+
     def next_target(self):
         alive = [h for h in self.heroes if not h.is_dead]
 
@@ -37,6 +52,7 @@ class Team:
         return True if all([h.is_dead for h in self.heroes]) else False
 
 
+## Heroes
 class BaseHero:
     def __init__(self, armor, helmet, weapon, pendant, rune, artifact, guild_tech):
         self.energy = 50
@@ -178,8 +194,8 @@ class BaseHero:
 
         type_damage = self.type_damage(target)
 
-        op_armor = target.armor - self.armor_break # check armor break behaviour
-        damage_reduction_from_armor = (op_armor + 11) / 91 # check armor behaviour
+        op_armor = target.armor - self.armor_break
+        damage_reduction_from_armor = op_armor * 0.00992543 + 0.20597124 # check armor behaviour
 
         crit_damage = 0
         crit = self.compute_crit(target)
@@ -229,6 +245,15 @@ class BaseHero:
 
         return dodged
 
+    def targets_hit(self, targets, name=''):
+        targets_hit = []
+        for target in targets:
+            dodged = self.compute_dodge(target, name=name)
+            if not dodged:
+                targets_hit.append(target)
+
+        return targets_hit
+
     def compute_crit(self, target):
         crit = False
         if rd.random() <= self.crit_rate and not target.is_dead:
@@ -261,34 +286,63 @@ class BaseHero:
 
     def skill(self):
         self.energy = 0
+        self.own_team.pet.energy = max(min(self.own_team.pet.energy + 12.5, 100), self.energy)
 
-    def hit(self, target, power, skill, active, on_attack, name=''):
-        if not target.is_dead:
-            damage_components = self.compute_damage(target, power, skill=skill)
-            dmg = damage_components['Total damage']
-            crit = True if damage_components['Crit damage'] > 0 else False
-            crit_str = ', crit' if crit else ''
+    def update_state(self, target, on_attack, active, crit):
+        target.has_taken_damage(self)
+        if on_attack:
+            self.on_attack(target)
+        if active and crit:
+            self.on_crit(target)
+        if active: # only triggered by active? dots/counters?
+            target.on_hit(self)
 
-            target.hp -= dmg
-            log_text = '\n{} takes {} damage from {} ({}{})' \
-                        .format(target.str_id, round(dmg), self.str_id, name, crit_str)
-            self.game.log += log_text
-            target.has_taken_damage(self)
-            if on_attack:
-                self.on_attack(target)
-            if active and crit:
-                self.on_crit(target)
-            if active: # only triggered by active? dots/counters?
-                target.on_hit(self)
+    def hit(self, target, power, skill, active, on_attack, multi, update=True, name=''):
+        if not multi:
+            if not target.is_dead:
+                damage_components = self.compute_damage(target, power, skill=skill)
+                dmg = damage_components['Total damage']
+                crit = True if damage_components['Crit damage'] > 0 else False
+                crit_str = ', crit' if crit else ''
+    
+                target.hp -= dmg
+                log_text = '\n{} takes {} damage from {} ({}{})' \
+                            .format(target.str_id, round(dmg), self.str_id, name, crit_str)
+                self.game.log += log_text
+    
+                if update:
+                    self.update_state(target, on_attack, active, crit)
 
-    def hit_attack(self, target, power, name='attack'):
-        self.hit(target, power, skill=False, active=True, on_attack=True, name=name)
+                return crit
 
-    def hit_skill(self, target, power, name=''):
-        self.hit(target, power, skill=True, active=True, on_attack=False, name=name)
+        else:
+            crits = []
+            for i, t in enumerate(target):
+                p = power[i]
+                crit = self.hit(t, p, skill, active, on_attack, 
+                        multi=False, update=False, name=name)
+                crits.append(crit)
+            for i, t in enumerate(target):
+                if not t.is_dead:
+                    crit = crits[i]
+                    self.update_state(t, on_attack, active, crit)
+                
 
-    def hit_passive(self, target, power, name=''):
-        self.hit(target, power, skill=False, active=False, on_attack=False, name=name)
+    def hit_attack(self, target, power, multi=False, name='attack'):
+        self.hit(target, power, skill=False, active=True, 
+                on_attack=True, multi=multi, name=name)
+
+    def hit_skill(self, target, power, multi=False, name=''):
+        self.hit(target, power, skill=True, active=True, 
+                on_attack=False, multi=multi, name=name)
+
+    def hit_passive(self, target, power, multi=False, name=''):
+        self.hit(target, power, skill=False, active=False, 
+                on_attack=False, multi=multi, name=name)
+
+    def try_hit_passive(self, target, power, chance, multi=False, name=''):
+        if rd.random() <= chance:
+            self.hit_passive(target, power, multi=multi, name=name)
 
     def dot(self, target, power, turns, skill=False, name=''):
         if not target.is_dead:
@@ -300,15 +354,15 @@ class BaseHero:
         if rd.random() <= chance:
             self.dot(target, power, turns, skill=skill, name=name)
 
-    def hot(self, target, power, turns, name=''):
+    def heal(self, target, power, turns, name=''):
         if not target.is_dead:
-            hot = Effect.hot(self, target, power, turns, name=name)
-            target.effects.append(hot)
-            hot.tick()
+            heal = Effect.heal(self, target, power, turns, name=name)
+            target.effects.append(heal)
+            heal.tick()
 
-    def try_hot(self, target, power, turns, chance, name=''):
+    def try_heal(self, target, power, turns, chance, name=''):
         if rd.random() <= chance:
-            self.hot(target, power, turns, name=name)
+            self.heal(target, power, turns, name=name)
 
     def poison(self, target, power, turns, skill=False, name=''):
         if not target.is_dead:
@@ -379,8 +433,9 @@ class BaseHero:
     def has_taken_damage(self, attacker):
         if self.hp <= 0:
             self.kill()
-            attacker.on_kill(self)
-            self.on_death(attacker)
+            if attacker is not None:
+                attacker.on_kill(self)
+                self.on_death(attacker)
 
     def kill(self):
         self.is_dead = True
@@ -487,15 +542,13 @@ class Centaur(BaseHero):
     def skill(self):
         name = 'Dual Throwing Axe'
         targets = targets_at_random(self.op_team, 4)
-        for target in targets:
-            dodged = self.compute_dodge(target, name=name)
-            if not dodged:
-                hit_power = self.atk * 0.8
-                dot_power = self.atk * 0.3
+        targets_hit = self.targets_hit(targets, name=name)
 
-                self.hit_skill(target, power=hit_power, name=name)
-                self.dot(target, power=dot_power, turns=2, skill=True, name=name)
-
+        hit_power = [self.atk * 0.8] * len(targets_hit)
+        dot_power = self.atk * 0.3
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        for target in targets_hit:
+            self.dot(target, power=dot_power, turns=2, skill=True, name=name)
         super().skill()
 
 
@@ -532,24 +585,22 @@ class Reaper(BaseHero):
 
     def skill(self):
         name = 'Fatal Wave'
-        for target in self.op_team.heroes:
-            dodged = self.compute_dodge(target, name=name)
-            if not dodged:
-                power = self.atk * 0.84
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
-                self.hit_skill(target, power=power, name=name)
-
-                if target.type == HeroType.WARRIOR:
-                    self.try_silence(target, turns=2, chance=0.75, name=name)
+        power = [self.atk * 0.84] * len(targets_hit)
+        self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        for target in targets_hit:
+            if target.type == HeroType.WARRIOR:
+                self.try_silence(target, turns=2, chance=0.75, name=name)
         super().skill()
 
     def on_death(self, attacker):
-        name = 'Pit Of Malice'
+        name = 'Pit Of Malice' # check : can be dodged?
         power = self.atk * 0.6
         if self.star >= 9:
             power = self.atk * 1.05
-        for h in self.op_team.heroes:
-            self.hit_passive(h, power=power, name=name)
+        power = [power] * 6
+        self.hit_passive(self.op_team.heroes, power=power, multi=True, name=name)
         super().on_death(attacker)
 
 
@@ -598,7 +649,7 @@ class Rlyeh(BaseHero):
             heal_power = self.atk * 4
 
             self.hit_skill(enemy_target, power=dmg_power, name=name)
-            self.hot(ally_target, power=heal_power, turns=1, name=name)
+            self.heal(ally_target, power=heal_power, turns=1, name=name)
         super().skill()
 
     def on_attack(self, target):
@@ -610,7 +661,7 @@ class Rlyeh(BaseHero):
         candidates = [h for h in self.own_team.heroes if h.hp == min_hp]
         rd.shuffle(candidates)
         target = candidates[0]
-        self.try_hot(target, power=power, turns=1, chance=0.5, name=name)
+        self.try_heal(target, power=power, turns=1, chance=0.5, name=name)
         super().on_attack(target)
 
     def on_hit(self, attacker):
@@ -618,7 +669,7 @@ class Rlyeh(BaseHero):
         power = self.atk * 0.5
         if self.star >= 8:
             power = self.atk * 0.65
-        self.hot(self, power=power, turns=1, name=name)
+        self.heal(self, power=power, turns=1, name=name)
         super().on_hit(attacker)
 
 
@@ -653,15 +704,13 @@ class SawMachine(BaseHero):
 
     def skill(self):
         name = 'Whirlwind Of Death'
-        for target in self.op_team.heroes:
-            dodged = self.compute_dodge(target, name=name)
-            if not dodged:
-                power = self.atk * 1.15
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
-                self.hit_skill(target, power=power, name=name)
-
-                if target.type == HeroType.CLERIC:
-                    self.try_silence(target, turns=3, chance=0.75, name=name)
+        power = [self.atk * 1.15] * len(targets_hit)
+        self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        for target in targets_hit:
+            if target.type == HeroType.CLERIC:
+                self.try_silence(target, turns=3, chance=0.75, name=name)
         super().skill()
 
     def on_attack(self, target):
@@ -706,14 +755,12 @@ class Scarlet(BaseHero):
 
     def skill(self):
         name = 'Poison Nova'
-        for target in self.op_team.heroes:
-            dodged = self.compute_dodge(target, name=name)
-            if not dodged:
-                hit_power = self.atk * 0.42
-                poison_power = self.atk * 0.6
-
-                self.hit_skill(target, power=hit_power, name=name) # sequence order? same for all aoe damage
-                self.poison(target, power=poison_power, turns=3, skill=True, name=name)
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+        hit_power = [self.atk * 0.42] * len(targets_hit)
+        poison_power = self.atk * 0.6
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name) # sequence order? same for all aoe damage
+        for target in targets_hit:
+            self.poison(target, power=poison_power, turns=3, skill=True, name=name)
         super().skill()
 
     def on_attack(self, target):
@@ -742,6 +789,62 @@ class Scarlet(BaseHero):
         super().on_death(attacker)
 
 
+class Verthandi(BaseHero):
+    name = HeroName.VERTHANDI
+    faction = Faction.HEAVEN
+    type = HeroType.CLERIC
+
+    def __init__(self, star=9, tier=6, level=200, 
+                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
+                    rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6, 
+                    guild_tech=guild_tech_maxed):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 200000 # should depend on the level
+        self.atk = 15000 # should depend on the level
+        self.armor = 12 # should depend on the level
+        self.speed = 950 # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
+                            rune=rune, artifact=artifact, guild_tech=guild_tech)
+
+        if self.star < 8:
+            self.true_damage += 0.48
+            self.atk *= 1.4
+        else:
+            self.true_damage += 0.54
+            self.atk *= 1.45
+
+    def skill(self):
+        name = 'Goddess Benison'
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+        hit_power = [self.atk * 0.69] * len(targets_hit)
+        heal_power = self.atk * 1.3
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        for target in self.own_team.heroes:
+            self.heal(target, power=heal_power, turns=1, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Hallowed Pray'
+        power = self.atk * 0.7
+        if self.star >= 7:
+            power = self.atk * 1.15
+        self.heal(self, power=power, turns=1, name=name)
+        super().on_attack(target)
+
+    def on_hit(self, attacker):
+        name = 'Inviolability'
+        power = self.atk * 1.8
+        if self.star >= 9:
+            power = self.atk * 2.1
+        self.try_hit_passive(attacker, power=power, chance=0.35, name=name)
+        super().on_hit(attacker)
+
+
 @dataclass
 class Hero:
     empty = EmptyHero()
@@ -750,3 +853,4 @@ class Hero:
     rlyeh = Rlyeh
     saw_machine = SawMachine
     scarlet = Scarlet
+    verthandi = Verthandi

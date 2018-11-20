@@ -1,6 +1,7 @@
 from enum import Enum
 from dataclasses import dataclass
 
+from utils import targets_at_random
 
 ## Heroes names, types and factions
 class Faction(Enum):
@@ -2078,6 +2079,112 @@ class Aura:
             self.hp_bonus = 0.11
 
 
+## Familiar
+class BaseFamiliar:
+    crit_rate = 0
+    crit_damage = 0
+    skill_damage = 0
+    hit_rate = 0
+    true_damage = 0
+    dodge = 0
+    speed = 0
+
+    def __init__(self, skill_1):
+        self.energy = 0
+
+        self.n_targets = 2
+        if skill_1 > 30:
+            self.n_targets = 3
+        if skill_1 > 60:
+            self.n_targets = 4
+        self.damage = 700
+        self.damage += min(skill_1, 10) * 300
+        if skill_1 > 10:
+            self.damage += min(skill_1 - 10, 10) * 400
+        if skill_1 > 20:
+            self.damage += min(skill_1 - 20, 10) * 500
+        if skill_1 > 30:
+            self.damage += min(skill_1 - 30, 10) * 800
+        if skill_1 > 40:
+            self.damage += min(skill_1 - 40, 10) * 1000
+        if skill_1 > 50:
+            self.damage += min(skill_1 - 50, 10) * 1200
+        if skill_1 > 60:
+            self.damage += min(skill_1 - 60, 10) * 1600
+        if skill_1 > 70:
+            self.damage += min(skill_1 - 70, 10) * 2000
+        if skill_1 > 80:
+            self.damage += min(skill_1 - 80, 10) * 2400
+        if skill_1 > 90:
+            self.damage += min(skill_1 - 90, 10) * 3000
+        if skill_1 > 100:
+            self.damage += min(skill_1 - 100, 10) * 3600
+        if skill_1 > 110:
+            self.damage += min(skill_1 - 110, 10) * 4200
+
+    def turn(self):
+        if self.energy == 100:
+            self.attack()
+            self.energy = 0
+
+        self.energy = max(min(self.energy + 25, 100), self.energy)
+
+    def attack(self):
+        targets = targets_at_random(self.op_team, self.n_targets)
+        for target in targets: # check : can be dodged?
+            target.hp -= self.damage
+            log_text = '\n{} takes {} damage from {} ({})' \
+                        .format(target.str_id, self.damage, self.str_id, self.skill_name)
+            self.game.log += log_text
+            target.has_taken_damage(attacker=None)
+
+
+class EmptyFamiliar(BaseFamiliar):
+    def __init__(self):
+        pass
+
+
+class Edison(BaseFamiliar):
+    name = 'Edison'
+    skill_name = "Thundergod's wrath"
+    def __init__(self, level, skill_1, skill_2, skill_3, skill_4):
+        self.level = level
+        self.pet_crit_rate = skill_2 * 0.005
+        self.pet_crit_damage = skill_3 * 0.01
+        self.pet_speed = skill_4 * 2
+        super().__init__(skill_1)
+
+
+class Vinci(BaseFamiliar):
+    name = 'Vinci'
+    skill_name = 'Chaotic storm'
+    def __init__(self, level, skill_1, skill_2, skill_3, skill_4):
+        self.level = level
+        self.pet_skill_damage = skill_2 * 0.01
+        self.pet_hit_rate = skill_3 * 0.005
+        self.pet_speed = skill_4 * 2
+        super().__init__(skill_1)
+
+
+class Raphael(BaseFamiliar):
+    name = 'Raphael'
+    skill_name = 'Bloom doom'
+    def __init__(self, level, skill_1, skill_2, skill_3, skill_4):
+        self.level = level
+        self.pet_true_damage = skill_2 * 0.01
+        self.pet_dodge = skill_3 * 0.005
+        self.pet_speed = skill_4 * 2
+        super().__init__(skill_1)
+
+
+@dataclass
+class Familiar:
+    empty = EmptyFamiliar()
+    edison = Edison
+    vinci = Vinci
+    raphael = Raphael
+
+
 ## Effects
 class BaseEffect:
     def kill(self):
@@ -2110,13 +2217,14 @@ class Dot(BaseEffect):
             self.holder.has_taken_damage(self.source)
 
 
-class Hot(BaseEffect):
+class Heal(BaseEffect):
     def __init__(self, source, holder, power, turns, name=''):
         self.source = source
         self.holder = holder
         self.power = power
         self.turns = turns
         self.name = name
+        self.hot = True if self.turns > 1 else False
 
     def tick(self):
         if self.turns == 0:
@@ -2124,9 +2232,14 @@ class Hot(BaseEffect):
         elif not self.holder.is_dead:
             self.holder.hp = min(self.holder.hp + self.power, self.holder.hp_max)
             self.turns -= 1
-            log_text = '\n{} is healed {} (hot from {} ({}), {} turns left)' \
+            if self.hot:
+                log_text = '\n{} is healed {} by {} ({}, {} turns left)' \
                         .format(self.holder.str_id, round(self.power), 
                         self.source.str_id, self.name, self.turns)
+            else:
+                log_text = '\n{} is healed {} by {} ({})' \
+                        .format(self.holder.str_id, round(self.power), 
+                        self.source.str_id, self.name)
             self.source.game.log += log_text
             self.holder.has_taken_damage(self.source)
 
@@ -2285,7 +2398,7 @@ class CritRateDown(BaseEffect):
 @dataclass
 class Effect:
     dot = Dot
-    hot = Hot
+    heal = Heal
     poison = Poison
     silence = Silence
     attack_down = AttackDown
