@@ -109,7 +109,8 @@ class Game:
         self.log += '\n### Final state ###\n'
         self.log += '\n\n{}'.format(self.state())
 
-        if self.team_2.is_dead() and self.team_1.is_dead():
+        if self.team_2.is_dead() and self.team_1.is_dead() or \
+                        not self.team_2.is_dead() and not self.team_1.is_dead():
             self.winner = 0
         elif self.team_2.is_dead():
             self.winner = 1

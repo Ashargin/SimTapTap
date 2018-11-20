@@ -591,9 +591,9 @@ class AccuracyRuneO1(BaseRune):
     atk_bonus = 0
     hit_rate = 0
 class AccuracyRuneO2(BaseRune):
-    atk = 0
+    atk = 420
     atk_bonus = 0
-    hit_rate = 0
+    hit_rate = 0.14
 class AccuracyRuneO3(BaseRune):
     atk = 0
     atk_bonus = 0
@@ -709,8 +709,8 @@ class AttackRuneP3(BaseRune):
     atk = 0
     atk_bonus = 0
 class AttackRuneO1(BaseRune):
-    atk = 1000
-    atk_bonus = 0.15
+    atk = 640
+    atk_bonus = 0.135
 class AttackRuneO2(BaseRune):
     atk = 0
     atk_bonus = 0
@@ -2287,6 +2287,23 @@ class Silence(BaseEffect):
             self.source.game.log += log_text
 
 
+class Stun(BaseEffect):
+    def __init__(self, source, holder, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.turns = turns
+        self.name = name
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            self.turns -= 1
+            log_text = '\n{} is stunned by {} ({}), {} turns left' \
+                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+            self.source.game.log += log_text
+
+
 class AttackUp(BaseEffect):
     def __init__(self, source, holder, up, turns, name=''):
         self.source = source
@@ -2401,6 +2418,7 @@ class Effect:
     heal = Heal
     poison = Poison
     silence = Silence
+    stun = Stun
     attack_down = AttackDown
     attack_up = AttackUp
     crit_rate_up = CritRateUp
