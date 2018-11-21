@@ -1,0 +1,841 @@
+---
+swagger: "2.0"
+info:
+  description: "Api for simulating TapTapHeroes Stuff"
+  version: "1.0.0"
+  title: "TapTapSim API"
+  contact:
+    email: "gitterrost4@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "virtserver.swaggerhub.com"
+basePath: "/gitterrost4/TapTapSim/1.0.0"
+schemes:
+- "https"
+paths:
+  /hero/stats:
+    post:
+      summary: "calculates stats for the specified hero with the specified equipment"
+      description: "Calculates stats"
+      operationId: "calc_stats"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "StatEnvironment"
+        description: "stat environment containing desired hero and player progress"
+        required: false
+        schema:
+          $ref: "#/definitions/StatRequest"
+      responses:
+        201:
+          description: "Array of heroes with their calculated stats"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/HeroStats"
+        400:
+          description: "invalid input, object invalid"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /battle/simulate:
+    post:
+      summary: "Simulates a given number of battles"
+      operationId: "battle_simulate_post"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "count"
+        description: "number of battles to be simulated"
+        required: false
+        schema:
+          $ref: "#/definitions/SimulateRequest"
+      responses:
+        201:
+          description: "Hero stats"
+        400:
+          description: "invalid input, object invalid"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+definitions:
+  StatRequest:
+    required:
+    - "heroes"
+    - "player"
+    properties:
+      heroes:
+        type: "array"
+        description: "All heroes for which stats are to be calculated"
+        items:
+          $ref: "#/definitions/Hero"
+      player:
+        $ref: "#/definitions/Player"
+    title: "StatRequest"
+    description: "A complete request for calculating heroes' stats containing hero\
+      \ information and player information"
+    example:
+      heroes:
+      - tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+      - tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+      player:
+        petBonus:
+          hpBonus: 0
+          attackBonus: 6
+        activePet:
+          skill2level: 4
+          tier: 2
+          level: 17
+          skill3level: 14
+          skill1level: 67
+          skill4level: 18
+        guildTech:
+          cleric:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          mage:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          wanderer:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          warrior:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          assassin:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+  SimulateRequest:
+    properties:
+      repeat:
+        type: "integer"
+        description: "How many battles should be simulated. Defaults to 1"
+        minimum: 1
+        maximum: 1000
+      attacker:
+        $ref: "#/definitions/Team"
+      defender:
+        $ref: "#/definitions/Team"
+    title: "SimulateRequest"
+    description: "A complete request for simulating battles"
+    example:
+      repeat: 81
+      attacker:
+        heroRear3:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroRear2:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroRear1:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroFront3:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroFront2:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        player:
+          petBonus:
+            hpBonus: 0
+            attackBonus: 6
+          activePet:
+            skill2level: 4
+            tier: 2
+            level: 17
+            skill3level: 14
+            skill1level: 67
+            skill4level: 18
+          guildTech:
+            cleric:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            mage:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            wanderer:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            warrior:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            assassin:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+        heroFront1:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+      defender:
+        heroRear3:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroRear2:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroRear1:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroFront3:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        heroFront2:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+        player:
+          petBonus:
+            hpBonus: 0
+            attackBonus: 6
+          activePet:
+            skill2level: 4
+            tier: 2
+            level: 17
+            skill3level: 14
+            skill1level: 67
+            skill4level: 18
+          guildTech:
+            cleric:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            mage:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            wanderer:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            warrior:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+            assassin:
+              tier5: 2
+              tier4: 22
+              tier3: 16
+              tier2: 10
+              tier1: 21
+        heroFront1:
+          tier: 0
+          level: 16
+          equipment:
+            artifact:
+              stars: 5.962133916683182377482808078639209270477294921875
+              id: "queensCrown"
+            helmet: {}
+            rune:
+              level: "green1"
+              runeType: "accuracy"
+          id: "sawMachine"
+          stars: 5
+  Hero:
+    properties:
+      id:
+        type: "string"
+        description: "Which hero is requested."
+        enum:
+        - "sawMachine"
+        - "scarlet"
+      level:
+        type: "integer"
+        description: "The numerical level of the hero (1-200)"
+        minimum: 1
+        maximum: 200
+      stars:
+        type: "integer"
+        description: "The number of stars the hero has"
+        minimum: 1
+        maximum: 9
+      tier:
+        type: "integer"
+        description: "The tier of the hero (i.e. the number of purple gems below the\
+          \ name)"
+        minimum: 0
+        maximum: 6
+      equipment:
+        $ref: "#/definitions/Hero_equipment"
+    example:
+      tier: 0
+      level: 16
+      equipment:
+        artifact:
+          stars: 5.962133916683182377482808078639209270477294921875
+          id: "queensCrown"
+        helmet: {}
+        rune:
+          level: "green1"
+          runeType: "accuracy"
+      id: "sawMachine"
+      stars: 5
+  HeroStats:
+    properties:
+      hero:
+        $ref: "#/definitions/Hero"
+    example:
+      hero:
+        tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+  Player:
+    properties:
+      petBonus:
+        $ref: "#/definitions/Player_petBonus"
+      activePet:
+        $ref: "#/definitions/Pet"
+      guildTech:
+        $ref: "#/definitions/Player_guildTech"
+    example:
+      petBonus:
+        hpBonus: 0
+        attackBonus: 6
+      activePet:
+        skill2level: 4
+        tier: 2
+        level: 17
+        skill3level: 14
+        skill1level: 67
+        skill4level: 18
+      guildTech:
+        cleric:
+          tier5: 2
+          tier4: 22
+          tier3: 16
+          tier2: 10
+          tier1: 21
+        mage:
+          tier5: 2
+          tier4: 22
+          tier3: 16
+          tier2: 10
+          tier1: 21
+        wanderer:
+          tier5: 2
+          tier4: 22
+          tier3: 16
+          tier2: 10
+          tier1: 21
+        warrior:
+          tier5: 2
+          tier4: 22
+          tier3: 16
+          tier2: 10
+          tier1: 21
+        assassin:
+          tier5: 2
+          tier4: 22
+          tier3: 16
+          tier2: 10
+          tier1: 21
+  EquipmentLevel:
+    type: "string"
+    enum:
+    - "green1"
+    - "green2"
+    - "orange1"
+    - "orange2"
+  Rune:
+    properties:
+      level:
+        type: "string"
+        enum:
+        - "green1"
+        - "green2"
+        - "red1"
+        - "red2"
+      runeType:
+        type: "string"
+        enum:
+        - "accuracy"
+        - "damage"
+    example:
+      level: "green1"
+      runeType: "accuracy"
+  Artifact:
+    properties:
+      stars:
+        type: "number"
+        description: "Number of stars the artifact is leveled up to"
+      id:
+        type: "string"
+        description: "What artifact this refers to"
+        enum:
+        - "queensCrown"
+        - "windWalker"
+    description: "Describes a certain artifact at a certain level"
+    example:
+      stars: 5.962133916683182377482808078639209270477294921875
+      id: "queensCrown"
+  Pet:
+    properties:
+      level:
+        type: "integer"
+        description: "The level of the pet itself"
+        minimum: 0
+        maximum: 120
+      tier:
+        type: "integer"
+        description: "The tier of the pet"
+        minimum: 0
+        maximum: 4
+      skill1level:
+        type: "integer"
+        description: "The level of the pet's first skill (active)"
+        minimum: 0
+        maximum: 120
+      skill2level:
+        type: "integer"
+        description: "The level of the pet's second skill (passive)"
+        minimum: 0
+        maximum: 20
+      skill3level:
+        type: "integer"
+        description: "The level of the pet's third skill (passive)"
+        minimum: 0
+        maximum: 20
+      skill4level:
+        type: "integer"
+        description: "The level of the pet's fourth skill (passive)"
+        minimum: 0
+        maximum: 20
+    description: "Describes a pet with all its levels"
+    example:
+      skill2level: 4
+      tier: 2
+      level: 17
+      skill3level: 14
+      skill1level: 67
+      skill4level: 18
+  ClassGuildTech:
+    properties:
+      tier1:
+        type: "integer"
+        description: "The level of the first tier of guild tech"
+        minimum: 0
+        maximum: 60
+      tier2:
+        type: "integer"
+        description: "The level of the second tier of guild tech"
+        minimum: 0
+        maximum: 50
+      tier3:
+        type: "integer"
+        description: "The level of the third tier of guild tech"
+        minimum: 0
+        maximum: 40
+      tier4:
+        type: "integer"
+        description: "The level of the fourth tier of guild tech"
+        minimum: 0
+        maximum: 30
+      tier5:
+        type: "integer"
+        description: "The level of the fifth tier of guild tech"
+        minimum: 0
+        maximum: 20
+    example:
+      tier5: 2
+      tier4: 22
+      tier3: 16
+      tier2: 10
+      tier1: 21
+  Team:
+    properties:
+      player:
+        $ref: "#/definitions/Player"
+      heroFront1:
+        $ref: "#/definitions/Hero"
+      heroFront2:
+        $ref: "#/definitions/Hero"
+      heroFront3:
+        $ref: "#/definitions/Hero"
+      heroRear1:
+        $ref: "#/definitions/Hero"
+      heroRear2:
+        $ref: "#/definitions/Hero"
+      heroRear3:
+        $ref: "#/definitions/Hero"
+    description: "Full description of a team. Here, heroFront1 is the hero on the\
+      \ bottom of the front row, heroRear3 is the hero on the top of the rear row."
+    example:
+      heroRear3:
+        tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+      heroRear2:
+        tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+      heroRear1:
+        tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+      heroFront3:
+        tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+      heroFront2:
+        tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+      player:
+        petBonus:
+          hpBonus: 0
+          attackBonus: 6
+        activePet:
+          skill2level: 4
+          tier: 2
+          level: 17
+          skill3level: 14
+          skill1level: 67
+          skill4level: 18
+        guildTech:
+          cleric:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          mage:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          wanderer:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          warrior:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+          assassin:
+            tier5: 2
+            tier4: 22
+            tier3: 16
+            tier2: 10
+            tier1: 21
+      heroFront1:
+        tier: 0
+        level: 16
+        equipment:
+          artifact:
+            stars: 5.962133916683182377482808078639209270477294921875
+            id: "queensCrown"
+          helmet: {}
+          rune:
+            level: "green1"
+            runeType: "accuracy"
+        id: "sawMachine"
+        stars: 5
+  Hero_equipment:
+    properties:
+      helmet:
+        $ref: "#/definitions/EquipmentLevel"
+      chest:
+        $ref: "#/definitions/EquipmentLevel"
+      weapon:
+        $ref: "#/definitions/EquipmentLevel"
+      pendant:
+        $ref: "#/definitions/EquipmentLevel"
+      rune:
+        $ref: "#/definitions/Rune"
+      artifact:
+        $ref: "#/definitions/Artifact"
+    description: "Object describing anything the hero has equipped"
+    example:
+      artifact:
+        stars: 5.962133916683182377482808078639209270477294921875
+        id: "queensCrown"
+      helmet: {}
+      rune:
+        level: "green1"
+        runeType: "accuracy"
+  Player_petBonus:
+    properties:
+      hpBonus:
+        type: "integer"
+        description: "The cumulative hp bonus of all pets"
+      attackBonus:
+        type: "integer"
+        description: "The cumulative attack bonus of all pets"
+    description: "Sum of bonuses provided by all pets"
+    example:
+      hpBonus: 0
+      attackBonus: 6
+  Player_guildTech:
+    properties:
+      warrior:
+        $ref: "#/definitions/ClassGuildTech"
+      assassin:
+        $ref: "#/definitions/ClassGuildTech"
+      wanderer:
+        $ref: "#/definitions/ClassGuildTech"
+      cleric:
+        $ref: "#/definitions/ClassGuildTech"
+      mage:
+        $ref: "#/definitions/ClassGuildTech"
+    description: "The unlocked guild tech"
+    example:
+      cleric:
+        tier5: 2
+        tier4: 22
+        tier3: 16
+        tier2: 10
+        tier1: 21
+      mage:
+        tier5: 2
+        tier4: 22
+        tier3: 16
+        tier2: 10
+        tier1: 21
+      wanderer:
+        tier5: 2
+        tier4: 22
+        tier3: 16
+        tier2: 10
+        tier1: 21
+      warrior:
+        tier5: 2
+        tier4: 22
+        tier3: 16
+        tier2: 10
+        tier1: 21
+      assassin:
+        tier5: 2
+        tier4: 22
+        tier3: 16
+        tier2: 10
+        tier1: 21
