@@ -385,6 +385,16 @@ class BaseHero:
         if rd.random() <= chance:
             self.poison(target, power, turns, skill=skill, name=name)
 
+    def bleed(self, target, power, turns, skill=False, name=''):
+        if not target.is_dead:
+            bleed = Effect.bleed(self, target, power, turns, skill=skill, name=name)
+            target.effects.append(bleed)
+            bleed.tick()
+
+    def try_bleed(self, target, power, turns, chance, skill=False, name=''):
+        if rd.random() <= chance:
+            self.bleed(target, power, turns, skill=skill, name=name)
+
     def silence(self, target, turns, name=''):
         if not target.is_dead:
             silence = Effect.silence(self, target, turns, name=name)
@@ -447,6 +457,9 @@ class BaseHero:
 
     def is_poisoned(self):
         return True if any([isinstance(e, Effect.poison) for e in self.effects]) else False
+
+    def is_bleeding(self):
+        return True if any([isinstance(e, Effect.bleed) for e in self.effects]) else False
 
     def is_silenced(self):
         return True if any([isinstance(e, Effect.silence) for e in self.effects]) else False
@@ -564,6 +577,7 @@ class Centaur(BaseHero):
         if self.star >= 8:
             power = self.atk * 0.78
         self.poison(target, power=power, turns=2, name=name)
+        super().on_crit(target)
 
     def skill(self):
         name = 'Dual Throwing Axe'
@@ -595,7 +609,7 @@ class Dziewona(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 168584.5 # should depend on the level
-        self.atk = 11848.0 # should depend on the level
+        self.atk = 13496.1 # should depend on the level
         self.armor = 9 # should depend on the level
         self.speed = 1008 # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
@@ -663,13 +677,64 @@ class ForestHealer(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 208931.4 # should depend on the level
-        self.atk = 12837.8 # should depend on the level
+        self.hp = 191062.2 # should depend on the level
+        self.atk = 11944.0 # should depend on the level
         self.armor = 10 # should depend on the level
-        self.speed = 1017 # should depend on the level
+        self.speed = 973 # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
                             rune=rune, artifact=artifact, guild_tech=guild_tech, 
                             familiar_stats=familiar_stats)
+
+
+class Freya(BaseHero):
+    name = HeroName.FREYA
+    faction = Faction.HELL
+    type = HeroType.MAGE
+
+    def __init__(self, star=9, tier=6, level=200, 
+                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
+                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
+                    guild_tech=guild_tech_maxed, 
+                    familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 155323.2 # should depend on the level
+        self.atk = 14530.4 # should depend on the level
+        self.armor = 9 # should depend on the level
+        self.speed = 971 # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
+                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
+                            familiar_stats=familiar_stats)
+
+
+class Gerald(BaseHero):
+    name = HeroName.GERALD
+    faction = Faction.UNDEAD
+    type = HeroType.WANDERER
+
+    def __init__(self, star=9, tier=6, level=200, 
+                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
+                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
+                    guild_tech=guild_tech_maxed, 
+                    familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 238557.7 # should depend on the level
+        self.atk = 12320.2 # should depend on the level
+        self.armor = 13 # should depend on the level
+        self.speed = 983 # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
+                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
+                            familiar_stats=familiar_stats)
+
 
 
 class Luna(BaseHero):
@@ -720,6 +785,43 @@ class Medusa(BaseHero):
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
                             rune=rune, artifact=artifact, guild_tech=guild_tech, 
                             familiar_stats=familiar_stats)
+
+        if self.star < 8:
+            self.atk *= 1.4
+        else:
+            self.atk *= 1.5
+
+    def skill(self):
+        name = 'Viper Arrow'
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+
+        power = [self.atk * 1.02] * len(targets_hit)
+        self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        for target in targets_hit:
+            down = 0.24
+            self.crit_rate_down(target, down=down, turns=3, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Snake Locks'
+        down = 0.15
+        up = 0.15
+        if self.star >= 7:
+            down = 0.20
+            up = 0.20
+        self.crit_rate_down(target, down=down, turns=4, name=name)
+        self.crit_rate_up(self, up=up, turns=4, name=name)
+        super().on_attack(target)
+
+    def on_hit(self, attacker):
+        name = 'Counter'
+        power = self.atk * 0.48
+        turns = 2
+        if self.star >= 9:
+            power = self.atk * 0.72
+            turns = 1
+        self.bleed(attacker, power=power, turns=turns, name=name)
+        super().on_hit(attacker)
 
 
 class Reaper(BaseHero):
@@ -1032,6 +1134,8 @@ class Hero:
     centaur = Centaur
     dziewona = Dziewona
     forest_healer = ForestHealer
+    freya = Freya
+    gerald = Gerald
     luna = Luna
     medusa = Medusa
     reaper = Reaper

@@ -84,9 +84,10 @@ class Game:
             first_pet = self.pets[1]
             second_pet = self.pets[0]
         for pet in (first_pet, second_pet):
-            if pet.energy == 100:
-                self.log += "\n\n# {}'s turn #".format(pet.str_id)
-            pet.turn()
+            if not self.is_finished():
+                if pet.energy == 100:
+                    self.log += "\n\n# {}'s turn #".format(pet.str_id)
+                pet.turn()
 
         self.log += '\n\n{}\n'.format(self.state())
 

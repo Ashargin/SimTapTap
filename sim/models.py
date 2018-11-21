@@ -2270,6 +2270,32 @@ class Poison(BaseEffect):
             self.holder.has_taken_damage(self.source)
 
 
+class Bleed(BaseEffect):
+    def __init__(self, source, holder, power, turns, skill=False, name=''):
+        self.source = source
+        self.holder = holder
+        self.power = power
+        self.turns = turns
+        self.skill = skill
+        self.name = name
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+            dmg = damage_components['Total damage']
+            crit = True if damage_components['Crit damage'] > 0 else False
+            crit_str = ', crit' if crit else ''
+
+            self.holder.hp -= dmg
+            self.turns -= 1
+            log_text = '\n{} takes {} damage (bleed from {} ({}{}), {} turns left)' \
+                        .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+            self.source.game.log += log_text
+            self.holder.has_taken_damage(self.source)
+
+
 class Silence(BaseEffect):
     def __init__(self, source, holder, turns, name=''):
         self.source = source
@@ -2417,6 +2443,7 @@ class Effect:
     dot = Dot
     heal = Heal
     poison = Poison
+    bleed = Bleed
     silence = Silence
     stun = Stun
     attack_down = AttackDown
