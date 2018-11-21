@@ -2338,6 +2338,10 @@ class AttackUp(BaseEffect):
         self.turns = turns
         self.name = name
         self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
 
     def tick(self):
         if self.turns == 0:
@@ -2348,9 +2352,15 @@ class AttackUp(BaseEffect):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = "\n{}'s attack is increased by {}% by {} ({}), {} turns left" \
-                        .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
-                        self.name, self.turns)
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s attack is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s attack is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
             self.source.game.log += log_text
 
     def kill(self):
@@ -2365,23 +2375,33 @@ class AttackDown(BaseEffect):
         self.turns = turns
         self.name = name
         self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
 
     def tick(self):
         if self.turns == 0:
             self.kill()
         elif not self.holder.is_dead:
             if not self.has_been_set:
-                self.holder.atk *= 1 - self.down
+                self.holder.atk /= 1 + self.down
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = "\n{}'s attack is reduced by {}% by {} ({}), {} turns left" \
-                        .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
-                        self.name, self.turns)
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s attack is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s attack is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
             self.source.game.log += log_text
 
     def kill(self):
-        self.holder.atk /= 1 - self.down
+        self.holder.attack *= 1 + self.down
 
 
 class CritRateUp(BaseEffect):
@@ -2392,6 +2412,10 @@ class CritRateUp(BaseEffect):
         self.turns = turns
         self.name = name
         self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
 
     def tick(self):
         if self.turns == 0:
@@ -2402,9 +2426,15 @@ class CritRateUp(BaseEffect):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = "\n{}'s crit rate is increased by {}% by {} ({}), {} turns left" \
-                        .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
-                        self.name, self.turns)
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s crit rate is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s crit rate is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
             self.source.game.log += log_text
 
     def kill(self):
@@ -2419,6 +2449,10 @@ class CritRateDown(BaseEffect):
         self.turns = turns
         self.name = name
         self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
 
     def tick(self):
         if self.turns == 0:
@@ -2429,13 +2463,167 @@ class CritRateDown(BaseEffect):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = "\n{}'s crit rate is reduced by {}% by {} ({}), {} turns left" \
-                        .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
-                        self.name, self.turns)
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s crit rate is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s crit rate is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
             self.source.game.log += log_text
 
     def kill(self):
-        self.holder.atk += self.down
+        self.holder.crit_rate += self.down
+
+
+class CritDamageUp(BaseEffect):
+    def __init__(self, source, holder, up, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.up = up
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.crit_damage += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s crit damage is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s crit damage is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.crit_damage -= self.up
+
+
+class CritDamageDown(BaseEffect):
+    def __init__(self, source, holder, down, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.down = down
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.crit_damage -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s crit damage is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s crit damage is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.crit_damage += self.down
+
+
+class ArmorBreakUp(BaseEffect):
+    def __init__(self, source, holder, up, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.up = up
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.armor_break += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s armor break is increased by {} by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s armor break is increased by {} by {} ({})" \
+                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.armor_break -= self.up
+
+
+class ArmorBreakDown(BaseEffect):
+    def __init__(self, source, holder, down, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.down = down
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+
+    def tick(self):
+        if self.turns == 0:
+            self.kill()
+        elif not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.armor_break -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s armor break is reduced by {} by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s armor break is reduced by {} by {} ({})" \
+                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.armor_break += self.down
 
 
 @dataclass
@@ -2450,3 +2638,7 @@ class Effect:
     attack_up = AttackUp
     crit_rate_up = CritRateUp
     crit_rate_down = CritRateDown
+    crit_damage_up = CritDamageUp
+    crit_damage_down = CritDamageDown
+    armor_break_up = ArmorBreakUp
+    armor_break_down = ArmorBreakDown

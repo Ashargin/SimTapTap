@@ -271,13 +271,13 @@ class BaseHero:
             for e in [e for e in self.effects if isinstance(e, Effect.stun)]:
                 self.game.log += '\n{} is stunned by {} ({}, {} turns left) ' \
                         'and cannot play' \
-                        .format(self.str_id, e.holder.str_id, e.name, e.turns)
+                        .format(self.str_id, e.source.str_id, e.name, e.turns)
         else:
             if self.energy >= 100 and self.is_silenced():
                 for e in [e for e in self.effects if isinstance(e, Effect.silence)]:
                     self.game.log += '\n{} is silenced by {} ({}, {} turns left) ' \
                             'and cannot use its skill' \
-                            .format(self.str_id, e.holder.str_id, e.name, e.turns)
+                            .format(self.str_id, e.source.str_id, e.name, e.turns)
     
             if self.energy >= 100 and not self.is_silenced():
                 self.skill()
@@ -455,6 +455,46 @@ class BaseHero:
         if rd.random() <= chance:
             self.crit_rate_down(target, down, turns, name=name)
 
+    def crit_damage_up(self, target, up, turns, name=''):
+        if not target.is_dead:
+            crit_damage_up = Effect.crit_damage_up(self, target, up, turns, name=name)
+            target.effects.append(crit_damage_up)
+            crit_damage_up.tick()
+
+    def try_crit_damage_up(self, target, up, turns, chance, name=''):
+        if rd.random() <= chance:
+            self.crit_damage_up(target, up, turns, name=name)
+
+    def crit_damage_down(self, target, down, turns, name=''):
+        if not target.is_dead:
+            crit_damage_down = Effect.crit_damage_down(self, target, down, turns, name=name)
+            target.effects.append(crit_damage_down)
+            crit_damage_down.tick()
+
+    def try_crit_damage_down(self, target, down, turns, chance, name=''):
+        if rd.random() <= chance:
+            self.crit_damage_down(target, down, turns, name=name)
+
+    def armor_break_up(self, target, up, turns, name=''):
+        if not target.is_dead:
+            armor_break_up = Effect.armor_break_up(self, target, up, turns, name=name)
+            target.effects.append(armor_break_up)
+            armor_break_up.tick()
+
+    def try_armor_break_up(self, target, up, turns, chance, name=''):
+        if rd.random() <= chance:
+            self.armor_break_up(target, up, turns, name=name)
+
+    def armor_break_down(self, target, down, turns, name=''):
+        if not target.is_dead:
+            armor_break_down = Effect.armor_break_down(self, target, down, turns, name=name)
+            target.effects.append(armor_break_down)
+            armor_break_down.tick()
+
+    def try_armor_break_down(self, target, down, turns, chance, name=''):
+        if rd.random() <= chance:
+            self.armor_break_down(target, down, turns, name=name)
+
     def is_poisoned(self):
         return True if any([isinstance(e, Effect.poison) for e in self.effects]) else False
 
@@ -495,12 +535,25 @@ class BaseHero:
     def on_death(self, attacker):
         for h in self.own_team.heroes:
             if isinstance(h, Reaper) and not h.is_dead:
-                if h.star < 7:
-                    h.armor_break += 6
-                    h.atk *= 1.15
-                else:
-                    h.armor_break += 8.4
-                    h.atk *= 1.2
+                name = 'Sadism'
+                armor_break_up = 6
+                attack_up = 0.15
+                if h.star >= 7:
+                    armor_break_up = 8.4
+                    attack_up = 0.2
+                h.armor_break_up(h, up=armor_break_up, turns=None, name=name)
+                h.attack_up(h, up=attack_up, turns=None, name=name)
+
+        for h in self.op_team.heroes:
+            if isinstance(h, Luna) and not h.is_dead:
+                name = 'Blood Moon Sacrifice'
+                crit_damage_up = 0.15
+                attack_up = 0.12
+                if h.star >= 8:
+                    crit_damage_up = 0.20
+                    attack_up = 0.15
+                h.crit_damage_up(h, up=crit_damage_up, turns=None, name=name)
+                h.attack_up(h, up=attack_up, turns=None, name=name)
 
     def print_stats(self):
         stats = [self.hp, self.atk, self.armor, self.speed, 
@@ -693,7 +746,7 @@ class Freya(BaseHero):
 
     def __init__(self, star=9, tier=6, level=200, 
                     armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
+                    rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6, 
                     guild_tech=guild_tech_maxed, 
                     familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -718,7 +771,7 @@ class Gerald(BaseHero):
 
     def __init__(self, star=9, tier=6, level=200, 
                     armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
+                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
                     guild_tech=guild_tech_maxed, 
                     familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -760,6 +813,37 @@ class Luna(BaseHero):
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
                             rune=rune, artifact=artifact, guild_tech=guild_tech, 
                             familiar_stats=familiar_stats)
+
+        if self.star < 7:
+            self.crit_rate += 0.3
+            self.crit_damage += 0.9
+        else:
+            self.crit_rate += 0.3
+            self.crit_damage += 0.3
+            self.atk *= 1.3
+
+    def attack(self):
+        name = 'attack'
+        targets = targets_at_random(self.op_team, 3)
+        targets_hit = self.targets_hit(targets, name=name)
+        power = [self.atk * 0.7] * len(targets_hit)
+        if self.star >= 9:
+            power = [self.atk * 0.85] * len(targets_hit)
+
+        self.hit(targets_hit, power, skill=False, active=True, 
+                    on_attack=False, multi=True, name=name)
+        if targets_hit:
+            self.on_attack(targets_hit[0])
+
+    def skill(self):
+        name = 'Shooting Star'
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+
+        power = [self.atk * 0.85] * len(targets_hit)
+        self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        for target in targets_hit:
+            self.try_silence(target, turns=2, chance=0.5, name=name)
+        super().skill()
 
 
 class Medusa(BaseHero):
