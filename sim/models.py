@@ -2187,9 +2187,16 @@ class Familiar:
 
 
 ## Effects
+effect_id = 0
+
 class BaseEffect:
+    def __init__(self):
+        global effect_id
+        self.id = effect_id
+        effect_id += 1
+
     def kill(self):
-        self.holder.effects = [e for e in self.holder.effects if e.turns > 0]
+        self.holder.effects = [e for e in self.holder.effects if e.id != self.id]
 
 
 class Dot(BaseEffect):
@@ -2200,6 +2207,7 @@ class Dot(BaseEffect):
         self.turns = turns
         self.skill = skill
         self.name = name
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2224,6 +2232,7 @@ class Heal(BaseEffect):
         self.turns = turns
         self.name = name
         self.hot = True if self.turns > 1 else False
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2249,6 +2258,7 @@ class Poison(BaseEffect):
         self.turns = turns
         self.skill = skill
         self.name = name
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2273,6 +2283,7 @@ class Bleed(BaseEffect):
         self.turns = turns
         self.skill = skill
         self.name = name
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2295,6 +2306,7 @@ class Silence(BaseEffect):
         self.holder = holder
         self.turns = turns
         self.name = name
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2310,6 +2322,7 @@ class Stun(BaseEffect):
         self.holder = holder
         self.turns = turns
         self.name = name
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2325,6 +2338,7 @@ class Petrify(BaseEffect):
         self.holder = holder
         self.turns = turns
         self.name = name
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2346,11 +2360,15 @@ class AttackUp(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
             if not self.has_been_set:
-                self.holder.atk *= 1 + self.up
+                n_stacks = len([e for e in self.holder.effects 
+                                if e.name == self.name and e.source.str_id == self.source.str_id]) - 1
+                additive_up = self.up / (1 + n_stacks * self.up)
+                self.holder.atk *= 1 + additive_up
                 self.has_been_set = True
 
             self.turns -= 1
@@ -2366,7 +2384,11 @@ class AttackUp(BaseEffect):
             self.source.game.log += log_text
 
     def kill(self):
-        self.holder.atk /= 1 + self.up
+        n_stacks = len([e for e in self.holder.effects 
+                        if e.name == self.name and e.source.str_id == self.source.str_id])
+        additive_down = self.up / (1 + n_stacks * self.up)
+        self.holder.atk *= 1 - additive_down
+        super().kill()
 
 
 class AttackDown(BaseEffect):
@@ -2381,11 +2403,15 @@ class AttackDown(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
             if not self.has_been_set:
-                self.holder.atk /= 1 + self.down
+                n_stacks = len([e for e in self.holder.effects 
+                                if e.name == self.name and e.source.str_id == self.source.str_id]) - 1
+                additive_down = self.down / (1 - n_stacks * self.down)
+                self.holder.atk *= 1 - additive_down
                 self.has_been_set = True
 
             self.turns -= 1
@@ -2401,7 +2427,11 @@ class AttackDown(BaseEffect):
             self.source.game.log += log_text
 
     def kill(self):
-        self.holder.atk *= 1 + self.down
+        n_stacks = len([e for e in self.holder.effects 
+                        if e.name == self.name and e.source.str_id == self.source.str_id])
+        additive_up = self.down / (1 - n_stacks * self.down)
+        self.holder.atk *= 1 + additive_up
+        super().kill()
 
 
 class CritRateUp(BaseEffect):
@@ -2416,6 +2446,7 @@ class CritRateUp(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2437,6 +2468,7 @@ class CritRateUp(BaseEffect):
 
     def kill(self):
         self.holder.crit_rate -= self.up
+        super().kill()
 
 
 class CritRateDown(BaseEffect):
@@ -2451,6 +2483,7 @@ class CritRateDown(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2472,6 +2505,7 @@ class CritRateDown(BaseEffect):
 
     def kill(self):
         self.holder.crit_rate += self.down
+        super().kill()
 
 
 class CritDamageUp(BaseEffect):
@@ -2486,6 +2520,7 @@ class CritDamageUp(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2507,6 +2542,7 @@ class CritDamageUp(BaseEffect):
 
     def kill(self):
         self.holder.crit_damage -= self.up
+        super().kill()
 
 
 class CritDamageDown(BaseEffect):
@@ -2521,6 +2557,7 @@ class CritDamageDown(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2542,6 +2579,7 @@ class CritDamageDown(BaseEffect):
 
     def kill(self):
         self.holder.crit_damage += self.down
+        super().kill()
 
 
 class ArmorBreakUp(BaseEffect):
@@ -2556,6 +2594,7 @@ class ArmorBreakUp(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2577,6 +2616,7 @@ class ArmorBreakUp(BaseEffect):
 
     def kill(self):
         self.holder.armor_break -= self.up
+        super().kill()
 
 
 class ArmorBreakDown(BaseEffect):
@@ -2591,6 +2631,7 @@ class ArmorBreakDown(BaseEffect):
         if self.turns is None:
             self.turns = 15
             self.infinite = True
+        super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
@@ -2612,6 +2653,7 @@ class ArmorBreakDown(BaseEffect):
 
     def kill(self):
         self.holder.armor_break += self.down
+        super().kill()
 
 
 @dataclass

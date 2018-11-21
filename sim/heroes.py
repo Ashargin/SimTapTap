@@ -275,9 +275,10 @@ class BaseHero:
     def targets_hit(self, targets, name=''):
         targets_hit = []
         for target in targets:
-            dodged = self.compute_dodge(target, name=name)
-            if not dodged:
-                targets_hit.append(target)
+            if not target.is_dead:
+                dodged = self.compute_dodge(target, name=name)
+                if not dodged:
+                    targets_hit.append(target)
 
         return targets_hit
 

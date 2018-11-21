@@ -15,6 +15,11 @@ sim = Sim(team_1, team_2, n_sim=1000)
 sim.process()
 sim.print_winrate()
 
+# priority:
+# check that atk boosts are multiplicative between skills and additive beneath skills, even for atk_down
+# (maybe atk_down is multiplicative between stacks of the same skill?)
+# make sure atk > 0 (and crit damage > 0, or > 0.5, and armor break > 0?)
+
 # todo:
 # add all heroes
 
