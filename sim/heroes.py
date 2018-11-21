@@ -8,7 +8,10 @@ from utils import targets_at_random
 
 ## Team
 class Team:
-    def __init__(self, heroes, pet=default_familiar):   
+    def __init__(self, heroes, pet=default_familiar):
+        if len(heroes) != 6:
+            raise Warning('Teams must contain 6 heroes')
+
         self.heroes = heroes
         self.pet = pet
         for i, h in enumerate(self.heroes):
@@ -48,6 +51,16 @@ class Team:
 
         return alive[0]
 
+    def get_backline(self):
+        if all([h.is_dead for h in self.heroes[3:]]):
+            return self.heroes[:3]
+        return self.heroes[3:]
+
+    def get_frontline(self):
+        if all([h.is_dead for h in self.heroes[:3]]):
+            return self.heroes[3:]
+        return self.heroes[:3]
+
     def is_dead(self):
         return True if all([h.is_dead for h in self.heroes]) else False
 
@@ -71,6 +84,8 @@ class BaseHero:
         self.damage_to_clerics = 0
         self.damage_to_mages = 0
         self.damage_to_poisoned = 0
+        self.damage_to_bleeding = 0
+        self.damage_to_stunned = 0
     
         self.own_team = None
         self.op_team = None
@@ -214,15 +229,22 @@ class BaseHero:
         poisoned_extra_damage = 0
         if target.is_poisoned():
             poisoned_extra_damage = self.damage_to_poisoned
+        bleeding_extra_damage = 0
+        if target.is_bleeding():
+            bleeding_extra_damage = self.damage_to_bleeding
+        stunned_extra_damage = 0
+        if target.is_stunned():
+            stunned_extra_damage = self.damage_to_stunned
 
         dmg = power * (1 - damage_reduction_from_armor) * (1 + crit_damage) \
                     * (1 + self.true_damage) * (1 - target.damage_reduction) \
                     * (1 + faction_damage) * (1 + type_damage) * (1 + skill_damage) \
-                    * (1 + poisoned_extra_damage)
+                    * (1 + poisoned_extra_damage) * (1 + bleeding_extra_damage) \
+                    * (1 + stunned_extra_damage)
                     # check faction damage behaviour
                     # check type damage behaviour
                     # check skill damage behaviour
-                    # check extra damage to poisoned behaviour
+                    # check extra damage to poisoned/bleeding/stunned behaviour
 
         damage_components = {'Power': power, 
                             'Damage reduction from armor': damage_reduction_from_armor, 
@@ -267,9 +289,13 @@ class BaseHero:
         return crit
 
     def turn(self):
-        if self.is_stunned():
+        if self.is_stunned() or self.is_petrified():
             for e in [e for e in self.effects if isinstance(e, Effect.stun)]:
                 self.game.log += '\n{} is stunned by {} ({}, {} turns left) ' \
+                        'and cannot play' \
+                        .format(self.str_id, e.source.str_id, e.name, e.turns)
+            for e in [e for e in self.effects if isinstance(e, Effect.petrify)]:
+                self.game.log += '\n{} is petrified by {} ({}, {} turns left) ' \
                         'and cannot play' \
                         .format(self.str_id, e.source.str_id, e.name, e.turns)
         else:
@@ -354,6 +380,7 @@ class BaseHero:
     def try_hit_passive(self, target, power, chance, multi=False, name=''):
         if rd.random() <= chance:
             self.hit_passive(target, power, multi=multi, name=name)
+            return True
 
     def dot(self, target, power, turns, skill=False, name=''):
         if not target.is_dead:
@@ -364,6 +391,7 @@ class BaseHero:
     def try_dot(self, target, power, turns, chance, skill=False, name=''):
         if rd.random() <= chance:
             self.dot(target, power, turns, skill=skill, name=name)
+            return True
 
     def heal(self, target, power, turns, name=''):
         if not target.is_dead:
@@ -374,6 +402,7 @@ class BaseHero:
     def try_heal(self, target, power, turns, chance, name=''):
         if rd.random() <= chance:
             self.heal(target, power, turns, name=name)
+            return True
 
     def poison(self, target, power, turns, skill=False, name=''):
         if not target.is_dead:
@@ -384,6 +413,7 @@ class BaseHero:
     def try_poison(self, target, power, turns, chance, skill=False, name=''):
         if rd.random() <= chance:
             self.poison(target, power, turns, skill=skill, name=name)
+            return True
 
     def bleed(self, target, power, turns, skill=False, name=''):
         if not target.is_dead:
@@ -394,6 +424,7 @@ class BaseHero:
     def try_bleed(self, target, power, turns, chance, skill=False, name=''):
         if rd.random() <= chance:
             self.bleed(target, power, turns, skill=skill, name=name)
+            return True
 
     def silence(self, target, turns, name=''):
         if not target.is_dead:
@@ -404,6 +435,7 @@ class BaseHero:
     def try_silence(self, target, turns, chance, name=''):
         if rd.random() <= chance and rd.random() >= target.control_immune: # check control immune behaviour
             self.silence(target, turns, name=name)
+            return True
 
     def stun(self, target, turns, name=''):
         if not target.is_dead:
@@ -414,6 +446,18 @@ class BaseHero:
     def try_stun(self, target, turns, chance, name=''):
         if rd.random() <= chance and rd.random() >= target.control_immune: # check control immune behaviour
             self.stun(target, turns, name=name)
+            return True
+
+    def petrify(self, target, turns, name=''):
+        if not target.is_dead:
+            petrify = Effect.petrify(self, target, turns, name=name)
+            target.effects.append(petrify)
+            petrify.tick()
+
+    def try_petrify(self, target, turns, chance, name=''):
+        if rd.random() <= chance and rd.random() >= target.control_immune: # check control immune behaviour
+            self.petrify(target, turns, name=name)
+            return True
 
     def attack_up(self, target, up, turns, name=''):
         if not target.is_dead:
@@ -424,6 +468,7 @@ class BaseHero:
     def try_attack_up(self, target, up, turns, chance, name=''):
         if rd.random() <= chance:
             self.attack_up(target, up, turns, name=name)
+            return True
 
     def attack_down(self, target, down, turns, name=''):
         if not target.is_dead:
@@ -434,6 +479,7 @@ class BaseHero:
     def try_attack_down(self, target, down, turns, chance, name=''):
         if rd.random() <= chance:
             self.attack_down(target, down, turns, name=name)
+            return True
 
     def crit_rate_up(self, target, up, turns, name=''):
         if not target.is_dead:
@@ -444,6 +490,7 @@ class BaseHero:
     def try_crit_rate_up(self, target, up, turns, chance, name=''):
         if rd.random() <= chance:
             self.crit_rate_up(target, up, turns, name=name)
+            return True
 
     def crit_rate_down(self, target, down, turns, name=''):
         if not target.is_dead:
@@ -454,6 +501,7 @@ class BaseHero:
     def try_crit_rate_down(self, target, down, turns, chance, name=''):
         if rd.random() <= chance:
             self.crit_rate_down(target, down, turns, name=name)
+            return True
 
     def crit_damage_up(self, target, up, turns, name=''):
         if not target.is_dead:
@@ -464,6 +512,7 @@ class BaseHero:
     def try_crit_damage_up(self, target, up, turns, chance, name=''):
         if rd.random() <= chance:
             self.crit_damage_up(target, up, turns, name=name)
+            return True
 
     def crit_damage_down(self, target, down, turns, name=''):
         if not target.is_dead:
@@ -474,6 +523,7 @@ class BaseHero:
     def try_crit_damage_down(self, target, down, turns, chance, name=''):
         if rd.random() <= chance:
             self.crit_damage_down(target, down, turns, name=name)
+            return True
 
     def armor_break_up(self, target, up, turns, name=''):
         if not target.is_dead:
@@ -484,6 +534,7 @@ class BaseHero:
     def try_armor_break_up(self, target, up, turns, chance, name=''):
         if rd.random() <= chance:
             self.armor_break_up(target, up, turns, name=name)
+            return True
 
     def armor_break_down(self, target, down, turns, name=''):
         if not target.is_dead:
@@ -494,6 +545,7 @@ class BaseHero:
     def try_armor_break_down(self, target, down, turns, chance, name=''):
         if rd.random() <= chance:
             self.armor_break_down(target, down, turns, name=name)
+            return True
 
     def is_poisoned(self):
         return True if any([isinstance(e, Effect.poison) for e in self.effects]) else False
@@ -507,12 +559,15 @@ class BaseHero:
     def is_stunned(self):
         return True if any([isinstance(e, Effect.stun) for e in self.effects]) else False
 
+    def is_petrified(self):
+        return True if any([isinstance(e, Effect.petrify) for e in self.effects]) else False
+
     def has_taken_damage(self, attacker):
         if self.hp <= 0:
             self.kill()
             if attacker is not None:
                 attacker.on_kill(self)
-                self.on_death(attacker)
+            self.on_death(attacker)
 
     def kill(self):
         self.is_dead = True
@@ -738,6 +793,45 @@ class ForestHealer(BaseHero):
                             rune=rune, artifact=artifact, guild_tech=guild_tech, 
                             familiar_stats=familiar_stats)
 
+        if self.star < 8:
+            self.hp *= 1.3
+        else:
+            self.hp *= 1.4
+
+    def skill(self):
+        name = "Nature's Hymn"
+        targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
+
+        hit_power = [self.atk * 0.89] * len(targets_hit)
+        heal_power = self.atk * 1.85
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        if targets_hit:
+            for target in self.own_team.heroes:
+                self.heal(target, power=heal_power, turns=1, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Healing Heart'
+        power = self.atk * 0.64
+        if self.star >= 7:
+            power = self.atk * 0.81
+        for target in self.own_team.get_frontline():
+            self.heal(target, power=power, turns=1, name=name)
+        super().on_attack(target)
+
+    def on_death(self, attacker):
+        name = 'Meaning Of Life'
+        power = self.atk * 1.2
+        crit_rate_up = 0.11
+        if self.star >= 9:
+            power = self.atk * 1.6
+            crit_rate_up = 0.135
+        for target in self.own_team.heroes:
+            self.heal(target, power=power, turns=1, name=name)
+        for target in self.own_team.heroes:
+            self.crit_rate_up(target, up=crit_rate_up, turns=3, name=name)
+        super().on_death(attacker)
+
 
 class Freya(BaseHero):
     name = HeroName.FREYA
@@ -762,6 +856,45 @@ class Freya(BaseHero):
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
                             rune=rune, artifact=artifact, guild_tech=guild_tech, 
                             familiar_stats=familiar_stats)
+
+        if self.star < 8:
+            self.skill_damage += 0.875
+            self.hp *= 1.35
+            self.speed += 50
+        else:
+            self.skill_damage += 1.0
+            self.hp *= 1.4
+            self.speed += 60
+
+    def skill(self):
+        name = 'Hollow Descent'
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+
+        power = [self.atk * 0.54] * len(targets_hit)
+        self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        for target in targets_hit:
+            landed = self.try_petrify(target, turns=2, chance=0.2, name=name)
+            if landed:
+                name = 'Expand'
+                up = 0.35
+                if self.star >= 9:
+                    up = 0.5
+                self.attack_up(self, up=up, turns=4, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Soul Sever'
+        chance = 0.45
+        if self.star >= 7:
+            chance = 0.55
+        landed = self.try_petrify(target, turns=1, chance=chance, name=name)
+        if landed:
+            name = 'Expand'
+            up = 0.35
+            if self.star >= 9:
+                up = 0.5
+            self.attack_up(self, up=up, turns=4, name=name)
+        super().on_attack(target)
 
 
 class Gerald(BaseHero):
@@ -788,6 +921,39 @@ class Gerald(BaseHero):
                             rune=rune, artifact=artifact, guild_tech=guild_tech, 
                             familiar_stats=familiar_stats)
 
+        if self.star < 8:
+            self.damage_to_stunned += 0.75
+        else:
+            self.damage_to_stunned += 0.95
+
+        if self.star < 9:
+            self.armor_break += 9.6
+            self.atk *= 1.3
+        else:
+            self.armor_break += 12
+            self.atk *= 1.35
+
+    def skill(self):
+        name = 'Wheel Of Torture'
+        targets = targets_at_random(self.op_team, 4)
+        targets_hit = self.targets_hit(targets, name=name)
+
+        power = [self.atk * 0.98] * len(targets_hit)
+        self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        for target in targets_hit:
+            if target.type == HeroType.ASSASSIN:
+                self.try_stun(target, turns=2, chance=0.8, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Chain Of Fool'
+        chance = 0.5
+        turns = 1
+        if self.star >= 7:
+            chance = 0.48
+            turns = 2
+        self.try_stun(target, turns=turns, chance=chance, name=name)
+        super().on_attack(target)
 
 
 class Luna(BaseHero):
@@ -953,7 +1119,7 @@ class Reaper(BaseHero):
         super().skill()
 
     def on_death(self, attacker):
-        name = 'Pit Of Malice' # check : can be dodged?
+        name = 'Pit Of Malice'
         power = self.atk * 0.6
         if self.star >= 9:
             power = self.atk * 1.05
@@ -1191,8 +1357,9 @@ class Verthandi(BaseHero):
         hit_power = [self.atk * 0.69] * len(targets_hit)
         heal_power = self.atk * 1.3
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
-        for target in self.own_team.heroes:
-            self.heal(target, power=heal_power, turns=1, name=name)
+        if targets_hit:
+            for target in self.own_team.heroes:
+                self.heal(target, power=heal_power, turns=1, name=name)
         super().skill()
 
     def on_attack(self, target):

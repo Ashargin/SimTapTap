@@ -89,6 +89,12 @@ class Game:
                     self.log += "\n\n# {}'s turn #".format(pet.str_id)
                 pet.turn()
 
+        # effects
+        for h in self.heroes:
+            for e in h.effects:
+                if e.turns == 0:
+                    e.kill()
+
         self.log += '\n\n{}\n'.format(self.state())
 
     def state(self):

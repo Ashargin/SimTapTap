@@ -2136,6 +2136,7 @@ class BaseFamiliar:
             log_text = '\n{} takes {} damage from {} ({})' \
                         .format(target.str_id, self.damage, self.str_id, self.skill_name)
             self.game.log += log_text
+        for target in targets:
             target.has_taken_damage(attacker=None)
 
 
@@ -2201,9 +2202,7 @@ class Dot(BaseEffect):
         self.name = name
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
             dmg = damage_components['Total damage']
             crit = True if damage_components['Crit damage'] > 0 else False
@@ -2227,9 +2226,7 @@ class Heal(BaseEffect):
         self.hot = True if self.turns > 1 else False
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             self.holder.hp = min(self.holder.hp + self.power, self.holder.hp_max)
             self.turns -= 1
             if self.hot:
@@ -2254,9 +2251,7 @@ class Poison(BaseEffect):
         self.name = name
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
             dmg = damage_components['Total damage']
             crit = True if damage_components['Crit damage'] > 0 else False
@@ -2280,9 +2275,7 @@ class Bleed(BaseEffect):
         self.name = name
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
             dmg = damage_components['Total damage']
             crit = True if damage_components['Crit damage'] > 0 else False
@@ -2304,9 +2297,7 @@ class Silence(BaseEffect):
         self.name = name
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             self.turns -= 1
             log_text = '\n{} is silenced by {} ({}), {} turns left' \
                         .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
@@ -2321,11 +2312,24 @@ class Stun(BaseEffect):
         self.name = name
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             self.turns -= 1
             log_text = '\n{} is stunned by {} ({}), {} turns left' \
+                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+            self.source.game.log += log_text
+
+
+class Petrify(BaseEffect):
+    def __init__(self, source, holder, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.turns = turns
+        self.name = name
+
+    def tick(self):
+        if not self.holder.is_dead:
+            self.turns -= 1
+            log_text = '\n{} is petrified by {} ({}), {} turns left' \
                         .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
             self.source.game.log += log_text
 
@@ -2344,9 +2348,7 @@ class AttackUp(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.atk *= 1 + self.up
                 self.has_been_set = True
@@ -2381,9 +2383,7 @@ class AttackDown(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.atk /= 1 + self.down
                 self.has_been_set = True
@@ -2401,7 +2401,7 @@ class AttackDown(BaseEffect):
             self.source.game.log += log_text
 
     def kill(self):
-        self.holder.attack *= 1 + self.down
+        self.holder.atk *= 1 + self.down
 
 
 class CritRateUp(BaseEffect):
@@ -2418,9 +2418,7 @@ class CritRateUp(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_rate += self.up
                 self.has_been_set = True
@@ -2455,9 +2453,7 @@ class CritRateDown(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_rate -= self.down
                 self.has_been_set = True
@@ -2492,9 +2488,7 @@ class CritDamageUp(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_damage += self.up
                 self.has_been_set = True
@@ -2529,9 +2523,7 @@ class CritDamageDown(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_damage -= self.down
                 self.has_been_set = True
@@ -2566,9 +2558,7 @@ class ArmorBreakUp(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.armor_break += self.up
                 self.has_been_set = True
@@ -2603,9 +2593,7 @@ class ArmorBreakDown(BaseEffect):
             self.infinite = True
 
     def tick(self):
-        if self.turns == 0:
-            self.kill()
-        elif not self.holder.is_dead:
+        if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.armor_break -= self.down
                 self.has_been_set = True
@@ -2634,6 +2622,7 @@ class Effect:
     bleed = Bleed
     silence = Silence
     stun = Stun
+    petrify = Petrify
     attack_down = AttackDown
     attack_up = AttackUp
     crit_rate_up = CritRateUp
