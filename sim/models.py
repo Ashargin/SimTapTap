@@ -2135,12 +2135,12 @@ class WarriorArtifact:
 
 
 satans_power_artifact_from_request = {
-                    'ORANGE1': WarriorArtifact.O1, 
-                    'ORANGE2': WarriorArtifact.O2, 
-                    'ORANGE3': WarriorArtifact.O3, 
-                    'ORANGE4': WarriorArtifact.O4, 
-                    'ORANGE5': WarriorArtifact.O5, 
-                    'ORANGE6': WarriorArtifact.O6
+                    1: WarriorArtifact.O1, 
+                    2: WarriorArtifact.O2, 
+                    3: WarriorArtifact.O3, 
+                    4: WarriorArtifact.O4, 
+                    5: WarriorArtifact.O5, 
+                    6: WarriorArtifact.O6
                     }
 
 
@@ -2173,12 +2173,12 @@ class AssassinArtifact:
 
 
 yaksha_artifact_from_request = {
-                    'ORANGE1': AssassinArtifact.O1, 
-                    'ORANGE2': AssassinArtifact.O2, 
-                    'ORANGE3': AssassinArtifact.O3, 
-                    'ORANGE4': AssassinArtifact.O4, 
-                    'ORANGE5': AssassinArtifact.O5, 
-                    'ORANGE6': AssassinArtifact.O6
+                    1: AssassinArtifact.O1, 
+                    2: AssassinArtifact.O2, 
+                    3: AssassinArtifact.O3, 
+                    4: AssassinArtifact.O4, 
+                    5: AssassinArtifact.O5, 
+                    6: AssassinArtifact.O6
                     }
 
 
@@ -2211,12 +2211,12 @@ class WandererArtifact:
 
 
 dark_destroyer_artifact_from_request = {
-                    'ORANGE1': WandererArtifact.O1, 
-                    'ORANGE2': WandererArtifact.O2, 
-                    'ORANGE3': WandererArtifact.O3, 
-                    'ORANGE4': WandererArtifact.O4, 
-                    'ORANGE5': WandererArtifact.O5, 
-                    'ORANGE6': WandererArtifact.O6
+                    1: WandererArtifact.O1, 
+                    2: WandererArtifact.O2, 
+                    3: WandererArtifact.O3, 
+                    4: WandererArtifact.O4, 
+                    5: WandererArtifact.O5, 
+                    6: WandererArtifact.O6
                     }
 
 
@@ -2249,12 +2249,12 @@ class ClericArtifact:
 
 
 suns_hymn_artifact_from_request = {
-                    'ORANGE1': ClericArtifact.O1, 
-                    'ORANGE2': ClericArtifact.O2, 
-                    'ORANGE3': ClericArtifact.O3, 
-                    'ORANGE4': ClericArtifact.O4, 
-                    'ORANGE5': ClericArtifact.O5, 
-                    'ORANGE6': ClericArtifact.O6
+                    1: ClericArtifact.O1, 
+                    2: ClericArtifact.O2, 
+                    3: ClericArtifact.O3, 
+                    4: ClericArtifact.O4, 
+                    5: ClericArtifact.O5, 
+                    6: ClericArtifact.O6
                     }
 
 
@@ -2287,12 +2287,12 @@ class MageArtifact:
 
 
 burning_soul_artifact_from_request = {
-                    'ORANGE1': MageArtifact.O1, 
-                    'ORANGE2': MageArtifact.O2, 
-                    'ORANGE3': MageArtifact.O3, 
-                    'ORANGE4': MageArtifact.O4, 
-                    'ORANGE5': MageArtifact.O5, 
-                    'ORANGE6': MageArtifact.O6
+                    1: MageArtifact.O1, 
+                    2: MageArtifact.O2, 
+                    3: MageArtifact.O3, 
+                    4: MageArtifact.O4, 
+                    5: MageArtifact.O5, 
+                    6: MageArtifact.O6
                     }
 
 
@@ -2307,12 +2307,12 @@ class EyeOfHeaven:
 
 
 eye_of_heaven_artifact_from_request = {
-                    'ORANGE1': EyeOfHeaven.O1, 
-                    'ORANGE2': EyeOfHeaven.O2, 
-                    'ORANGE3': EyeOfHeaven.O3, 
-                    'ORANGE4': EyeOfHeaven.O4, 
-                    'ORANGE5': EyeOfHeaven.O5, 
-                    'ORANGE6': EyeOfHeaven.O6
+                    1: EyeOfHeaven.O1, 
+                    2: EyeOfHeaven.O2, 
+                    3: EyeOfHeaven.O3, 
+                    4: EyeOfHeaven.O4, 
+                    5: EyeOfHeaven.O5, 
+                    6: EyeOfHeaven.O6
                     }
 
 
@@ -2327,12 +2327,12 @@ class WindWalker:
 
 
 wind_walker_artifact_from_request = {
-                    'ORANGE1': WindWalker.O1, 
-                    'ORANGE2': WindWalker.O2, 
-                    'ORANGE3': WindWalker.O3, 
-                    'ORANGE4': WindWalker.O4, 
-                    'ORANGE5': WindWalker.O5, 
-                    'ORANGE6': WindWalker.O6
+                    1: WindWalker.O1, 
+                    2: WindWalker.O2, 
+                    3: WindWalker.O3, 
+                    4: WindWalker.O4, 
+                    5: WindWalker.O5, 
+                    6: WindWalker.O6
                     }
 
 
@@ -2347,12 +2347,12 @@ class ScorchingSun:
 
 
 scorching_sun_artifact_from_request = {
-                    'ORANGE1': ScorchingSun.O1, 
-                    'ORANGE2': ScorchingSun.O2, 
-                    'ORANGE3': ScorchingSun.O3, 
-                    'ORANGE4': ScorchingSun.O4, 
-                    'ORANGE5': ScorchingSun.O5, 
-                    'ORANGE6': ScorchingSun.O6
+                    1: ScorchingSun.O1, 
+                    2: ScorchingSun.O2, 
+                    3: ScorchingSun.O3, 
+                    4: ScorchingSun.O4, 
+                    5: ScorchingSun.O5, 
+                    6: ScorchingSun.O6
                     }
 
 
@@ -2367,12 +2367,12 @@ class Dragonblood:
 
 
 dragonblood_artifact_from_request = {
-                    'ORANGE1': Dragonblood.O1, 
-                    'ORANGE2': Dragonblood.O2, 
-                    'ORANGE3': Dragonblood.O3, 
-                    'ORANGE4': Dragonblood.O4, 
-                    'ORANGE5': Dragonblood.O5, 
-                    'ORANGE6': Dragonblood.O6
+                    1: Dragonblood.O1, 
+                    2: Dragonblood.O2, 
+                    3: Dragonblood.O3, 
+                    4: Dragonblood.O4, 
+                    5: Dragonblood.O5, 
+                    6: Dragonblood.O6
                     }
 
 
@@ -2387,12 +2387,12 @@ class SoundStep:
 
 
 sound_step_artifact_from_request = {
-                    'ORANGE1': SoundStep.O1, 
-                    'ORANGE2': SoundStep.O2, 
-                    'ORANGE3': SoundStep.O3, 
-                    'ORANGE4': SoundStep.O4, 
-                    'ORANGE5': SoundStep.O5, 
-                    'ORANGE6': SoundStep.O6
+                    1: SoundStep.O1, 
+                    2: SoundStep.O2, 
+                    3: SoundStep.O3, 
+                    4: SoundStep.O4, 
+                    5: SoundStep.O5, 
+                    6: SoundStep.O6
                     }
 
 
@@ -2407,12 +2407,12 @@ class KnightsVow:
 
 
 knights_vow_artifact_from_request = {
-                    'ORANGE1': KnightsVow.O1, 
-                    'ORANGE2': KnightsVow.O2, 
-                    'ORANGE3': KnightsVow.O3, 
-                    'ORANGE4': KnightsVow.O4, 
-                    'ORANGE5': KnightsVow.O5, 
-                    'ORANGE6': KnightsVow.O6
+                    1: KnightsVow.O1, 
+                    2: KnightsVow.O2, 
+                    3: KnightsVow.O3, 
+                    4: KnightsVow.O4, 
+                    5: KnightsVow.O5, 
+                    6: KnightsVow.O6
                     }
 
 
@@ -2427,12 +2427,12 @@ class PrimevalSoul:
 
 
 primeval_soul_artifact_from_request = {
-                    'ORANGE1': PrimevalSoul.O1, 
-                    'ORANGE2': PrimevalSoul.O2, 
-                    'ORANGE3': PrimevalSoul.O3, 
-                    'ORANGE4': PrimevalSoul.O4, 
-                    'ORANGE5': PrimevalSoul.O5, 
-                    'ORANGE6': PrimevalSoul.O6
+                    1: PrimevalSoul.O1, 
+                    2: PrimevalSoul.O2, 
+                    3: PrimevalSoul.O3, 
+                    4: PrimevalSoul.O4, 
+                    5: PrimevalSoul.O5, 
+                    6: PrimevalSoul.O6
                     }
 
 
@@ -2447,12 +2447,12 @@ class QueensCrown:
 
 
 queens_crown_artifact_from_request = {
-                    'ORANGE1': QueensCrown.O1, 
-                    'ORANGE2': QueensCrown.O2, 
-                    'ORANGE3': QueensCrown.O3, 
-                    'ORANGE4': QueensCrown.O4, 
-                    'ORANGE5': QueensCrown.O5, 
-                    'ORANGE6': QueensCrown.O6
+                    1: QueensCrown.O1, 
+                    2: QueensCrown.O2, 
+                    3: QueensCrown.O3, 
+                    4: QueensCrown.O4, 
+                    5: QueensCrown.O5, 
+                    6: QueensCrown.O6
                     }
 
 
@@ -2467,12 +2467,12 @@ class SoulTorrent:
 
 
 soul_torrent_artifact_from_request = {
-                    'ORANGE1': SoulTorrent.O1, 
-                    'ORANGE2': SoulTorrent.O2, 
-                    'ORANGE3': SoulTorrent.O3, 
-                    'ORANGE4': SoulTorrent.O4, 
-                    'ORANGE5': SoulTorrent.O5, 
-                    'ORANGE6': SoulTorrent.O6
+                    1: SoulTorrent.O1, 
+                    2: SoulTorrent.O2, 
+                    3: SoulTorrent.O3, 
+                    4: SoulTorrent.O4, 
+                    5: SoulTorrent.O5, 
+                    6: SoulTorrent.O6
                     }
 
 
@@ -2487,12 +2487,12 @@ class GiftOfCreation:
 
 
 gift_of_creation_artifact_from_request = {
-                    'ORANGE1': GiftOfCreation.O1, 
-                    'ORANGE2': GiftOfCreation.O2, 
-                    'ORANGE3': GiftOfCreation.O3, 
-                    'ORANGE4': GiftOfCreation.O4, 
-                    'ORANGE5': GiftOfCreation.O5, 
-                    'ORANGE6': GiftOfCreation.O6
+                    1: GiftOfCreation.O1, 
+                    2: GiftOfCreation.O2, 
+                    3: GiftOfCreation.O3, 
+                    4: GiftOfCreation.O4, 
+                    5: GiftOfCreation.O5, 
+                    6: GiftOfCreation.O6
                     }
 
 
@@ -2507,12 +2507,12 @@ class EternalCurse:
 
 
 eternal_curse_artifact_from_request = {
-                    'ORANGE1': EternalCurse.O1, 
-                    'ORANGE2': EternalCurse.O2, 
-                    'ORANGE3': EternalCurse.O3, 
-                    'ORANGE4': EternalCurse.O4, 
-                    'ORANGE5': EternalCurse.O5, 
-                    'ORANGE6': EternalCurse.O6
+                    1: EternalCurse.O1, 
+                    2: EternalCurse.O2, 
+                    3: EternalCurse.O3, 
+                    4: EternalCurse.O4, 
+                    5: EternalCurse.O5, 
+                    6: EternalCurse.O6
                     }
 
 
