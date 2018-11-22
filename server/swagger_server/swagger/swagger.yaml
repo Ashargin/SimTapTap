@@ -25,7 +25,7 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "StatEnvironment"
+        name: "statRequest"
         description: "stat environment containing desired hero and player progress"
         required: false
         schema:
@@ -50,7 +50,7 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "count"
+        name: "simulateRequest"
         description: "number of battles to be simulated"
         required: false
         schema:
@@ -79,77 +79,87 @@ definitions:
       \ information and player information"
     example:
       heroes:
-      - tier: 0
-        level: 16
+      - tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
-      - tier: 0
-        level: 16
+        stars: 9
+      - tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
       player:
         petBonus:
-          hpBonus: 0
-          attackBonus: 6
+          hpBonus: 26672
+          attackBonus: 1705
         activePet:
-          skill2level: 4
-          tier: 2
-          level: 17
-          skill3level: 14
-          skill1level: 67
-          skill4level: 18
+          skill2level: 11
+          tier: 3
+          level: 155
+          skill3level: 1
+          id: "raphael"
+          skill1level: 53
+          skill4level: 0
         guildTech:
           cleric:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           mage:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           wanderer:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           warrior:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           assassin:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
   SimulateRequest:
+    required:
+    - "attacker"
+    - "defender"
     properties:
       repeat:
         type: "integer"
-        description: "How many battles should be simulated. Defaults to 1"
+        description: "How many battles should be simulated."
         minimum: 1
         maximum: 1000
       attacker:
@@ -162,266 +172,311 @@ definitions:
       repeat: 81
       attacker:
         heroRear3:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroRear2:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroRear1:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroFront3:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroFront2:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         player:
           petBonus:
-            hpBonus: 0
-            attackBonus: 6
+            hpBonus: 26672
+            attackBonus: 1705
           activePet:
-            skill2level: 4
-            tier: 2
-            level: 17
-            skill3level: 14
-            skill1level: 67
-            skill4level: 18
+            skill2level: 11
+            tier: 3
+            level: 155
+            skill3level: 1
+            id: "raphael"
+            skill1level: 53
+            skill4level: 0
           guildTech:
             cleric:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             mage:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             wanderer:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             warrior:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             assassin:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
         heroFront1:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
       defender:
         heroRear3:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroRear2:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroRear1:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroFront3:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         heroFront2:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
         player:
           petBonus:
-            hpBonus: 0
-            attackBonus: 6
+            hpBonus: 26672
+            attackBonus: 1705
           activePet:
-            skill2level: 4
-            tier: 2
-            level: 17
-            skill3level: 14
-            skill1level: 67
-            skill4level: 18
+            skill2level: 11
+            tier: 3
+            level: 155
+            skill3level: 1
+            id: "raphael"
+            skill1level: 53
+            skill4level: 0
           guildTech:
             cleric:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             mage:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             wanderer:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             warrior:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
             assassin:
-              tier5: 2
-              tier4: 22
-              tier3: 16
-              tier2: 10
-              tier1: 21
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
         heroFront1:
-          tier: 0
-          level: 16
+          tier: 6
+          level: 200
           equipment:
             artifact:
-              stars: 5.962133916683182377482808078639209270477294921875
-              id: "queensCrown"
-            helmet: {}
+              id: "knightsVow"
+              stars: 6
+            weapon: "orange2"
+            chest: "orange2"
+            helmet: "orange2"
+            pendant: "orange2"
             rune:
-              level: "green1"
-              runeType: "accuracy"
+              level: "red2"
+              runeType: "hp"
           id: "sawMachine"
-          stars: 5
+          stars: 9
   Hero:
+    required:
+    - "equipment"
+    - "id"
     properties:
       id:
         type: "string"
+        example: "sawMachine"
         description: "Which hero is requested."
         enum:
         - "sawMachine"
         - "scarlet"
       level:
         type: "integer"
+        example: 200
         description: "The numerical level of the hero (1-200)"
         minimum: 1
         maximum: 200
       stars:
         type: "integer"
+        example: 9
         description: "The number of stars the hero has"
         minimum: 1
         maximum: 9
       tier:
         type: "integer"
+        example: 6
         description: "The tier of the hero (i.e. the number of purple gems below the\
           \ name)"
         minimum: 0
@@ -429,37 +484,65 @@ definitions:
       equipment:
         $ref: "#/definitions/Hero_equipment"
     example:
-      tier: 0
-      level: 16
+      tier: 6
+      level: 200
       equipment:
         artifact:
-          stars: 5.962133916683182377482808078639209270477294921875
-          id: "queensCrown"
-        helmet: {}
+          id: "knightsVow"
+          stars: 6
+        weapon: "orange2"
+        chest: "orange2"
+        helmet: "orange2"
+        pendant: "orange2"
         rune:
-          level: "green1"
-          runeType: "accuracy"
+          level: "red2"
+          runeType: "hp"
       id: "sawMachine"
-      stars: 5
+      stars: 9
   HeroStats:
+    required:
+    - "hero"
+    - "stats"
     properties:
       hero:
         $ref: "#/definitions/Hero"
+      stats:
+        $ref: "#/definitions/HeroStats_stats"
     example:
+      stats:
+        dodge: 0.0
+        hp: 634205.0
+        critDamage: 0.0
+        critRate: 0.2
+        controlResist: 0.0
+        hitRate: 0.15
+        speed: 984.0
+        trueDamage: 0.0
+        skillDamage: 1.4
+        defense: 13.0
+        attack: 25152.0
+        defenseBreak: 0.0
+        reduceDamage: 0.0
       hero:
-        tier: 0
-        level: 16
+        tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
   Player:
+    required:
+    - "activePet"
+    - "petBonus"
     properties:
       petBonus:
         $ref: "#/definitions/Player_petBonus"
@@ -469,159 +552,227 @@ definitions:
         $ref: "#/definitions/Player_guildTech"
     example:
       petBonus:
-        hpBonus: 0
-        attackBonus: 6
+        hpBonus: 26672
+        attackBonus: 1705
       activePet:
-        skill2level: 4
-        tier: 2
-        level: 17
-        skill3level: 14
-        skill1level: 67
-        skill4level: 18
+        skill2level: 11
+        tier: 3
+        level: 155
+        skill3level: 1
+        id: "raphael"
+        skill1level: 53
+        skill4level: 0
       guildTech:
         cleric:
-          tier5: 2
-          tier4: 22
-          tier3: 16
-          tier2: 10
-          tier1: 21
+          tier5: 20
+          tier4: 30
+          tier3: 40
+          tier2: 50
+          tier1: 60
         mage:
-          tier5: 2
-          tier4: 22
-          tier3: 16
-          tier2: 10
-          tier1: 21
+          tier5: 20
+          tier4: 30
+          tier3: 40
+          tier2: 50
+          tier1: 60
         wanderer:
-          tier5: 2
-          tier4: 22
-          tier3: 16
-          tier2: 10
-          tier1: 21
+          tier5: 20
+          tier4: 30
+          tier3: 40
+          tier2: 50
+          tier1: 60
         warrior:
-          tier5: 2
-          tier4: 22
-          tier3: 16
-          tier2: 10
-          tier1: 21
+          tier5: 20
+          tier4: 30
+          tier3: 40
+          tier2: 50
+          tier1: 60
         assassin:
-          tier5: 2
-          tier4: 22
-          tier3: 16
-          tier2: 10
-          tier1: 21
+          tier5: 20
+          tier4: 30
+          tier3: 40
+          tier2: 50
+          tier1: 60
   EquipmentLevel:
     type: "string"
+    example: "orange2"
     enum:
     - "green1"
     - "green2"
+    - "blue1"
+    - "blue2"
+    - "yellow1"
+    - "yellow2"
+    - "yellow3"
+    - "purple1"
+    - "purple2"
+    - "purple3"
+    - "purple4"
     - "orange1"
     - "orange2"
+    - "orange3"
+    - "orange4"
+    default: "orange4"
   Rune:
+    required:
+    - "runeType"
     properties:
-      level:
-        type: "string"
-        enum:
-        - "green1"
-        - "green2"
-        - "red1"
-        - "red2"
       runeType:
         type: "string"
+        example: "hp"
         enum:
         - "accuracy"
-        - "damage"
+        - "critRate"
+        - "attack"
+        - "evasion"
+        - "armorBreak"
+        - "skillDamage"
+        - "critDamage"
+        - "hp"
+      level:
+        type: "string"
+        example: "red2"
+        default: "red2"
+        enum:
+        - "blue1"
+        - "blue2"
+        - "green1"
+        - "green2"
+        - "yellow1"
+        - "yellow2"
+        - "yellow3"
+        - "purple1"
+        - "purple2"
+        - "purple3"
+        - "orange1"
+        - "orange2"
+        - "orange3"
+        - "orange4"
+        - "red1"
+        - "red2"
     example:
-      level: "green1"
-      runeType: "accuracy"
+      level: "red2"
+      runeType: "hp"
   Artifact:
+    required:
+    - "id"
     properties:
-      stars:
-        type: "number"
-        description: "Number of stars the artifact is leveled up to"
       id:
         type: "string"
+        example: "knightsVow"
         description: "What artifact this refers to"
         enum:
         - "queensCrown"
         - "windWalker"
+        - "knightsVow"
+      stars:
+        type: "integer"
+        example: 6
+        description: "Number of stars the artifact is leveled up to"
+        minimum: 1
+        maximum: 6
     description: "Describes a certain artifact at a certain level"
     example:
-      stars: 5.962133916683182377482808078639209270477294921875
-      id: "queensCrown"
+      id: "knightsVow"
+      stars: 6
   Pet:
+    required:
+    - "id"
     properties:
+      id:
+        type: "string"
+        example: "raphael"
+        description: "Which pet is described"
+        enum:
+        - "edison"
+        - "vinci"
+        - "raphael"
       level:
         type: "integer"
+        example: 155
         description: "The level of the pet itself"
         minimum: 0
-        maximum: 120
+        maximum: 200
       tier:
         type: "integer"
+        example: 3
         description: "The tier of the pet"
         minimum: 0
         maximum: 4
       skill1level:
         type: "integer"
+        example: 53
         description: "The level of the pet's first skill (active)"
         minimum: 0
         maximum: 120
       skill2level:
         type: "integer"
+        example: 11
         description: "The level of the pet's second skill (passive)"
         minimum: 0
         maximum: 20
       skill3level:
         type: "integer"
+        example: 1
         description: "The level of the pet's third skill (passive)"
         minimum: 0
         maximum: 20
       skill4level:
         type: "integer"
+        example: 0
         description: "The level of the pet's fourth skill (passive)"
         minimum: 0
         maximum: 20
     description: "Describes a pet with all its levels"
     example:
-      skill2level: 4
-      tier: 2
-      level: 17
-      skill3level: 14
-      skill1level: 67
-      skill4level: 18
+      skill2level: 11
+      tier: 3
+      level: 155
+      skill3level: 1
+      id: "raphael"
+      skill1level: 53
+      skill4level: 0
   ClassGuildTech:
     properties:
       tier1:
         type: "integer"
+        example: 60
         description: "The level of the first tier of guild tech"
         minimum: 0
         maximum: 60
       tier2:
         type: "integer"
+        example: 50
         description: "The level of the second tier of guild tech"
         minimum: 0
         maximum: 50
       tier3:
         type: "integer"
+        example: 40
         description: "The level of the third tier of guild tech"
         minimum: 0
         maximum: 40
       tier4:
         type: "integer"
+        example: 30
         description: "The level of the fourth tier of guild tech"
         minimum: 0
         maximum: 30
       tier5:
         type: "integer"
+        example: 20
         description: "The level of the fifth tier of guild tech"
         minimum: 0
         maximum: 20
     example:
-      tier5: 2
-      tier4: 22
-      tier3: 16
-      tier2: 10
-      tier1: 21
+      tier5: 20
+      tier4: 30
+      tier3: 40
+      tier2: 50
+      tier1: 60
   Team:
+    required:
+    - "player"
     properties:
       player:
         $ref: "#/definitions/Player"
@@ -638,129 +789,152 @@ definitions:
       heroRear3:
         $ref: "#/definitions/Hero"
     description: "Full description of a team. Here, heroFront1 is the hero on the\
-      \ bottom of the front row, heroRear3 is the hero on the top of the rear row."
+      \ bottom of the front row, heroRear3 is the hero on the top of the rear row.\
+      \ If one of the heroes is not given, the spot is assumed empty."
     example:
       heroRear3:
-        tier: 0
-        level: 16
+        tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
       heroRear2:
-        tier: 0
-        level: 16
+        tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
       heroRear1:
-        tier: 0
-        level: 16
+        tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
       heroFront3:
-        tier: 0
-        level: 16
+        tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
       heroFront2:
-        tier: 0
-        level: 16
+        tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
       player:
         petBonus:
-          hpBonus: 0
-          attackBonus: 6
+          hpBonus: 26672
+          attackBonus: 1705
         activePet:
-          skill2level: 4
-          tier: 2
-          level: 17
-          skill3level: 14
-          skill1level: 67
-          skill4level: 18
+          skill2level: 11
+          tier: 3
+          level: 155
+          skill3level: 1
+          id: "raphael"
+          skill1level: 53
+          skill4level: 0
         guildTech:
           cleric:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           mage:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           wanderer:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           warrior:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
           assassin:
-            tier5: 2
-            tier4: 22
-            tier3: 16
-            tier2: 10
-            tier1: 21
+            tier5: 20
+            tier4: 30
+            tier3: 40
+            tier2: 50
+            tier1: 60
       heroFront1:
-        tier: 0
-        level: 16
+        tier: 6
+        level: 200
         equipment:
           artifact:
-            stars: 5.962133916683182377482808078639209270477294921875
-            id: "queensCrown"
-          helmet: {}
+            id: "knightsVow"
+            stars: 6
+          weapon: "orange2"
+          chest: "orange2"
+          helmet: "orange2"
+          pendant: "orange2"
           rune:
-            level: "green1"
-            runeType: "accuracy"
+            level: "red2"
+            runeType: "hp"
         id: "sawMachine"
-        stars: 5
+        stars: 9
   Hero_equipment:
+    required:
+    - "artifact"
+    - "rune"
     properties:
       helmet:
         $ref: "#/definitions/EquipmentLevel"
@@ -777,24 +951,100 @@ definitions:
     description: "Object describing anything the hero has equipped"
     example:
       artifact:
-        stars: 5.962133916683182377482808078639209270477294921875
-        id: "queensCrown"
-      helmet: {}
+        id: "knightsVow"
+        stars: 6
+      weapon: "orange2"
+      chest: "orange2"
+      helmet: "orange2"
+      pendant: "orange2"
       rune:
-        level: "green1"
-        runeType: "accuracy"
+        level: "red2"
+        runeType: "hp"
+  HeroStats_stats:
+    properties:
+      hp:
+        type: "number"
+        example: 634205.0
+        description: "Health of the Hero"
+      attack:
+        type: "number"
+        example: 25152.0
+        description: "Attack of the Hero"
+      defense:
+        type: "number"
+        example: 13.0
+        description: "Defense of the Hero"
+      speed:
+        type: "number"
+        example: 984.0
+        description: "Speed of the Hero"
+      defenseBreak:
+        type: "number"
+        example: 0.0
+        description: "Defense Break of the Hero"
+      skillDamage:
+        type: "number"
+        example: 1.4
+        description: "Skill Damage of the Hero"
+      hitRate:
+        type: "number"
+        example: 0.15
+        description: "Hit rate of the Hero (as a bonus which is added to the natural\
+          \ hit rate)"
+      dodge:
+        type: "number"
+        example: 0.0
+        description: "Dodge rate of the Hero"
+      critRate:
+        type: "number"
+        example: 0.2
+        description: "Crit rate of the Hero"
+      critDamage:
+        type: "number"
+        example: 0.0
+        description: "Crit damage of the Hero (which is added to the natural 50% crit\
+          \ damage bonus)"
+      trueDamage:
+        type: "number"
+        example: 0.0
+        description: "True damage of the Hero"
+      reduceDamage:
+        type: "number"
+        example: 0.0
+        description: "Reduce damage of the Hero"
+      controlResist:
+        type: "number"
+        example: 0.0
+        description: "Control resist of the Hero"
+    description: "Collection of all stats regarding this hero"
+    example:
+      dodge: 0.0
+      hp: 634205.0
+      critDamage: 0.0
+      critRate: 0.2
+      controlResist: 0.0
+      hitRate: 0.15
+      speed: 984.0
+      trueDamage: 0.0
+      skillDamage: 1.4
+      defense: 13.0
+      attack: 25152.0
+      defenseBreak: 0.0
+      reduceDamage: 0.0
   Player_petBonus:
     properties:
       hpBonus:
         type: "integer"
+        example: 26672
         description: "The cumulative hp bonus of all pets"
       attackBonus:
         type: "integer"
+        example: 1705
         description: "The cumulative attack bonus of all pets"
     description: "Sum of bonuses provided by all pets"
     example:
-      hpBonus: 0
-      attackBonus: 6
+      hpBonus: 26672
+      attackBonus: 1705
   Player_guildTech:
     properties:
       warrior:
@@ -810,32 +1060,32 @@ definitions:
     description: "The unlocked guild tech"
     example:
       cleric:
-        tier5: 2
-        tier4: 22
-        tier3: 16
-        tier2: 10
-        tier1: 21
+        tier5: 20
+        tier4: 30
+        tier3: 40
+        tier2: 50
+        tier1: 60
       mage:
-        tier5: 2
-        tier4: 22
-        tier3: 16
-        tier2: 10
-        tier1: 21
+        tier5: 20
+        tier4: 30
+        tier3: 40
+        tier2: 50
+        tier1: 60
       wanderer:
-        tier5: 2
-        tier4: 22
-        tier3: 16
-        tier2: 10
-        tier1: 21
+        tier5: 20
+        tier4: 30
+        tier3: 40
+        tier2: 50
+        tier1: 60
       warrior:
-        tier5: 2
-        tier4: 22
-        tier3: 16
-        tier2: 10
-        tier1: 21
+        tier5: 20
+        tier4: 30
+        tier3: 40
+        tier2: 50
+        tier1: 60
       assassin:
-        tier5: 2
-        tier4: 22
-        tier3: 16
-        tier2: 10
-        tier1: 21
+        tier5: 20
+        tier4: 30
+        tier3: 40
+        tier2: 50
+        tier1: 60

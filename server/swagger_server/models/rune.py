@@ -15,26 +15,26 @@ class Rune(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, level: str=None, rune_type: str=None):  # noqa: E501
+    def __init__(self, rune_type: str=None, level: str='red2'):  # noqa: E501
         """Rune - a model defined in Swagger
 
-        :param level: The level of this Rune.  # noqa: E501
-        :type level: str
         :param rune_type: The rune_type of this Rune.  # noqa: E501
         :type rune_type: str
+        :param level: The level of this Rune.  # noqa: E501
+        :type level: str
         """
         self.swagger_types = {
-            'level': str,
-            'rune_type': str
+            'rune_type': str,
+            'level': str
         }
 
         self.attribute_map = {
-            'level': 'level',
-            'rune_type': 'runeType'
+            'rune_type': 'runeType',
+            'level': 'level'
         }
 
-        self._level = level
         self._rune_type = rune_type
+        self._level = level
 
     @classmethod
     def from_dict(cls, dikt) -> 'Rune':
@@ -46,33 +46,6 @@ class Rune(Model):
         :rtype: Rune
         """
         return util.deserialize_model(dikt, cls)
-
-    @property
-    def level(self) -> str:
-        """Gets the level of this Rune.
-
-
-        :return: The level of this Rune.
-        :rtype: str
-        """
-        return self._level
-
-    @level.setter
-    def level(self, level: str):
-        """Sets the level of this Rune.
-
-
-        :param level: The level of this Rune.
-        :type level: str
-        """
-        allowed_values = ["green1", "green2", "red1", "red2"]  # noqa: E501
-        if level not in allowed_values:
-            raise ValueError(
-                "Invalid value for `level` ({0}), must be one of {1}"
-                .format(level, allowed_values)
-            )
-
-        self._level = level
 
     @property
     def rune_type(self) -> str:
@@ -92,7 +65,7 @@ class Rune(Model):
         :param rune_type: The rune_type of this Rune.
         :type rune_type: str
         """
-        allowed_values = ["accuracy", "damage"]  # noqa: E501
+        allowed_values = ["accuracy", "critRate", "attack", "evasion", "armorBreak", "skillDamage", "critDamage", "hp"]  # noqa: E501
         if rune_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `rune_type` ({0}), must be one of {1}"
@@ -100,3 +73,30 @@ class Rune(Model):
             )
 
         self._rune_type = rune_type
+
+    @property
+    def level(self) -> str:
+        """Gets the level of this Rune.
+
+
+        :return: The level of this Rune.
+        :rtype: str
+        """
+        return self._level
+
+    @level.setter
+    def level(self, level: str):
+        """Sets the level of this Rune.
+
+
+        :param level: The level of this Rune.
+        :type level: str
+        """
+        allowed_values = ["blue1", "blue2", "green1", "green2", "yellow1", "yellow2", "yellow3", "purple1", "purple2", "purple3", "orange1", "orange2", "orange3", "orange4", "red1", "red2"]  # noqa: E501
+        if level not in allowed_values:
+            raise ValueError(
+                "Invalid value for `level` ({0}), must be one of {1}"
+                .format(level, allowed_values)
+            )
+
+        self._level = level

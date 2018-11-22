@@ -15,9 +15,11 @@ class Pet(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, level: int=None, tier: int=None, skill1level: int=None, skill2level: int=None, skill3level: int=None, skill4level: int=None):  # noqa: E501
+    def __init__(self, id: str=None, level: int=None, tier: int=None, skill1level: int=None, skill2level: int=None, skill3level: int=None, skill4level: int=None):  # noqa: E501
         """Pet - a model defined in Swagger
 
+        :param id: The id of this Pet.  # noqa: E501
+        :type id: str
         :param level: The level of this Pet.  # noqa: E501
         :type level: int
         :param tier: The tier of this Pet.  # noqa: E501
@@ -32,6 +34,7 @@ class Pet(Model):
         :type skill4level: int
         """
         self.swagger_types = {
+            'id': str,
             'level': int,
             'tier': int,
             'skill1level': int,
@@ -41,6 +44,7 @@ class Pet(Model):
         }
 
         self.attribute_map = {
+            'id': 'id',
             'level': 'level',
             'tier': 'tier',
             'skill1level': 'skill1level',
@@ -49,6 +53,7 @@ class Pet(Model):
             'skill4level': 'skill4level'
         }
 
+        self._id = id
         self._level = level
         self._tier = tier
         self._skill1level = skill1level
@@ -66,6 +71,35 @@ class Pet(Model):
         :rtype: Pet
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def id(self) -> str:
+        """Gets the id of this Pet.
+
+        Which pet is described  # noqa: E501
+
+        :return: The id of this Pet.
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: str):
+        """Sets the id of this Pet.
+
+        Which pet is described  # noqa: E501
+
+        :param id: The id of this Pet.
+        :type id: str
+        """
+        allowed_values = ["edison", "vinci", "raphael"]  # noqa: E501
+        if id not in allowed_values:
+            raise ValueError(
+                "Invalid value for `id` ({0}), must be one of {1}"
+                .format(id, allowed_values)
+            )
+
+        self._id = id
 
     @property
     def level(self) -> int:
@@ -87,8 +121,8 @@ class Pet(Model):
         :param level: The level of this Pet.
         :type level: int
         """
-        if level is not None and level > 120:  # noqa: E501
-            raise ValueError("Invalid value for `level`, must be a value less than or equal to `120`")  # noqa: E501
+        if level is not None and level > 200:  # noqa: E501
+            raise ValueError("Invalid value for `level`, must be a value less than or equal to `200`")  # noqa: E501
         if level is not None and level < 0:  # noqa: E501
             raise ValueError("Invalid value for `level`, must be a value greater than or equal to `0`")  # noqa: E501
 

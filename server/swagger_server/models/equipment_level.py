@@ -20,8 +20,19 @@ class EquipmentLevel(Model):
     """
     GREEN1 = "green1"
     GREEN2 = "green2"
+    BLUE1 = "blue1"
+    BLUE2 = "blue2"
+    YELLOW1 = "yellow1"
+    YELLOW2 = "yellow2"
+    YELLOW3 = "yellow3"
+    PURPLE1 = "purple1"
+    PURPLE2 = "purple2"
+    PURPLE3 = "purple3"
+    PURPLE4 = "purple4"
     ORANGE1 = "orange1"
     ORANGE2 = "orange2"
+    ORANGE3 = "orange3"
+    ORANGE4 = "orange4"
 
     def __init__(self):  # noqa: E501
         """EquipmentLevel - a model defined in Swagger

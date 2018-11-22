@@ -73,6 +73,8 @@ class Player(Model):
         :param pet_bonus: The pet_bonus of this Player.
         :type pet_bonus: PlayerPetBonus
         """
+        if pet_bonus is None:
+            raise ValueError("Invalid value for `pet_bonus`, must not be `None`")  # noqa: E501
 
         self._pet_bonus = pet_bonus
 
@@ -94,6 +96,8 @@ class Player(Model):
         :param active_pet: The active_pet of this Player.
         :type active_pet: Pet
         """
+        if active_pet is None:
+            raise ValueError("Invalid value for `active_pet`, must not be `None`")  # noqa: E501
 
         self._active_pet = active_pet
 

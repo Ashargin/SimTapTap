@@ -191,5 +191,7 @@ class Hero(Model):
         :param equipment: The equipment of this Hero.
         :type equipment: HeroEquipment
         """
+        if equipment is None:
+            raise ValueError("Invalid value for `equipment`, must not be `None`")  # noqa: E501
 
         self._equipment = equipment

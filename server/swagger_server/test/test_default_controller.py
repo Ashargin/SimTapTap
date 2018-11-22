@@ -19,11 +19,11 @@ class TestDefaultController(BaseTestCase):
 
         Simulates a given number of battles
         """
-        count = SimulateRequest()
+        simulateRequest = SimulateRequest()
         response = self.client.open(
             '/gitterrost4/TapTapSim/1.0.0/battle/simulate',
             method='POST',
-            data=json.dumps(count),
+            data=json.dumps(simulateRequest),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -33,11 +33,11 @@ class TestDefaultController(BaseTestCase):
 
         calculates stats for the specified hero with the specified equipment
         """
-        StatEnvironment = StatRequest()
+        statRequest = StatRequest()
         response = self.client.open(
             '/gitterrost4/TapTapSim/1.0.0/hero/stats',
             method='POST',
-            data=json.dumps(StatEnvironment),
+            data=json.dumps(statRequest),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))

@@ -92,6 +92,8 @@ class Team(Model):
         :param player: The player of this Team.
         :type player: Player
         """
+        if player is None:
+            raise ValueError("Invalid value for `player`, must not be `None`")  # noqa: E501
 
         self._player = player
 

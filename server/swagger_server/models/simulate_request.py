@@ -57,7 +57,7 @@ class SimulateRequest(Model):
     def repeat(self) -> int:
         """Gets the repeat of this SimulateRequest.
 
-        How many battles should be simulated. Defaults to 1  # noqa: E501
+        How many battles should be simulated.  # noqa: E501
 
         :return: The repeat of this SimulateRequest.
         :rtype: int
@@ -68,7 +68,7 @@ class SimulateRequest(Model):
     def repeat(self, repeat: int):
         """Sets the repeat of this SimulateRequest.
 
-        How many battles should be simulated. Defaults to 1  # noqa: E501
+        How many battles should be simulated.  # noqa: E501
 
         :param repeat: The repeat of this SimulateRequest.
         :type repeat: int
@@ -98,6 +98,8 @@ class SimulateRequest(Model):
         :param attacker: The attacker of this SimulateRequest.
         :type attacker: Team
         """
+        if attacker is None:
+            raise ValueError("Invalid value for `attacker`, must not be `None`")  # noqa: E501
 
         self._attacker = attacker
 
@@ -119,5 +121,7 @@ class SimulateRequest(Model):
         :param defender: The defender of this SimulateRequest.
         :type defender: Team
         """
+        if defender is None:
+            raise ValueError("Invalid value for `defender`, must not be `None`")  # noqa: E501
 
         self._defender = defender

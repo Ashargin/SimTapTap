@@ -172,6 +172,8 @@ class HeroEquipment(Model):
         :param rune: The rune of this HeroEquipment.
         :type rune: Rune
         """
+        if rune is None:
+            raise ValueError("Invalid value for `rune`, must not be `None`")  # noqa: E501
 
         self._rune = rune
 
@@ -193,5 +195,7 @@ class HeroEquipment(Model):
         :param artifact: The artifact of this HeroEquipment.
         :type artifact: Artifact
         """
+        if artifact is None:
+            raise ValueError("Invalid value for `artifact`, must not be `None`")  # noqa: E501
 
         self._artifact = artifact

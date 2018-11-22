@@ -15,26 +15,26 @@ class Artifact(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, stars: float=None, id: str=None):  # noqa: E501
+    def __init__(self, id: str=None, stars: int=None):  # noqa: E501
         """Artifact - a model defined in Swagger
 
-        :param stars: The stars of this Artifact.  # noqa: E501
-        :type stars: float
         :param id: The id of this Artifact.  # noqa: E501
         :type id: str
+        :param stars: The stars of this Artifact.  # noqa: E501
+        :type stars: int
         """
         self.swagger_types = {
-            'stars': float,
-            'id': str
+            'id': str,
+            'stars': int
         }
 
         self.attribute_map = {
-            'stars': 'stars',
-            'id': 'id'
+            'id': 'id',
+            'stars': 'stars'
         }
 
-        self._stars = stars
         self._id = id
+        self._stars = stars
 
     @classmethod
     def from_dict(cls, dikt) -> 'Artifact':
@@ -46,29 +46,6 @@ class Artifact(Model):
         :rtype: Artifact
         """
         return util.deserialize_model(dikt, cls)
-
-    @property
-    def stars(self) -> float:
-        """Gets the stars of this Artifact.
-
-        Number of stars the artifact is leveled up to  # noqa: E501
-
-        :return: The stars of this Artifact.
-        :rtype: float
-        """
-        return self._stars
-
-    @stars.setter
-    def stars(self, stars: float):
-        """Sets the stars of this Artifact.
-
-        Number of stars the artifact is leveled up to  # noqa: E501
-
-        :param stars: The stars of this Artifact.
-        :type stars: float
-        """
-
-        self._stars = stars
 
     @property
     def id(self) -> str:
@@ -90,7 +67,7 @@ class Artifact(Model):
         :param id: The id of this Artifact.
         :type id: str
         """
-        allowed_values = ["queensCrown", "windWalker"]  # noqa: E501
+        allowed_values = ["queensCrown", "windWalker", "knightsVow"]  # noqa: E501
         if id not in allowed_values:
             raise ValueError(
                 "Invalid value for `id` ({0}), must be one of {1}"
@@ -98,3 +75,30 @@ class Artifact(Model):
             )
 
         self._id = id
+
+    @property
+    def stars(self) -> int:
+        """Gets the stars of this Artifact.
+
+        Number of stars the artifact is leveled up to  # noqa: E501
+
+        :return: The stars of this Artifact.
+        :rtype: int
+        """
+        return self._stars
+
+    @stars.setter
+    def stars(self, stars: int):
+        """Sets the stars of this Artifact.
+
+        Number of stars the artifact is leveled up to  # noqa: E501
+
+        :param stars: The stars of this Artifact.
+        :type stars: int
+        """
+        if stars is not None and stars > 6:  # noqa: E501
+            raise ValueError("Invalid value for `stars`, must be a value less than or equal to `6`")  # noqa: E501
+        if stars is not None and stars < 1:  # noqa: E501
+            raise ValueError("Invalid value for `stars`, must be a value greater than or equal to `1`")  # noqa: E501
+
+        self._stars = stars

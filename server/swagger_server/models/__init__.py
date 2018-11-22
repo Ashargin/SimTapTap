@@ -9,6 +9,7 @@ from swagger_server.models.equipment_level import EquipmentLevel
 from swagger_server.models.hero import Hero
 from swagger_server.models.hero_equipment import HeroEquipment
 from swagger_server.models.hero_stats import HeroStats
+from swagger_server.models.hero_stats_stats import HeroStatsStats
 from swagger_server.models.pet import Pet
 from swagger_server.models.player import Player
 from swagger_server.models.player_guild_tech import PlayerGuildTech
