@@ -67,7 +67,7 @@ class Artifact(Model):
         :param id: The id of this Artifact.
         :type id: str
         """
-        allowed_values = ["queensCrown", "windWalker", "knightsVow"]  # noqa: E501
+        allowed_values = ["QUEENS_CROWN", "WIND_WALKER", "KNIGHTS_VOW"]  # noqa: E501
         if id not in allowed_values:
             raise ValueError(
                 "Invalid value for `id` ({0}), must be one of {1}"

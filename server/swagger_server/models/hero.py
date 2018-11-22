@@ -83,7 +83,7 @@ class Hero(Model):
         :param id: The id of this Hero.
         :type id: str
         """
-        allowed_values = ["sawMachine", "scarlet"]  # noqa: E501
+        allowed_values = ["CENTAUR", "DZIEWONA", "FOREST_HEALER", "FREYA", "GERALD", "LUNA", "MEDUSA", "REAPER", "RLYEH", "SAW_MACHINE", "SCARLET", "VERTHANDI"]  # noqa: E501
         if id not in allowed_values:
             raise ValueError(
                 "Invalid value for `id` ({0}), must be one of {1}"

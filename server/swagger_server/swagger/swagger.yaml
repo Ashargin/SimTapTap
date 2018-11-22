@@ -83,31 +83,31 @@ definitions:
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
       - tier: 6
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
       player:
         petBonus:
@@ -118,7 +118,7 @@ definitions:
           tier: 3
           level: 155
           skill3level: 1
-          id: "raphael"
+          id: "RAPHAEL"
           skill1level: 53
           skill4level: 0
         guildTech:
@@ -176,80 +176,80 @@ definitions:
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroRear2:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroRear1:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroFront3:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroFront2:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         player:
           petBonus:
@@ -260,7 +260,7 @@ definitions:
             tier: 3
             level: 155
             skill3level: 1
-            id: "raphael"
+            id: "RAPHAEL"
             skill1level: 53
             skill4level: 0
           guildTech:
@@ -299,16 +299,16 @@ definitions:
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
       defender:
         heroRear3:
@@ -316,80 +316,80 @@ definitions:
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroRear2:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroRear1:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroFront3:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         heroFront2:
           tier: 6
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
         player:
           petBonus:
@@ -400,7 +400,7 @@ definitions:
             tier: 3
             level: 155
             skill3level: 1
-            id: "raphael"
+            id: "RAPHAEL"
             skill1level: 53
             skill4level: 0
           guildTech:
@@ -439,16 +439,16 @@ definitions:
           level: 200
           equipment:
             artifact:
-              id: "knightsVow"
+              id: "KNIGHTS_VOW"
               stars: 6
-            weapon: "orange2"
-            chest: "orange2"
-            helmet: "orange2"
-            pendant: "orange2"
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
             rune:
-              level: "red2"
-              runeType: "hp"
-          id: "sawMachine"
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
           stars: 9
   Hero:
     required:
@@ -457,11 +457,21 @@ definitions:
     properties:
       id:
         type: "string"
-        example: "sawMachine"
+        example: "SAW_MACHINE"
         description: "Which hero is requested."
         enum:
-        - "sawMachine"
-        - "scarlet"
+        - "CENTAUR"
+        - "DZIEWONA"
+        - "FOREST_HEALER"
+        - "FREYA"
+        - "GERALD"
+        - "LUNA"
+        - "MEDUSA"
+        - "REAPER"
+        - "RLYEH"
+        - "SAW_MACHINE"
+        - "SCARLET"
+        - "VERTHANDI"
       level:
         type: "integer"
         example: 200
@@ -488,16 +498,16 @@ definitions:
       level: 200
       equipment:
         artifact:
-          id: "knightsVow"
+          id: "KNIGHTS_VOW"
           stars: 6
-        weapon: "orange2"
-        chest: "orange2"
-        helmet: "orange2"
-        pendant: "orange2"
+        weapon: "ORANGE2"
+        chest: "ORANGE2"
+        helmet: "ORANGE2"
+        pendant: "ORANGE2"
         rune:
-          level: "red2"
-          runeType: "hp"
-      id: "sawMachine"
+          level: "RED2"
+          runeType: "HP"
+      id: "SAW_MACHINE"
       stars: 9
   HeroStats:
     required:
@@ -510,34 +520,34 @@ definitions:
         $ref: "#/definitions/HeroStats_stats"
     example:
       stats:
-        dodge: 0.0
-        hp: 634205.0
-        critDamage: 0.0
-        critRate: 0.2
-        controlResist: 0.0
-        hitRate: 0.15
-        speed: 984.0
-        trueDamage: 0.0
-        skillDamage: 1.4
-        defense: 13.0
-        attack: 25152.0
-        defenseBreak: 0.0
-        reduceDamage: 0.0
+        dodge: 0
+        hp: 634205
+        critDamage: 0
+        critRate: 0.200000000000000011102230246251565404236316680908203125
+        controlResist: 0
+        hitRate: 0.1499999999999999944488848768742172978818416595458984375
+        speed: 984
+        trueDamage: 0
+        skillDamage: 1.399999999999999911182158029987476766109466552734375
+        defense: 13
+        attack: 25152
+        defenseBreak: 0
+        reduceDamage: 0
       hero:
         tier: 6
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
   Player:
     required:
@@ -559,7 +569,7 @@ definitions:
         tier: 3
         level: 155
         skill3level: 1
-        id: "raphael"
+        id: "RAPHAEL"
         skill1level: 53
         skill4level: 0
       guildTech:
@@ -595,76 +605,76 @@ definitions:
           tier1: 60
   EquipmentLevel:
     type: "string"
-    example: "orange2"
+    example: "ORANGE2"
     enum:
-    - "green1"
-    - "green2"
-    - "blue1"
-    - "blue2"
-    - "yellow1"
-    - "yellow2"
-    - "yellow3"
-    - "purple1"
-    - "purple2"
-    - "purple3"
-    - "purple4"
-    - "orange1"
-    - "orange2"
-    - "orange3"
-    - "orange4"
-    default: "orange4"
+    - "GREEN1"
+    - "GREEN2"
+    - "BLUE1"
+    - "BLUE2"
+    - "YELLOW1"
+    - "YELLOW2"
+    - "YELLOW3"
+    - "PURPLE1"
+    - "PURPLE2"
+    - "PURPLE3"
+    - "PURPLE4"
+    - "ORANGE1"
+    - "ORANGE2"
+    - "ORANGE3"
+    - "ORANGE4"
+    default: "ORANGE4"
   Rune:
     required:
     - "runeType"
     properties:
       runeType:
         type: "string"
-        example: "hp"
+        example: "HP"
         enum:
-        - "accuracy"
-        - "critRate"
-        - "attack"
-        - "evasion"
-        - "armorBreak"
-        - "skillDamage"
-        - "critDamage"
-        - "hp"
+        - "ACCURACY"
+        - "CRITRATE"
+        - "ATTACK"
+        - "EVASION"
+        - "ARMORBREAK"
+        - "SKILLDAMAGE"
+        - "CRITDAMAGE"
+        - "HP"
       level:
         type: "string"
-        example: "red2"
-        default: "red2"
+        example: "RED2"
+        default: "RED2"
         enum:
-        - "blue1"
-        - "blue2"
-        - "green1"
-        - "green2"
-        - "yellow1"
-        - "yellow2"
-        - "yellow3"
-        - "purple1"
-        - "purple2"
-        - "purple3"
-        - "orange1"
-        - "orange2"
-        - "orange3"
-        - "orange4"
-        - "red1"
-        - "red2"
+        - "BLUE1"
+        - "BLUE2"
+        - "GREEN1"
+        - "GREEN2"
+        - "YELLOW1"
+        - "YELLOW2"
+        - "YELLOW3"
+        - "PURPLE1"
+        - "PURPLE2"
+        - "PURPLE3"
+        - "ORANGE1"
+        - "ORANGE2"
+        - "ORANGE3"
+        - "ORANGE4"
+        - "RED1"
+        - "RED2"
     example:
-      level: "red2"
-      runeType: "hp"
+      level: "RED2"
+      runeType: "HP"
   Artifact:
     required:
     - "id"
     properties:
       id:
         type: "string"
-        example: "knightsVow"
+        example: "KNIGHTS_VOW"
         description: "What artifact this refers to"
         enum:
-        - "queensCrown"
-        - "windWalker"
-        - "knightsVow"
+        - "QUEENS_CROWN"
+        - "WIND_WALKER"
+        - "KNIGHTS_VOW"
       stars:
         type: "integer"
         example: 6
@@ -673,7 +683,7 @@ definitions:
         maximum: 6
     description: "Describes a certain artifact at a certain level"
     example:
-      id: "knightsVow"
+      id: "KNIGHTS_VOW"
       stars: 6
   Pet:
     required:
@@ -681,12 +691,12 @@ definitions:
     properties:
       id:
         type: "string"
-        example: "raphael"
+        example: "RAPHAEL"
         description: "Which pet is described"
         enum:
-        - "edison"
-        - "vinci"
-        - "raphael"
+        - "EDISON"
+        - "VINCI"
+        - "RAPHAEL"
       level:
         type: "integer"
         example: 155
@@ -729,7 +739,7 @@ definitions:
       tier: 3
       level: 155
       skill3level: 1
-      id: "raphael"
+      id: "RAPHAEL"
       skill1level: 53
       skill4level: 0
   ClassGuildTech:
@@ -797,80 +807,80 @@ definitions:
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
       heroRear2:
         tier: 6
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
       heroRear1:
         tier: 6
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
       heroFront3:
         tier: 6
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
       heroFront2:
         tier: 6
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
       player:
         petBonus:
@@ -881,7 +891,7 @@ definitions:
           tier: 3
           level: 155
           skill3level: 1
-          id: "raphael"
+          id: "RAPHAEL"
           skill1level: 53
           skill4level: 0
         guildTech:
@@ -920,16 +930,16 @@ definitions:
         level: 200
         equipment:
           artifact:
-            id: "knightsVow"
+            id: "KNIGHTS_VOW"
             stars: 6
-          weapon: "orange2"
-          chest: "orange2"
-          helmet: "orange2"
-          pendant: "orange2"
+          weapon: "ORANGE2"
+          chest: "ORANGE2"
+          helmet: "ORANGE2"
+          pendant: "ORANGE2"
           rune:
-            level: "red2"
-            runeType: "hp"
-        id: "sawMachine"
+            level: "RED2"
+            runeType: "HP"
+        id: "SAW_MACHINE"
         stars: 9
   Hero_equipment:
     required:
@@ -951,86 +961,86 @@ definitions:
     description: "Object describing anything the hero has equipped"
     example:
       artifact:
-        id: "knightsVow"
+        id: "KNIGHTS_VOW"
         stars: 6
-      weapon: "orange2"
-      chest: "orange2"
-      helmet: "orange2"
-      pendant: "orange2"
+      weapon: "ORANGE2"
+      chest: "ORANGE2"
+      helmet: "ORANGE2"
+      pendant: "ORANGE2"
       rune:
-        level: "red2"
-        runeType: "hp"
+        level: "RED2"
+        runeType: "HP"
   HeroStats_stats:
     properties:
       hp:
         type: "number"
-        example: 634205.0
+        example: 634205
         description: "Health of the Hero"
       attack:
         type: "number"
-        example: 25152.0
+        example: 25152
         description: "Attack of the Hero"
       defense:
         type: "number"
-        example: 13.0
+        example: 13
         description: "Defense of the Hero"
       speed:
         type: "number"
-        example: 984.0
+        example: 984
         description: "Speed of the Hero"
       defenseBreak:
         type: "number"
-        example: 0.0
+        example: 0
         description: "Defense Break of the Hero"
       skillDamage:
         type: "number"
-        example: 1.4
+        example: 1.399999999999999911182158029987476766109466552734375
         description: "Skill Damage of the Hero"
       hitRate:
         type: "number"
-        example: 0.15
+        example: 0.1499999999999999944488848768742172978818416595458984375
         description: "Hit rate of the Hero (as a bonus which is added to the natural\
           \ hit rate)"
       dodge:
         type: "number"
-        example: 0.0
+        example: 0
         description: "Dodge rate of the Hero"
       critRate:
         type: "number"
-        example: 0.2
+        example: 0.200000000000000011102230246251565404236316680908203125
         description: "Crit rate of the Hero"
       critDamage:
         type: "number"
-        example: 0.0
+        example: 0
         description: "Crit damage of the Hero (which is added to the natural 50% crit\
           \ damage bonus)"
       trueDamage:
         type: "number"
-        example: 0.0
+        example: 0
         description: "True damage of the Hero"
       reduceDamage:
         type: "number"
-        example: 0.0
+        example: 0
         description: "Reduce damage of the Hero"
       controlResist:
         type: "number"
-        example: 0.0
+        example: 0
         description: "Control resist of the Hero"
     description: "Collection of all stats regarding this hero"
     example:
-      dodge: 0.0
-      hp: 634205.0
-      critDamage: 0.0
-      critRate: 0.2
-      controlResist: 0.0
-      hitRate: 0.15
-      speed: 984.0
-      trueDamage: 0.0
-      skillDamage: 1.4
-      defense: 13.0
-      attack: 25152.0
-      defenseBreak: 0.0
-      reduceDamage: 0.0
+      dodge: 0
+      hp: 634205
+      critDamage: 0
+      critRate: 0.200000000000000011102230246251565404236316680908203125
+      controlResist: 0
+      hitRate: 0.1499999999999999944488848768742172978818416595458984375
+      speed: 984
+      trueDamage: 0
+      skillDamage: 1.399999999999999911182158029987476766109466552734375
+      defense: 13
+      attack: 25152
+      defenseBreak: 0
+      reduceDamage: 0
   Player_petBonus:
     properties:
       hpBonus:

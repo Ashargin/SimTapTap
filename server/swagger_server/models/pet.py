@@ -92,7 +92,7 @@ class Pet(Model):
         :param id: The id of this Pet.
         :type id: str
         """
-        allowed_values = ["edison", "vinci", "raphael"]  # noqa: E501
+        allowed_values = ["EDISON", "VINCI", "RAPHAEL"]  # noqa: E501
         if id not in allowed_values:
             raise ValueError(
                 "Invalid value for `id` ({0}), must be one of {1}"
