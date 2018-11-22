@@ -74,7 +74,7 @@ class BaseHero:
         self.hit_rate = 0
         self.dodge = 0
         self.crit_rate = 0
-        self.crit_damage = 0.5
+        self.crit_damage = 0
         self.true_damage = 0
         self.damage_reduction = 0
         self.control_immune = 0
@@ -220,7 +220,7 @@ class BaseHero:
         crit_damage = 0
         crit = self.compute_crit(target)
         if crit:
-            crit_damage = self.crit_damage
+            crit_damage = self.crit_damage + 0.5
 
         skill_damage = 0
         if skill:
@@ -614,7 +614,7 @@ class BaseHero:
     def print_stats(self):
         stats = [self.hp, self.atk, self.armor, self.speed, 
                 self.armor_break, self.skill_damage, self.hit_rate, self.dodge, 
-                self.crit_rate, self.crit_damage - 0.5, self.true_damage, self.damage_reduction, 
+                self.crit_rate, self.crit_damage, self.true_damage, self.damage_reduction, 
                 self.control_immune, self.damage_to_warriors, 
                 self.damage_to_assassins, self.damage_to_wanderers, 
                 self.damage_to_clerics, self.damage_to_mages]
