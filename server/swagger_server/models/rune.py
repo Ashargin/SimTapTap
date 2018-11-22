@@ -65,7 +65,7 @@ class Rune(Model):
         :param rune_type: The rune_type of this Rune.
         :type rune_type: str
         """
-        allowed_values = ["ACCURACY", "CRITRATE", "ATTACK", "EVASION", "ARMORBREAK", "SKILLDAMAGE", "CRITDAMAGE", "HP"]  # noqa: E501
+        allowed_values = ["ACCURACY", "CRIT_RATE", "ATTACK", "EVASION", "ARMOR_BREAK", "SKILL_DAMAGE", "CRIT_DAMAGE", "HP"]  # noqa: E501
         if rune_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `rune_type` ({0}), must be one of {1}"
