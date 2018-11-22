@@ -15,13 +15,13 @@ sim = Sim(team_1, team_2, n_sim=1000)
 sim.process()
 sim.print_winrate()
 
-# priority:
-# check that atk boosts are multiplicative between skills and additive beneath skills, even for atk_down
-# (maybe atk_down is multiplicative between stacks of the same skill?)
-# make sure atk > 0 (and crit damage > 0, or > 0.5, and armor break > 0?)
-
 # todo:
+# connect the engine to the server
 # add all heroes
+# make sure crit_damage > 0, armor_break > 0
+# set stats depending on the hero level
 
-# kind of minor : check every behaviour marked with "check" comments
-# minor : store stats during battles, display graphs
+# check if stacks of attack_up from different sources, same skill, are multiplicative
+# check if stacks of attack_up from different sources, different skill, are multiplicative
+# check every behaviour marked with "check" comments
+# store stats during battles, display graphs

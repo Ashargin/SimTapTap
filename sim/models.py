@@ -468,6 +468,26 @@ class Armor:
     O4 = ArmorO4
 
 
+armor_from_request = {
+                    'EMPTY': Armor.empty, 
+                    'GREEN1': Armor.G1, 
+                    'GREEN2': Armor.G2, 
+                    'BLUE1': Armor.B1, 
+                    'BLUE2': Armor.B2, 
+                    'YELLOW1': Armor.Y1, 
+                    'YELLOW2': Armor.Y2, 
+                    'YELLOW3': Armor.Y3, 
+                    'PURPLE1': Armor.P1, 
+                    'PURPLE2': Armor.P2, 
+                    'PURPLE3': Armor.P3, 
+                    'PURPLE4': Armor.P4, 
+                    'ORANGE1': Armor.O1, 
+                    'ORANGE2': Armor.O2, 
+                    'ORANGE3': Armor.O3, 
+                    'ORANGE4': Armor.O4
+                    }
+
+
 @dataclass
 class Helmet:
     empty = EmptyItem
@@ -486,6 +506,26 @@ class Helmet:
     O2 = HelmetO2
     O3 = HelmetO3
     O4 = HelmetO4
+
+
+helmet_from_request = {
+                    'EMPTY': Helmet.empty, 
+                    'GREEN1': Helmet.G1, 
+                    'GREEN2': Helmet.G2, 
+                    'BLUE1': Helmet.B1, 
+                    'BLUE2': Helmet.B2, 
+                    'YELLOW1': Helmet.Y1, 
+                    'YELLOW2': Helmet.Y2, 
+                    'YELLOW3': Helmet.Y3, 
+                    'PURPLE1': Helmet.P1, 
+                    'PURPLE2': Helmet.P2, 
+                    'PURPLE3': Helmet.P3, 
+                    'PURPLE4': Helmet.P4, 
+                    'ORANGE1': Helmet.O1, 
+                    'ORANGE2': Helmet.O2, 
+                    'ORANGE3': Helmet.O3, 
+                    'ORANGE4': Helmet.O4
+                    }
 
 
 @dataclass
@@ -508,6 +548,26 @@ class Weapon:
     O4 = WeaponO4
 
 
+weapon_from_request = {
+                    'EMPTY': Weapon.empty, 
+                    'GREEN1': Weapon.G1, 
+                    'GREEN2': Weapon.G2, 
+                    'BLUE1': Weapon.B1, 
+                    'BLUE2': Weapon.B2, 
+                    'YELLOW1': Weapon.Y1, 
+                    'YELLOW2': Weapon.Y2, 
+                    'YELLOW3': Weapon.Y3, 
+                    'PURPLE1': Weapon.P1, 
+                    'PURPLE2': Weapon.P2, 
+                    'PURPLE3': Weapon.P3, 
+                    'PURPLE4': Weapon.P4, 
+                    'ORANGE1': Weapon.O1, 
+                    'ORANGE2': Weapon.O2, 
+                    'ORANGE3': Weapon.O3, 
+                    'ORANGE4': Weapon.O4
+                    }
+
+
 @dataclass
 class Pendant:
     empty = EmptyItem
@@ -526,6 +586,26 @@ class Pendant:
     O2 = PendantO2
     O3 = PendantO3
     O4 = PendantO4
+
+
+pendant_from_request = {
+                    'EMPTY': Pendant.empty, 
+                    'GREEN1': Pendant.G1, 
+                    'GREEN2': Pendant.G2, 
+                    'BLUE1': Pendant.B1, 
+                    'BLUE2': Pendant.B2, 
+                    'YELLOW1': Pendant.Y1, 
+                    'YELLOW2': Pendant.Y2, 
+                    'YELLOW3': Pendant.Y3, 
+                    'PURPLE1': Pendant.P1, 
+                    'PURPLE2': Pendant.P2, 
+                    'PURPLE3': Pendant.P3, 
+                    'PURPLE4': Pendant.P4, 
+                    'ORANGE1': Pendant.O1, 
+                    'ORANGE2': Pendant.O2, 
+                    'ORANGE3': Pendant.O3, 
+                    'ORANGE4': Pendant.O4
+                    }
 
 
 ## Rune
@@ -1046,6 +1126,26 @@ class AccuracyRune:
     R2 = AccuracyRuneR2()
 
 
+accuracy_rune_from_request = {
+                    'BLUE1': AccuracyRune.B1, 
+                    'BLUE2': AccuracyRune.B2, 
+                    'GREEN1': AccuracyRune.G1, 
+                    'GREEN2': AccuracyRune.G2, 
+                    'YELLOW1': AccuracyRune.Y1, 
+                    'YELLOW2': AccuracyRune.Y2, 
+                    'YELLOW3': AccuracyRune.Y3, 
+                    'PURPLE1': AccuracyRune.P1, 
+                    'PURPLE2': AccuracyRune.P2, 
+                    'PURPLE3': AccuracyRune.P3, 
+                    'ORANGE1': AccuracyRune.O1, 
+                    'ORANGE2': AccuracyRune.O2, 
+                    'ORANGE3': AccuracyRune.O3, 
+                    'ORANGE4': AccuracyRune.O4, 
+                    'RED1': AccuracyRune.R1, 
+                    'RED2': AccuracyRune.R2
+                    }
+
+
 @dataclass
 class CritRateRune:
     B1 = CritRateRuneB1()
@@ -1064,6 +1164,26 @@ class CritRateRune:
     O4 = CritRateRuneO4()
     R1 = CritRateRuneR1()
     R2 = CritRateRuneR2()
+
+
+crit_rate_rune_from_request = {
+                    'BLUE1': CritRateRune.B1, 
+                    'BLUE2': CritRateRune.B2, 
+                    'GREEN1': CritRateRune.G1, 
+                    'GREEN2': CritRateRune.G2, 
+                    'YELLOW1': CritRateRune.Y1, 
+                    'YELLOW2': CritRateRune.Y2, 
+                    'YELLOW3': CritRateRune.Y3, 
+                    'PURPLE1': CritRateRune.P1, 
+                    'PURPLE2': CritRateRune.P2, 
+                    'PURPLE3': CritRateRune.P3, 
+                    'ORANGE1': CritRateRune.O1, 
+                    'ORANGE2': CritRateRune.O2, 
+                    'ORANGE3': CritRateRune.O3, 
+                    'ORANGE4': CritRateRune.O4, 
+                    'RED1': CritRateRune.R1, 
+                    'RED2': CritRateRune.R2
+                    }
 
 
 @dataclass
@@ -1086,6 +1206,26 @@ class AttackRune:
     R2 = AttackRuneR2()
 
 
+attack_rune_from_request = {
+                    'BLUE1': AttackRune.B1, 
+                    'BLUE2': AttackRune.B2, 
+                    'GREEN1': AttackRune.G1, 
+                    'GREEN2': AttackRune.G2, 
+                    'YELLOW1': AttackRune.Y1, 
+                    'YELLOW2': AttackRune.Y2, 
+                    'YELLOW3': AttackRune.Y3, 
+                    'PURPLE1': AttackRune.P1, 
+                    'PURPLE2': AttackRune.P2, 
+                    'PURPLE3': AttackRune.P3, 
+                    'ORANGE1': AttackRune.O1, 
+                    'ORANGE2': AttackRune.O2, 
+                    'ORANGE3': AttackRune.O3, 
+                    'ORANGE4': AttackRune.O4, 
+                    'RED1': AttackRune.R1, 
+                    'RED2': AttackRune.R2
+                    }
+
+
 @dataclass
 class EvasionRune:
     B1 = EvasionRuneB1()
@@ -1104,6 +1244,26 @@ class EvasionRune:
     O4 = EvasionRuneO4()
     R1 = EvasionRuneR1()
     R2 = EvasionRuneR2()
+
+
+evasion_rune_from_request = {
+                    'BLUE1': EvasionRune.B1, 
+                    'BLUE2': EvasionRune.B2, 
+                    'GREEN1': EvasionRune.G1, 
+                    'GREEN2': EvasionRune.G2, 
+                    'YELLOW1': EvasionRune.Y1, 
+                    'YELLOW2': EvasionRune.Y2, 
+                    'YELLOW3': EvasionRune.Y3, 
+                    'PURPLE1': EvasionRune.P1, 
+                    'PURPLE2': EvasionRune.P2, 
+                    'PURPLE3': EvasionRune.P3, 
+                    'ORANGE1': EvasionRune.O1, 
+                    'ORANGE2': EvasionRune.O2, 
+                    'ORANGE3': EvasionRune.O3, 
+                    'ORANGE4': EvasionRune.O4, 
+                    'RED1': EvasionRune.R1, 
+                    'RED2': EvasionRune.R2
+                    }
 
 
 @dataclass
@@ -1126,6 +1286,26 @@ class ArmorBreakRune:
     R2 = ArmorBreakRuneR2()
 
 
+armor_break_rune_from_request = {
+                    'BLUE1': ArmorBreakRune.B1, 
+                    'BLUE2': ArmorBreakRune.B2, 
+                    'GREEN1': ArmorBreakRune.G1, 
+                    'GREEN2': ArmorBreakRune.G2, 
+                    'YELLOW1': ArmorBreakRune.Y1, 
+                    'YELLOW2': ArmorBreakRune.Y2, 
+                    'YELLOW3': ArmorBreakRune.Y3, 
+                    'PURPLE1': ArmorBreakRune.P1, 
+                    'PURPLE2': ArmorBreakRune.P2, 
+                    'PURPLE3': ArmorBreakRune.P3, 
+                    'ORANGE1': ArmorBreakRune.O1, 
+                    'ORANGE2': ArmorBreakRune.O2, 
+                    'ORANGE3': ArmorBreakRune.O3, 
+                    'ORANGE4': ArmorBreakRune.O4, 
+                    'RED1': ArmorBreakRune.R1, 
+                    'RED2': ArmorBreakRune.R2
+                    }
+
+
 @dataclass
 class SkillDamageRune:
     B1 = SkillDamageRuneB1()
@@ -1144,6 +1324,26 @@ class SkillDamageRune:
     O4 = SkillDamageRuneO4()
     R1 = SkillDamageRuneR1()
     R2 = SkillDamageRuneR2()
+
+
+skill_damage_rune_from_request = {
+                    'BLUE1': SkillDamageRune.B1, 
+                    'BLUE2': SkillDamageRune.B2, 
+                    'GREEN1': SkillDamageRune.G1, 
+                    'GREEN2': SkillDamageRune.G2, 
+                    'YELLOW1': SkillDamageRune.Y1, 
+                    'YELLOW2': SkillDamageRune.Y2, 
+                    'YELLOW3': SkillDamageRune.Y3, 
+                    'PURPLE1': SkillDamageRune.P1, 
+                    'PURPLE2': SkillDamageRune.P2, 
+                    'PURPLE3': SkillDamageRune.P3, 
+                    'ORANGE1': SkillDamageRune.O1, 
+                    'ORANGE2': SkillDamageRune.O2, 
+                    'ORANGE3': SkillDamageRune.O3, 
+                    'ORANGE4': SkillDamageRune.O4, 
+                    'RED1': SkillDamageRune.R1, 
+                    'RED2': SkillDamageRune.R2
+                    }
 
 
 @dataclass
@@ -1166,6 +1366,26 @@ class CritDamageRune:
     R2 = CritDamageRuneR2()
 
 
+crit_damage_rune_from_request = {
+                    'BLUE1': CritDamageRune.B1, 
+                    'BLUE2': CritDamageRune.B2, 
+                    'GREEN1': CritDamageRune.G1, 
+                    'GREEN2': CritDamageRune.G2, 
+                    'YELLOW1': CritDamageRune.Y1, 
+                    'YELLOW2': CritDamageRune.Y2, 
+                    'YELLOW3': CritDamageRune.Y3, 
+                    'PURPLE1': CritDamageRune.P1, 
+                    'PURPLE2': CritDamageRune.P2, 
+                    'PURPLE3': CritDamageRune.P3, 
+                    'ORANGE1': CritDamageRune.O1, 
+                    'ORANGE2': CritDamageRune.O2, 
+                    'ORANGE3': CritDamageRune.O3, 
+                    'ORANGE4': CritDamageRune.O4, 
+                    'RED1': CritDamageRune.R1, 
+                    'RED2': CritDamageRune.R2
+                    }
+
+
 @dataclass
 class HpRune:
     B1 = HpRuneB1()
@@ -1186,6 +1406,26 @@ class HpRune:
     R2 = HpRuneR2()
 
 
+hp_rune_from_request = {
+                    'BLUE1': HpRune.B1, 
+                    'BLUE2': HpRune.B2, 
+                    'GREEN1': HpRune.G1, 
+                    'GREEN2': HpRune.G2, 
+                    'YELLOW1': HpRune.Y1, 
+                    'YELLOW2': HpRune.Y2, 
+                    'YELLOW3': HpRune.Y3, 
+                    'PURPLE1': HpRune.P1, 
+                    'PURPLE2': HpRune.P2, 
+                    'PURPLE3': HpRune.P3, 
+                    'ORANGE1': HpRune.O1, 
+                    'ORANGE2': HpRune.O2, 
+                    'ORANGE3': HpRune.O3, 
+                    'ORANGE4': HpRune.O4, 
+                    'RED1': HpRune.R1, 
+                    'RED2': HpRune.R2
+                    }
+
+
 @dataclass
 class Rune:
     empty = EmptyRune()
@@ -1197,6 +1437,19 @@ class Rune:
     skill_damage = SkillDamageRune
     crit_damage = CritDamageRune
     hp = HpRune
+
+
+rune_from_request = {
+                    'EMPTY': Rune.empty, 
+                    'ACCURACY': accuracy_rune_from_request, 
+                    'CRIT_RATE': crit_rate_rune_from_request, 
+                    'ATTACK': attack_rune_from_request, 
+                    'EVASION': evasion_rune_from_request, 
+                    'ARMOR_BREAK': armor_break_rune_from_request, 
+                    'SKILL_DAMAGE': skill_damage_rune_from_request, 
+                    'CRIT_DAMAGE': crit_damage_rune_from_request, 
+                    'HP': hp_rune_from_request
+                    }
 
 
 ## Artifact
@@ -1251,6 +1504,21 @@ class WarriorArtifactB3(BaseArtifact):
 class WarriorArtifactB4(BaseArtifact):
     atk = 450
     damage_to_warriors = 0.15
+class WarriorArtifactY1(BaseArtifact):
+    atk = 360
+    damage_to_warriors = 0.12
+class WarriorArtifactY2(BaseArtifact):
+    atk = 420
+    damage_to_warriors = 0.14
+class WarriorArtifactY3(BaseArtifact):
+    atk = 480
+    damage_to_warriors = 0.16
+class WarriorArtifactY4(BaseArtifact):
+    atk = 540
+    damage_to_warriors = 0.18
+class WarriorArtifactY5(BaseArtifact):
+    atk = 600
+    damage_to_warriors = 0.2
 class WarriorArtifactP1(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
@@ -1310,6 +1578,21 @@ class AssassinArtifactB3(BaseArtifact):
 class AssassinArtifactB4(BaseArtifact):
     atk = 450
     damage_to_assassins = 0.15
+class AssassinArtifactY1(BaseArtifact):
+    atk = 360
+    damage_to_assassins = 0.12
+class AssassinArtifactY2(BaseArtifact):
+    atk = 420
+    damage_to_assassins = 0.14
+class AssassinArtifactY3(BaseArtifact):
+    atk = 480
+    damage_to_assassins = 0.16
+class AssassinArtifactY4(BaseArtifact):
+    atk = 540
+    damage_to_assassins = 0.18
+class AssassinArtifactY5(BaseArtifact):
+    atk = 600
+    damage_to_assassins = 0.2
 class AssassinArtifactP1(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
@@ -1369,6 +1652,21 @@ class WandererArtifactB3(BaseArtifact):
 class WandererArtifactB4(BaseArtifact):
     atk = 450
     damage_to_wanderers = 0.15
+class WandererArtifactY1(BaseArtifact):
+    atk = 360
+    damage_to_wanderers = 0.12
+class WandererArtifactY2(BaseArtifact):
+    atk = 420
+    damage_to_wanderers = 0.14
+class WandererArtifactY3(BaseArtifact):
+    atk = 480
+    damage_to_wanderers = 0.16
+class WandererArtifactY4(BaseArtifact):
+    atk = 540
+    damage_to_wanderers = 0.18
+class WandererArtifactY5(BaseArtifact):
+    atk = 600
+    damage_to_wanderers = 0.2
 class WandererArtifactP1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
@@ -1428,6 +1726,21 @@ class ClericArtifactB3(BaseArtifact):
 class ClericArtifactB4(BaseArtifact):
     atk = 450
     damage_to_clerics = 0.15
+class ClericArtifactY1(BaseArtifact):
+    atk = 360
+    damage_to_clerics = 0.12
+class ClericArtifactY2(BaseArtifact):
+    atk = 420
+    damage_to_clerics = 0.14
+class ClericArtifactY3(BaseArtifact):
+    atk = 480
+    damage_to_clerics = 0.16
+class ClericArtifactY4(BaseArtifact):
+    atk = 540
+    damage_to_clerics = 0.18
+class ClericArtifactY5(BaseArtifact):
+    atk = 600
+    damage_to_clerics = 0.2
 class ClericArtifactP1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
@@ -1487,6 +1800,21 @@ class MageArtifactB3(BaseArtifact):
 class MageArtifactB4(BaseArtifact):
     atk = 450
     damage_to_mages = 0.15
+class MageArtifactY1(BaseArtifact):
+    atk = 360
+    damage_to_mages = 0.12
+class MageArtifactY2(BaseArtifact):
+    atk = 420
+    damage_to_mages = 0.14
+class MageArtifactY3(BaseArtifact):
+    atk = 480
+    damage_to_mages = 0.16
+class MageArtifactY4(BaseArtifact):
+    atk = 540
+    damage_to_mages = 0.18
+class MageArtifactY5(BaseArtifact):
+    atk = 600
+    damage_to_mages = 0.2
 class MageArtifactP1(BaseArtifact):
     atk = 0
     damage_to_mages = 0
@@ -1788,6 +2116,11 @@ class WarriorArtifact:
     B2 = WarriorArtifactB2()
     B3 = WarriorArtifactB3()
     B4 = WarriorArtifactB4()
+    Y1 = WarriorArtifactY1()
+    Y2 = WarriorArtifactY2()
+    Y3 = WarriorArtifactY3()
+    Y4 = WarriorArtifactY4()
+    Y5 = WarriorArtifactY5()
     P1 = WarriorArtifactP1()
     P2 = WarriorArtifactP2()
     P3 = WarriorArtifactP3()
@@ -1801,6 +2134,16 @@ class WarriorArtifact:
     O6 = WarriorArtifactO6()
 
 
+satans_power_artifact_from_request = {
+                    'ORANGE1': WarriorArtifact.O1, 
+                    'ORANGE2': WarriorArtifact.O2, 
+                    'ORANGE3': WarriorArtifact.O3, 
+                    'ORANGE4': WarriorArtifact.O4, 
+                    'ORANGE5': WarriorArtifact.O5, 
+                    'ORANGE6': WarriorArtifact.O6
+                    }
+
+
 @dataclass
 class AssassinArtifact:
     G1 = AssassinArtifactG1()
@@ -1811,6 +2154,11 @@ class AssassinArtifact:
     B2 = AssassinArtifactB2()
     B3 = AssassinArtifactB3()
     B4 = AssassinArtifactB4()
+    Y1 = AssassinArtifactY1()
+    Y2 = AssassinArtifactY2()
+    Y3 = AssassinArtifactY3()
+    Y4 = AssassinArtifactY4()
+    Y5 = AssassinArtifactY5()
     P1 = AssassinArtifactP1()
     P2 = AssassinArtifactP2()
     P3 = AssassinArtifactP3()
@@ -1824,6 +2172,16 @@ class AssassinArtifact:
     O6 = AssassinArtifactO6()
 
 
+yaksha_artifact_from_request = {
+                    'ORANGE1': AssassinArtifact.O1, 
+                    'ORANGE2': AssassinArtifact.O2, 
+                    'ORANGE3': AssassinArtifact.O3, 
+                    'ORANGE4': AssassinArtifact.O4, 
+                    'ORANGE5': AssassinArtifact.O5, 
+                    'ORANGE6': AssassinArtifact.O6
+                    }
+
+
 @dataclass
 class WandererArtifact:
     G1 = WandererArtifactG1()
@@ -1834,6 +2192,11 @@ class WandererArtifact:
     B2 = WandererArtifactB2()
     B3 = WandererArtifactB3()
     B4 = WandererArtifactB4()
+    Y1 = WandererArtifactY1()
+    Y2 = WandererArtifactY2()
+    Y3 = WandererArtifactY3()
+    Y4 = WandererArtifactY4()
+    Y5 = WandererArtifactY5()
     P1 = WandererArtifactP1()
     P2 = WandererArtifactP2()
     P3 = WandererArtifactP3()
@@ -1847,6 +2210,16 @@ class WandererArtifact:
     O6 = WandererArtifactO6()
 
 
+dark_destroyer_artifact_from_request = {
+                    'ORANGE1': WandererArtifact.O1, 
+                    'ORANGE2': WandererArtifact.O2, 
+                    'ORANGE3': WandererArtifact.O3, 
+                    'ORANGE4': WandererArtifact.O4, 
+                    'ORANGE5': WandererArtifact.O5, 
+                    'ORANGE6': WandererArtifact.O6
+                    }
+
+
 @dataclass
 class ClericArtifact:
     G1 = ClericArtifactG1()
@@ -1857,6 +2230,11 @@ class ClericArtifact:
     B2 = ClericArtifactB2()
     B3 = ClericArtifactB3()
     B4 = ClericArtifactB4()
+    Y1 = ClericArtifactY1()
+    Y2 = ClericArtifactY2()
+    Y3 = ClericArtifactY3()
+    Y4 = ClericArtifactY4()
+    Y5 = ClericArtifactY5()
     P1 = ClericArtifactP1()
     P2 = ClericArtifactP2()
     P3 = ClericArtifactP3()
@@ -1870,6 +2248,16 @@ class ClericArtifact:
     O6 = ClericArtifactO6()
 
 
+suns_hymn_artifact_from_request = {
+                    'ORANGE1': ClericArtifact.O1, 
+                    'ORANGE2': ClericArtifact.O2, 
+                    'ORANGE3': ClericArtifact.O3, 
+                    'ORANGE4': ClericArtifact.O4, 
+                    'ORANGE5': ClericArtifact.O5, 
+                    'ORANGE6': ClericArtifact.O6
+                    }
+
+
 @dataclass
 class MageArtifact:
     G1 = MageArtifactG1()
@@ -1880,6 +2268,11 @@ class MageArtifact:
     B2 = MageArtifactB2()
     B3 = MageArtifactB3()
     B4 = MageArtifactB4()
+    Y1 = MageArtifactY1()
+    Y2 = MageArtifactY2()
+    Y3 = MageArtifactY3()
+    Y4 = MageArtifactY4()
+    Y5 = MageArtifactY5()
     P1 = MageArtifactP1()
     P2 = MageArtifactP2()
     P3 = MageArtifactP3()
@@ -1893,6 +2286,16 @@ class MageArtifact:
     O6 = MageArtifactO6()
 
 
+burning_soul_artifact_from_request = {
+                    'ORANGE1': MageArtifact.O1, 
+                    'ORANGE2': MageArtifact.O2, 
+                    'ORANGE3': MageArtifact.O3, 
+                    'ORANGE4': MageArtifact.O4, 
+                    'ORANGE5': MageArtifact.O5, 
+                    'ORANGE6': MageArtifact.O6
+                    }
+
+
 @dataclass
 class EyeOfHeaven:
     O1 = EyeOfHeavenO1()
@@ -1901,6 +2304,16 @@ class EyeOfHeaven:
     O4 = EyeOfHeavenO4()
     O5 = EyeOfHeavenO5()
     O6 = EyeOfHeavenO6()
+
+
+eye_of_heaven_artifact_from_request = {
+                    'ORANGE1': EyeOfHeaven.O1, 
+                    'ORANGE2': EyeOfHeaven.O2, 
+                    'ORANGE3': EyeOfHeaven.O3, 
+                    'ORANGE4': EyeOfHeaven.O4, 
+                    'ORANGE5': EyeOfHeaven.O5, 
+                    'ORANGE6': EyeOfHeaven.O6
+                    }
 
 
 @dataclass
@@ -1913,6 +2326,16 @@ class WindWalker:
     O6 = WindWalkerO6()
 
 
+wind_walker_artifact_from_request = {
+                    'ORANGE1': WindWalker.O1, 
+                    'ORANGE2': WindWalker.O2, 
+                    'ORANGE3': WindWalker.O3, 
+                    'ORANGE4': WindWalker.O4, 
+                    'ORANGE5': WindWalker.O5, 
+                    'ORANGE6': WindWalker.O6
+                    }
+
+
 @dataclass
 class ScorchingSun:
     O1 = ScorchingSunO1()
@@ -1921,6 +2344,16 @@ class ScorchingSun:
     O4 = ScorchingSunO4()
     O5 = ScorchingSunO5()
     O6 = ScorchingSunO6()
+
+
+scorching_sun_artifact_from_request = {
+                    'ORANGE1': ScorchingSun.O1, 
+                    'ORANGE2': ScorchingSun.O2, 
+                    'ORANGE3': ScorchingSun.O3, 
+                    'ORANGE4': ScorchingSun.O4, 
+                    'ORANGE5': ScorchingSun.O5, 
+                    'ORANGE6': ScorchingSun.O6
+                    }
 
 
 @dataclass
@@ -1933,6 +2366,16 @@ class Dragonblood:
     O6 = DragonbloodO6()
 
 
+dragonblood_artifact_from_request = {
+                    'ORANGE1': Dragonblood.O1, 
+                    'ORANGE2': Dragonblood.O2, 
+                    'ORANGE3': Dragonblood.O3, 
+                    'ORANGE4': Dragonblood.O4, 
+                    'ORANGE5': Dragonblood.O5, 
+                    'ORANGE6': Dragonblood.O6
+                    }
+
+
 @dataclass
 class SoundStep:
     O1 = SoundStepO1()
@@ -1941,6 +2384,16 @@ class SoundStep:
     O4 = SoundStepO4()
     O5 = SoundStepO5()
     O6 = SoundStepO6()
+
+
+sound_step_artifact_from_request = {
+                    'ORANGE1': SoundStep.O1, 
+                    'ORANGE2': SoundStep.O2, 
+                    'ORANGE3': SoundStep.O3, 
+                    'ORANGE4': SoundStep.O4, 
+                    'ORANGE5': SoundStep.O5, 
+                    'ORANGE6': SoundStep.O6
+                    }
 
 
 @dataclass
@@ -1953,6 +2406,16 @@ class KnightsVow:
     O6 = KnightsVowO6()
 
 
+knights_vow_artifact_from_request = {
+                    'ORANGE1': KnightsVow.O1, 
+                    'ORANGE2': KnightsVow.O2, 
+                    'ORANGE3': KnightsVow.O3, 
+                    'ORANGE4': KnightsVow.O4, 
+                    'ORANGE5': KnightsVow.O5, 
+                    'ORANGE6': KnightsVow.O6
+                    }
+
+
 @dataclass
 class PrimevalSoul:
     O1 = PrimevalSoulO1()
@@ -1961,6 +2424,16 @@ class PrimevalSoul:
     O4 = PrimevalSoulO4()
     O5 = PrimevalSoulO5()
     O6 = PrimevalSoulO6()
+
+
+primeval_soul_artifact_from_request = {
+                    'ORANGE1': PrimevalSoul.O1, 
+                    'ORANGE2': PrimevalSoul.O2, 
+                    'ORANGE3': PrimevalSoul.O3, 
+                    'ORANGE4': PrimevalSoul.O4, 
+                    'ORANGE5': PrimevalSoul.O5, 
+                    'ORANGE6': PrimevalSoul.O6
+                    }
 
 
 @dataclass
@@ -1973,6 +2446,16 @@ class QueensCrown:
     O6 = QueensCrownO6()
 
 
+queens_crown_artifact_from_request = {
+                    'ORANGE1': QueensCrown.O1, 
+                    'ORANGE2': QueensCrown.O2, 
+                    'ORANGE3': QueensCrown.O3, 
+                    'ORANGE4': QueensCrown.O4, 
+                    'ORANGE5': QueensCrown.O5, 
+                    'ORANGE6': QueensCrown.O6
+                    }
+
+
 @dataclass
 class SoulTorrent:
     O1 = SoulTorrentO1()
@@ -1981,6 +2464,16 @@ class SoulTorrent:
     O4 = SoulTorrentO4()
     O5 = SoulTorrentO5()
     O6 = SoulTorrentO6()
+
+
+soul_torrent_artifact_from_request = {
+                    'ORANGE1': SoulTorrent.O1, 
+                    'ORANGE2': SoulTorrent.O2, 
+                    'ORANGE3': SoulTorrent.O3, 
+                    'ORANGE4': SoulTorrent.O4, 
+                    'ORANGE5': SoulTorrent.O5, 
+                    'ORANGE6': SoulTorrent.O6
+                    }
 
 
 @dataclass
@@ -1993,6 +2486,16 @@ class GiftOfCreation:
     O6 = GiftOfCreationO6()
 
 
+gift_of_creation_artifact_from_request = {
+                    'ORANGE1': GiftOfCreation.O1, 
+                    'ORANGE2': GiftOfCreation.O2, 
+                    'ORANGE3': GiftOfCreation.O3, 
+                    'ORANGE4': GiftOfCreation.O4, 
+                    'ORANGE5': GiftOfCreation.O5, 
+                    'ORANGE6': GiftOfCreation.O6
+                    }
+
+
 @dataclass
 class EternalCurse:
     O1 = EternalCurseO1()
@@ -2001,6 +2504,16 @@ class EternalCurse:
     O4 = EternalCurseO4()
     O5 = EternalCurseO5()
     O6 = EternalCurseO6()
+
+
+eternal_curse_artifact_from_request = {
+                    'ORANGE1': EternalCurse.O1, 
+                    'ORANGE2': EternalCurse.O2, 
+                    'ORANGE3': EternalCurse.O3, 
+                    'ORANGE4': EternalCurse.O4, 
+                    'ORANGE5': EternalCurse.O5, 
+                    'ORANGE6': EternalCurse.O6
+                    }
 
 
 @dataclass
@@ -2022,6 +2535,27 @@ class Artifact:
     soul_torrent = SoulTorrent
     gift_of_creation = GiftOfCreation
     eternal_curse = EternalCurse
+
+
+artifact_from_request = {
+                    'EMPTY': Artifact.empty, 
+                    'SATANS_POWER': satans_power_artifact_from_request, 
+                    'YAKSHA': yaksha_artifact_from_request, 
+                    'DARK_DESTROYER': dark_destroyer_artifact_from_request, 
+                    'SUNS_HYMN': suns_hymn_artifact_from_request, 
+                    'BURNING_SOUL': burning_soul_artifact_from_request, 
+                    'EYE_OF_HEAVEN': eye_of_heaven_artifact_from_request, 
+                    'WIND_WALKER': wind_walker_artifact_from_request, 
+                    'SCORCHING_SUN': scorching_sun_artifact_from_request, 
+                    'DRAGONBLOOD': dragonblood_artifact_from_request, 
+                    'SOUND_STEP': sound_step_artifact_from_request, 
+                    'KNIGHTS_VOW': knights_vow_artifact_from_request, 
+                    'PRIMEVAL_SOUL': primeval_soul_artifact_from_request, 
+                    'QUEENS_CROWN': queens_crown_artifact_from_request, 
+                    'SOUL_TORRENT': soul_torrent_artifact_from_request, 
+                    'GIFT_OF_CREATION': gift_of_creation_artifact_from_request, 
+                    'ETERNAL_CURSE': eternal_curse_artifact_from_request
+                    }
 
 
 ## Aura
@@ -2408,10 +2942,7 @@ class AttackDown(BaseEffect):
     def tick(self):
         if not self.holder.is_dead:
             if not self.has_been_set:
-                n_stacks = len([e for e in self.holder.effects 
-                                if e.name == self.name and e.source.str_id == self.source.str_id]) - 1
-                additive_down = self.down / (1 - n_stacks * self.down)
-                self.holder.atk *= 1 - additive_down
+                self.holder.atk *= 1 - self.down
                 self.has_been_set = True
 
             self.turns -= 1
@@ -2427,10 +2958,7 @@ class AttackDown(BaseEffect):
             self.source.game.log += log_text
 
     def kill(self):
-        n_stacks = len([e for e in self.holder.effects 
-                        if e.name == self.name and e.source.str_id == self.source.str_id])
-        additive_up = self.down / (1 - n_stacks * self.down)
-        self.holder.atk *= 1 + additive_up
+        self.holder.atk /= 1 - self.down
         super().kill()
 
 

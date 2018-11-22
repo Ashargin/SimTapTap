@@ -1382,7 +1382,7 @@ class Verthandi(BaseHero):
 
 @dataclass
 class Hero:
-    empty = EmptyHero()
+    empty = EmptyHero
     centaur = Centaur
     dziewona = Dziewona
     forest_healer = ForestHealer
@@ -1395,3 +1395,20 @@ class Hero:
     saw_machine = SawMachine
     scarlet = Scarlet
     verthandi = Verthandi
+
+
+hero_from_request = {
+                    'EMPTY': Hero.empty, 
+                    'CENTAUR': Hero.centaur, 
+                    'DZIEWONA': Hero.dziewona, 
+                    'FOREST_HEALER': Hero.forest_healer, 
+                    'FREYA': Hero.freya, 
+                    'GERALD': Hero.gerald, 
+                    'LUNA': Hero.luna, 
+                    'MEDUSA': Hero.medusa, 
+                    'REAPER': Hero.reaper, 
+                    'RLYEH': Hero.rlyeh, 
+                    'SAW_MACHINE': Hero.saw_machine, 
+                    'SCARLET': Hero.scarlet, 
+                    'VERTHANDI': Hero.verthandi
+                    }
