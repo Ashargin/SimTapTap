@@ -36,38 +36,38 @@ def get_hero_from_request(request_hero, player):
     guild_tech = [
             [
                 player.guild_tech.warrior.tier1,
-                player.guild_tech.warrior.tier2,
-                player.guild_tech.warrior.tier3,
-                player.guild_tech.warrior.tier4,
-                player.guild_tech.warrior.tier5
-                ],
-            [
                 player.guild_tech.assassin.tier1,
-                player.guild_tech.assassin.tier2,
-                player.guild_tech.assassin.tier3,
-                player.guild_tech.assassin.tier4,
-                player.guild_tech.assassin.tier5
-                ],
-            [
                 player.guild_tech.wanderer.tier1,
-                player.guild_tech.wanderer.tier2,
-                player.guild_tech.wanderer.tier3,
-                player.guild_tech.wanderer.tier4,
-                player.guild_tech.wanderer.tier5
-                ],
-            [
                 player.guild_tech.cleric.tier1,
-                player.guild_tech.cleric.tier2,
-                player.guild_tech.cleric.tier3,
-                player.guild_tech.cleric.tier4,
-                player.guild_tech.cleric.tier5
+                player.guild_tech.mage.tier1,
                 ],
             [
-                player.guild_tech.mage.tier1,
+                player.guild_tech.warrior.tier2,
+                player.guild_tech.assassin.tier2,
+                player.guild_tech.wanderer.tier2,
+                player.guild_tech.cleric.tier2,
                 player.guild_tech.mage.tier2,
+                ],
+            [
+                player.guild_tech.warrior.tier3,
+                player.guild_tech.assassin.tier3,
+                player.guild_tech.wanderer.tier3,
+                player.guild_tech.cleric.tier3,
                 player.guild_tech.mage.tier3,
+                ],
+            [
+                player.guild_tech.warrior.tier4,
+                player.guild_tech.assassin.tier4,
+                player.guild_tech.wanderer.tier4,
+                player.guild_tech.cleric.tier4,
                 player.guild_tech.mage.tier4,
-                player.guild_tech.mage.tier5
+                ],
+            [
+                player.guild_tech.warrior.tier5,
+                player.guild_tech.assassin.tier5,
+                player.guild_tech.wanderer.tier5,
+                player.guild_tech.cleric.tier5,
+                player.guild_tech.mage.tier5,
                 ]
             ]
     familiar_stats = [player.pet_bonus.hp_bonus, player.pet_bonus.attack_bonus]
