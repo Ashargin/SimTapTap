@@ -56,11 +56,12 @@ class Game:
         self.log += '\n### Turn {} ###'.format(self.round)
 
         # effects
+        self.log += '\n# Active effects #'.format(self.round)
         for h in self.heroes:
             if not h.is_dead:
                 h.can_attack = True
-            for e in h.effects:
-                e.tick()
+                for e in h.effects:
+                    e.tick()
 
         # heroes
         while any([h.can_attack for h in self.heroes]) and not self.is_finished():
@@ -91,9 +92,10 @@ class Game:
 
         # effects
         for h in self.heroes:
-            for e in h.effects:
-                if e.turns == 0:
-                    e.kill()
+            if not h.is_dead:
+                for e in h.effects:
+                    if e.turns == 0:
+                        e.kill()
 
         self.log += '\n\n{}\n'.format(self.state())
 

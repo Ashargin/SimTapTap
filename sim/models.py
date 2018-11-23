@@ -2089,17 +2089,17 @@ class EternalCurseO2(BaseArtifact):
     hit_rate = 0
     skill_damage_if_hell = 0
 class EternalCurseO3(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_hell = 0
+    atk_bonus = 0.075
+    hit_rate = 0.05
+    skill_damage_if_hell = 0.25
 class EternalCurseO4(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_hell = 0
+    atk_bonus = 0.09
+    hit_rate = 0.06
+    skill_damage_if_hell = 0.25
 class EternalCurseO5(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_hell = 0
+    atk_bonus = 0.105
+    hit_rate = 0.07
+    skill_damage_if_hell = 0.25
 class EternalCurseO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
@@ -2834,6 +2834,42 @@ class Bleed(BaseEffect):
             self.holder.has_taken_damage(self.source)
 
 
+class TimedMark(BaseEffect):
+    def __init__(self, source, holder, power, turns, skill=False, name=''):
+        self.source = source
+        self.holder = holder
+        self.power = power
+        self.turns = turns + 2
+        self.first_turn = True
+        self.skill = skill
+        self.name = name
+        super().__init__()
+
+    def tick(self):
+        if not self.holder.is_dead:
+            self.turns -= 1
+            if self.turns == 0:
+                damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+                dmg = damage_components['Total damage']
+                crit = True if damage_components['Crit damage'] > 0 else False
+                crit_str = ', crit' if crit else ''
+        
+                self.holder.hp -= dmg
+                log_text = '\n{} takes {} damage (timed mark from {} ({}{}))' \
+                            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
+                self.source.game.log += log_text
+                self.holder.has_taken_damage(self.source)
+            elif self.first_turn:
+                self.first_turn = False
+                log_text = '\n{} receives a timed mark from {} ({}, {} turns)' \
+                    .format(self.holder.str_id, self.source.str_id, self.name, self.turns - 1)
+                self.source.game.log += log_text
+            else:
+                log_text = '\n{} has a timed mark from {} ({}, {} turns left)' \
+                    .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+                self.source.game.log += log_text
+
+
 class Silence(BaseEffect):
     def __init__(self, source, holder, turns, name=''):
         self.source = source
@@ -3190,6 +3226,7 @@ class Effect:
     heal = Heal
     poison = Poison
     bleed = Bleed
+    timed_mark = TimedMark
     silence = Silence
     stun = Stun
     petrify = Petrify

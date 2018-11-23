@@ -86,7 +86,7 @@ class BaseHero:
         self.damage_to_poisoned = 0
         self.damage_to_bleeding = 0
         self.damage_to_stunned = 0
-    
+
         self.own_team = None
         self.op_team = None
         self.game = None
@@ -94,6 +94,9 @@ class BaseHero:
         self.is_dead = False
         self.can_attack = True
         self.effects = []
+
+        self.has_dropped_below_60 = False
+        self.has_dropped_below_30 = False
 
         self.compute_familiar_stats(familiar_stats)
         self.compute_items(armor, helmet, weapon, pendant, rune, artifact)
@@ -254,6 +257,9 @@ class BaseHero:
                             'Faction damage': faction_damage, 
                             'Type damage': type_damage, 
                             'Skill damage': skill_damage, 
+                            'Poisoned extra damage': poisoned_extra_damage, 
+                            'Bleeding extra damage': bleeding_extra_damage, 
+                            'Stunned extra damage': stunned_extra_damage, 
                             'Total damage': dmg}
 
         return damage_components
@@ -427,6 +433,12 @@ class BaseHero:
             self.bleed(target, power, turns, skill=skill, name=name)
             return True
 
+    def timed_mark(self, target, power, turns, skill=False, name=''):
+        if not target.is_dead:
+            timed_mark = Effect.timed_mark(self, target, power, turns, skill=skill, name=name)
+            target.effects.append(timed_mark)
+            timed_mark.tick()
+
     def silence(self, target, turns, name=''):
         if not target.is_dead:
             silence = Effect.silence(self, target, turns, name=name)
@@ -564,8 +576,29 @@ class BaseHero:
         return True if any([isinstance(e, Effect.petrify) for e in self.effects]) else False
 
     def has_taken_damage(self, attacker):
+        for h in self.op_team.heroes:
+            if isinstance(h, Aden) and not h.is_dead:
+                name = 'Bloodstain'
+                up = 0.08
+                if h.star >= 7:
+                    up = 0.1
+                if self.hp <= 0.6 * self.hp_max and not self.has_dropped_below_60:
+                    h.attack_up(h, up=up, turns=None, name=name)
+                if self.hp <= 0.3 * self.hp_max and not self.has_dropped_below_30:
+                    h.attack_up(h, up=up, turns=None, name=name)
+
+        if self.hp <= 0.6 * self.hp_max:
+            self.has_dropped_below_60 = True
+        if self.hp <= 0.3 * self.hp_max:
+            self.has_dropped_below_30 = True
+
         if self.hp <= 0:
-            self.kill()
+            if isinstance(self, MonkeyKing):
+                if self.has_revived:
+                    self.kill()
+            else:
+                self.kill()
+
             if attacker is not None:
                 attacker.on_kill(self)
             self.on_death(attacker)
@@ -573,7 +606,6 @@ class BaseHero:
     def kill(self):
         self.is_dead = True
         self.can_attack = False
-        self.effects = []
         self.game.log += '\n{} dies'.format(self.str_id)
 
     def on_attack(self, target):
@@ -611,6 +643,17 @@ class BaseHero:
                 h.crit_damage_up(h, up=crit_damage_up, turns=None, name=name)
                 h.attack_up(h, up=attack_up, turns=None, name=name)
 
+        for h in self.op_team.heroes:
+            if isinstance(h, Aden) and not h.is_dead:
+                name = 'Blood Temple'
+                power = h.atk * 0.8
+                if h.star >= 9:
+                    power = h.atk
+                if attacker is not None:
+                    if attacker.str_id == h.str_id:
+                        power *= 2
+                h.heal(h, power=power, turns=1, name=name)
+
     def print_stats(self):
         stats = [self.hp, self.atk, self.armor, self.speed, 
                 self.armor_break, self.skill_damage, self.hit_rate, self.dodge, 
@@ -642,6 +685,54 @@ class EmptyHero(BaseHero):
 
     def __init__(self):
         pass
+
+
+class Aden(BaseHero):
+    name = HeroName.ADEN
+    faction = Faction.UNDEAD
+    type = HeroType.ASSASSIN
+
+    def __init__(self, star=9, tier=6, level=200, 
+                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
+                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
+                    guild_tech=guild_tech_maxed, 
+                    familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 0.0 # should depend on the level
+        self.atk = 0.0 # should depend on the level
+        self.armor = 0 # should depend on the level
+        self.speed = 0 # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
+                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
+                            familiar_stats=familiar_stats)
+
+        if self.star < 8:
+            self.hit_rate += 0.2
+            self.armor_break += 6.4
+            self.damage_to_bleeding += 0.4
+        else:
+            self.hit_rate += 0.25
+            self.armor_break += 9.6
+            self.damage_to_bleeding += 0.5
+
+    def skill(self):
+        name = 'Strangle'
+        targets_hit = targets_at_random(self.op_team, 3)
+
+        hit_power = [self.atk * 1.48] * len(targets_hit)
+        bleed_power = self.atk * 0.46
+        heal_power = self.atk
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        for target in targets_hit:
+            self.bleed(target, power=bleed_power, turns=3, skill=True, name=name)
+        if targets_hit:
+            self.heal(self, power=heal_power, turns=1, name=name)
+        super().skill()
 
 
 class Centaur(BaseHero):
@@ -1075,6 +1166,73 @@ class Medusa(BaseHero):
         super().on_hit(attacker)
 
 
+class MonkeyKing(BaseHero):
+    name = HeroName.MONKEY_KING
+    faction = Faction.HELL
+    type = HeroType.WARRIOR
+
+    def __init__(self, star=9, tier=6, level=200, 
+                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
+                    rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6, 
+                    guild_tech=guild_tech_maxed, 
+                    familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 0.0 # should depend on the level
+        self.atk = 0.0 # should depend on the level
+        self.armor = 0 # should depend on the level
+        self.speed = 0 # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
+                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
+                            familiar_stats=familiar_stats)
+
+        self.has_revived = False
+
+    def skill(self):
+        name = 'Boundless Strike'
+        targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
+
+        hit_power = [self.atk * 1.08] * len(targets_hit)
+        mark_power = self.atk * 2.64
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        for target in targets_hit:
+            self.timed_mark(target, power=mark_power, turns=2, skill=True, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Cudgel Mastery'
+        chance = 0.3
+        power = self.atk * 0.9
+        if self.star >= 7:
+            chance = 0.35
+            power = self.atk * 1.2
+        self.try_petrify(target, turns=1, chance=chance, name=name)
+        self.timed_mark(target, power=power, turns=2, name=name)
+
+    def on_hit(self, attacker):
+        name = 'Fight Against Buddha'
+        power = self.atk * 1.5
+        if self.star >= 8:
+            power = self.atk * 1.85 ### add value
+        self.try_hit_passive(attacker, power=power, chance=0.7, name=name)
+        super().on_hit(attacker)
+
+
+    def on_death(self, attacker):
+        if not self.has_revived:
+            name = 'Buddha Rebirth'
+            power = self.hp_max * 0.9 - self.hp
+            if self.star >= 9:
+                power = self.hp_max - self.hp
+            self.heal(self, power=power, turns=1, name=name)
+            self.has_revived = True
+        super().on_death(attacker)
+
+
 class Reaper(BaseHero):
     name = HeroName.REAPER
     faction = Faction.UNDEAD
@@ -1337,10 +1495,10 @@ class Verthandi(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 15000 # should depend on the level
-        self.armor = 12 # should depend on the level
-        self.speed = 950 # should depend on the level
+        self.hp = 0.0 # should depend on the level
+        self.atk = 0.0 # should depend on the level
+        self.armor = 0 # should depend on the level
+        self.speed = 0 # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
                             rune=rune, artifact=artifact, guild_tech=guild_tech, 
                             familiar_stats=familiar_stats)
@@ -1383,6 +1541,7 @@ class Verthandi(BaseHero):
 @dataclass
 class Hero:
     empty = EmptyHero
+    aden = Aden
     centaur = Centaur
     dziewona = Dziewona
     forest_healer = ForestHealer
@@ -1390,6 +1549,7 @@ class Hero:
     gerald = Gerald
     luna = Luna
     medusa = Medusa
+    monkey_king = MonkeyKing
     reaper = Reaper
     rlyeh = Rlyeh
     saw_machine = SawMachine
@@ -1399,6 +1559,7 @@ class Hero:
 
 hero_from_request = {
                     'EMPTY': Hero.empty, 
+                    'ADEN'  : Hero.aden, # add stats
                     'CENTAUR': Hero.centaur, 
                     'DZIEWONA': Hero.dziewona, 
                     'FOREST_HEALER': Hero.forest_healer, 
@@ -1406,9 +1567,10 @@ hero_from_request = {
                     'GERALD': Hero.gerald, 
                     'LUNA': Hero.luna, 
                     'MEDUSA': Hero.medusa, 
+                    'MONKEY_KING': Hero.monkey_king, # add stats, add 9* skill values
                     'REAPER': Hero.reaper, 
                     'RLYEH': Hero.rlyeh, 
                     'SAW_MACHINE': Hero.saw_machine, 
                     'SCARLET': Hero.scarlet, 
-                    'VERTHANDI': Hero.verthandi
+                    'VERTHANDI': Hero.verthandi # add stats
                     }
