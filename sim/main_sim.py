@@ -4,8 +4,8 @@ from heroes import Team, Hero
 from models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
 from sim import Sim, Game
 
-team_1 = Team([Hero.monkey_king() for i in range(6)])
-team_2 = Team([Hero.reaper() for i in range(6)])
+team_1 = Team([Hero.ripper() for i in range(6)])
+team_2 = Team([Hero.shudde_m_ell() for i in range(6)])
 
 game = Game(team_1, team_2)
 game.process()

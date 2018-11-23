@@ -1,8 +1,8 @@
 import random as rd
 
 
-def targets_at_random(team, n):
-    alive = [h for h in team.heroes if not h.is_dead]
+def targets_at_random(heroes, n):
+    alive = [h for h in heroes if not h.is_dead]
     targets = alive
     if len(alive) > n:
         idxs = list(range(len(alive)))

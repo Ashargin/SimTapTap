@@ -2664,7 +2664,7 @@ class BaseFamiliar:
         self.energy = max(min(self.energy + 25, 100), self.energy)
 
     def attack(self):
-        targets = targets_at_random(self.op_team, self.n_targets)
+        targets = targets_at_random(self.op_team.heroes, self.n_targets)
         for target in targets: # check : can be dodged?
             target.hp -= self.damage
             log_text = '\n{} takes {} damage from {} ({})' \
@@ -2914,6 +2914,22 @@ class Petrify(BaseEffect):
         if not self.holder.is_dead:
             self.turns -= 1
             log_text = '\n{} is petrified by {} ({}), {} turns left' \
+                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+            self.source.game.log += log_text
+
+
+class Freeze(BaseEffect):
+    def __init__(self, source, holder, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.turns = turns
+        self.name = name
+        super().__init__()
+
+    def tick(self):
+        if not self.holder.is_dead:
+            self.turns -= 1
+            log_text = '\n{} is frozen by {} ({}), {} turns left' \
                         .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
             self.source.game.log += log_text
 
@@ -3220,6 +3236,154 @@ class ArmorBreakDown(BaseEffect):
         super().kill()
 
 
+class ArmorUp(BaseEffect):
+    def __init__(self, source, holder, up, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.up = up
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+        super().__init__()
+
+    def tick(self):
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.armor += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s defense is increased by {} by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s defense is increased by {} by {} ({})" \
+                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.armor -= self.up
+        super().kill()
+
+
+class ArmorDown(BaseEffect):
+    def __init__(self, source, holder, down, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.down = down
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+        super().__init__()
+
+    def tick(self):
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.armor -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s defense is reduced by {} by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s defense is reduced by {} by {} ({})" \
+                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.armor += self.down
+        super().kill()
+
+
+class SpeedUp(BaseEffect):
+    def __init__(self, source, holder, up, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.up = up
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+        super().__init__()
+
+    def tick(self):
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.speed += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s speed is increased by {} by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s speed is increased by {} by {} ({})" \
+                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.speed -= self.up
+        super().kill()
+
+
+class SpeedDown(BaseEffect):
+    def __init__(self, source, holder, down, turns, name=''):
+        self.source = source
+        self.holder = holder
+        self.down = down
+        self.turns = turns
+        self.name = name
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 15
+            self.infinite = True
+        super().__init__()
+
+    def tick(self):
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.speed -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s speed is reduced by {} by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s speed is reduced by {} by {} ({})" \
+                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                            self.name)
+            self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.speed += self.down
+        super().kill()
+
+
 @dataclass
 class Effect:
     dot = Dot
@@ -3230,6 +3394,7 @@ class Effect:
     silence = Silence
     stun = Stun
     petrify = Petrify
+    freeze = Freeze
     attack_down = AttackDown
     attack_up = AttackUp
     crit_rate_up = CritRateUp
@@ -3238,3 +3403,7 @@ class Effect:
     crit_damage_down = CritDamageDown
     armor_break_up = ArmorBreakUp
     armor_break_down = ArmorBreakDown
+    armor_up = ArmorUp
+    armor_down = ArmorDown
+    speed_up = SpeedUp
+    speed_down = SpeedDown
