@@ -1,29 +1,31 @@
 import numpy as np
+import random as rd
 
 from heroes import Team, Hero
 from models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
 from sim import Sim, Game
 
-team_1 = Team([Hero.ripper() for i in range(6)])
-team_2 = Team([Hero.shudde_m_ell() for i in range(6)])
+heroes = [Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.dziewona, Hero.forest_healer, Hero.freya, Hero.gerald, Hero.luna, Hero.medusa, Hero.minotaur, Hero.monkey_king, Hero.reaper, Hero.ripper, Hero.rlyeh, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.ultima, Hero.vegvisir, Hero.verthandi]
 
-game = Game(team_1, team_2)
+def get_random_team():
+    team_heroes = []
+    for i in range(6):
+        team_heroes.append(heroes[rd.randint(0, len(heroes) - 1)]())
+    return Team(team_heroes)
+
+attack_team = get_random_team()
+defense_team = get_random_team()
+
+game = Game(attack_team, defense_team)
 game.process()
 print(game.log)
-
-sim = Sim(team_1, team_2, n_sim=1000)
-sim.process()
-sim.print_winrate()
 
 # todo:
 # connect the engine to the server
 # add all heroes
-
 # set stats depending on the hero level
-# make sure crit_damage > 0, armor_break > 0
-# check timed_mark behaviour
-# check if skill damage affects undirect skill damage
-# check if stacks of attack_up from different sources, same skill, are multiplicative
-# check if stacks of attack_up from different sources, different skill, are multiplicative
+
+# see which familiar attacks first
+# make sure crit_damage > 0, armor_break > 0 (or not? check)
 # check every behaviour marked with "check" comments
 # store stats during battles, display graphs

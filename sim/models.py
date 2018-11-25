@@ -26,13 +26,13 @@ class HeroType(Enum):
 class HeroName(Enum):
     EMPTY = 'Empty Hero'
 
-    SIR_CONRAD = 'Sir Conrad'
-    LONE_HERO = 'Lone Hero' 
+    SIR_CONRAD = 'Sir_Conrad'
+    LONE_HERO = 'Lone_Hero' 
     OLIVIA = 'Olivia'
-    KING_LIONHEART = 'King Lionheart'
+    KING_LIONHEART = 'King_Lionheart'
     TESLA = 'Tesla'
     MULAN = 'Mulan'
-    SAW_MACHINE = 'Saw Machine'
+    SAW_MACHINE = 'Saw_Machine'
     ULTIMA = 'Ultima'
     VIVIENNE = 'Vivienne'
     MARTIN = 'Martin'
@@ -40,48 +40,48 @@ class HeroName(Enum):
 
     KHALIL = 'Khalil'
     RLYEH = 'Rlyeh'
-    WOLF_RIDER = 'Wolf Rider'
-    ABYSS_LORD = 'Abyss Lord'
+    WOLF_RIDER = 'Wolf_Rider'
+    ABYSS_LORD = 'Abyss_Lord'
     MEDUSA = 'Medusa'
-    EAGLE_EYE_SHAMAN = 'Eagle-eye Shaman'
-    SWORD_MASTER = 'Sword Master'
+    EAGLE_EYE_SHAMAN = 'Eagle-eye_Shaman'
+    SWORD_MASTER = 'Sword_Master'
     SCARLET = 'Scarlet'
     MINOTAUR = 'Minotaur'
-    BLOOD_TOOTH = 'Blood Tooth'
+    BLOOD_TOOTH = 'Blood_Tooth'
     LEXAR = 'Lexar'
 
     MEGAW = 'Megaw'
     WEREWORF = 'Werewolf'
     CENTAUR = 'Centaur'
-    TIGER_KING = 'Tiger King'
-    DEMON_FIGHTER = 'Demon Fighter'
+    TIGER_KING = 'Tiger_King'
+    DEMON_FIGHTER = 'Demon_Fighter'
     GRAND = 'Grand'
-    FOREST_HEALER = 'Forest Healer'
+    FOREST_HEALER = 'Forest_Healer'
     ORPHEE = 'Orphee'
     LUNA = 'Luna'
     VEGVISIR = 'Vegvisir'
 
     FORREN = 'Forren'
-    PUPPET_MAID = 'Puppet Maid'
+    PUPPET_MAID = 'Puppet_Maid'
     EXDEATH = 'Exdeath'
     HESTER = 'Hester'
     DZIEWONA =  'Dziewona'
     WOLNIR = 'Wolnir'
-    CURSED_ONE = 'Cursed One'
+    CURSED_ONE = 'Cursed_One'
     GERALD = 'Gerald'
     REAPER = 'Reaper'
     RIPPER = 'Ripper'
     ADEN = 'Aden'
-    SHUDDE_M_ELL = "Shudde M'ell"
+    SHUDDE_M_ELL = "Shudde_M'ell"
 
-    HEAVEN_JUDGE = 'Heaven Judge'
-    NAMELESS_KING = 'Nameless King'
+    HEAVEN_JUDGE = 'Heaven_Judge'
+    NAMELESS_KING = 'Nameless_King'
     VERTHANDI = 'Verthandi'
     MARS = 'Mars'
 
-    DARK_JUDGE = 'Dark Judge'
+    DARK_JUDGE = 'Dark_Judge'
     FREYA = 'Freya'
-    MONKEY_KING = 'Monkey King'
+    MONKEY_KING = 'Monkey_King'
     CHESSIA = 'Chessia'
 
 
@@ -2733,19 +2733,50 @@ class BaseEffect:
         self.holder.effects = [e for e in self.holder.effects if e.id != self.id]
 
 
+class StatUp(BaseEffect):
+    def __init__(self, source, holder, up, turns, name='', passive=False):
+        self.source = source
+        self.holder = holder
+        self.up = up
+        self.turns = turns
+        self.name = name
+        self.verbose = False if passive else True
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 1000
+            self.infinite = True
+        super().__init__()
+
+
+class StatDown(BaseEffect):
+    def __init__(self, source, holder, down, turns, name='', passive=False):
+        self.source = source
+        self.holder = holder
+        self.down = down
+        self.turns = turns
+        self.name = name
+        self.verbose = False if passive else True
+        self.has_been_set = False
+        self.infinite = False
+        if self.turns is None:
+            self.turns = 1000
+            self.infinite = True
+        super().__init__()
+
+
 class Dot(BaseEffect):
-    def __init__(self, source, holder, power, turns, skill=False, name=''):
+    def __init__(self, source, holder, power, turns, name=''):
         self.source = source
         self.holder = holder
         self.power = power
         self.turns = turns
-        self.skill = skill
         self.name = name
         super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
-            damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+            damage_components = self.source.compute_damage(self.holder, self.power)
             dmg = damage_components['Total damage']
             crit = True if damage_components['Crit damage'] > 0 else False
             crit_str = ', crit' if crit else ''
@@ -2785,18 +2816,17 @@ class Heal(BaseEffect):
 
 
 class Poison(BaseEffect):
-    def __init__(self, source, holder, power, turns, skill=False, name=''):
+    def __init__(self, source, holder, power, turns, name=''):
         self.source = source
         self.holder = holder
         self.power = power
         self.turns = turns
-        self.skill = skill
         self.name = name
         super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
-            damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+            damage_components = self.source.compute_damage(self.holder, self.power)
             dmg = damage_components['Total damage']
             crit = True if damage_components['Crit damage'] > 0 else False
             crit_str = ', crit' if crit else ''
@@ -2810,18 +2840,17 @@ class Poison(BaseEffect):
 
 
 class Bleed(BaseEffect):
-    def __init__(self, source, holder, power, turns, skill=False, name=''):
+    def __init__(self, source, holder, power, turns, name=''):
         self.source = source
         self.holder = holder
         self.power = power
         self.turns = turns
-        self.skill = skill
         self.name = name
         super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
-            damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+            damage_components = self.source.compute_damage(self.holder, self.power)
             dmg = damage_components['Total damage']
             crit = True if damage_components['Crit damage'] > 0 else False
             crit_str = ', crit' if crit else ''
@@ -2835,13 +2864,12 @@ class Bleed(BaseEffect):
 
 
 class TimedMark(BaseEffect):
-    def __init__(self, source, holder, power, turns, skill=False, name=''):
+    def __init__(self, source, holder, power, turns, name=''):
         self.source = source
         self.holder = holder
         self.power = power
         self.turns = turns + 2
         self.first_turn = True
-        self.skill = skill
         self.name = name
         super().__init__()
 
@@ -2849,7 +2877,7 @@ class TimedMark(BaseEffect):
         if not self.holder.is_dead:
             self.turns -= 1
             if self.turns == 0:
-                damage_components = self.source.compute_damage(self.holder, self.power, skill=self.skill)
+                damage_components = self.source.compute_damage(self.holder, self.power)
                 dmg = damage_components['Total damage']
                 crit = True if damage_components['Crit damage'] > 0 else False
                 crit_str = ', crit' if crit else ''
@@ -2934,27 +2962,14 @@ class Freeze(BaseEffect):
             self.source.game.log += log_text
 
 
-class AttackUp(BaseEffect):
-    def __init__(self, source, holder, up, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.up = up
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class AttackUp(StatUp):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
-                n_stacks = len([e for e in self.holder.effects 
-                                if e.name == self.name and e.source.str_id == self.source.str_id]) - 1
-                additive_up = self.up / (1 + n_stacks * self.up)
-                self.holder.atk *= 1 + additive_up
+                previous_bonus = self.holder.atk_bonus
+                self.holder.atk_bonus += self.up
+                self.holder.atk *= (1 + self.holder.atk_bonus) / (1 + previous_bonus)  
                 self.has_been_set = True
 
             self.turns -= 1
@@ -2967,31 +2982,19 @@ class AttackUp(BaseEffect):
                 log_text = "\n{}'s attack is increased by {}% by {} ({})" \
                             .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
-        n_stacks = len([e for e in self.holder.effects 
-                        if e.name == self.name and e.source.str_id == self.source.str_id])
-        additive_down = self.up / (1 + n_stacks * self.up)
-        self.holder.atk *= 1 - additive_down
+        previous_bonus = self.holder.atk_bonus
+        self.holder.atk_bonus -= self.up
+        self.holder.atk *= (1 + self.holder.atk_bonus) / (1 + previous_bonus)
         super().kill()
 
 
-class AttackDown(BaseEffect):
-    def __init__(self, source, holder, down, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.down = down
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class AttackDown(StatDown):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.atk *= 1 - self.down
@@ -3007,28 +3010,80 @@ class AttackDown(BaseEffect):
                 log_text = "\n{}'s attack is reduced by {}% by {} ({})" \
                             .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.atk /= 1 - self.down
         super().kill()
 
 
-class CritRateUp(BaseEffect):
-    def __init__(self, source, holder, up, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.up = up
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class HpUp(StatUp):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                previous_bonus = self.holder.hp_bonus
+                self.holder.hp_bonus += self.up
+                self.holder.hp *= (1 + self.holder.hp_bonus) / (1 + previous_bonus)
+                try:
+                    self.holder.hp_max *= (1 + self.holder.hp_bonus) / (1 + previous_bonus)
+                except AttributeError:
+                    pass
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s hp is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s hp is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        previous_bonus = self.holder.hp_bonus
+        self.holder.hp_bonus -= self.up
+        self.holder.hp *= (1 + self.holder.hp_bonus) / (1 + previous_bonus)
+        self.holder.hp_max *= (1 + self.holder.hp_bonus) / (1 + previous_bonus)
+        super().kill()
+
+
+class HpDown(StatDown):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.hp *= 1 - self.down
+                self.holder.hp_max *= 1 - self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s hp is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s hp is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.hp /= 1 - self.down
+        self.holder.hp_max /= 1 - self.down
+        super().kill()
+
+
+class CritRateUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_rate += self.up
@@ -3044,28 +3099,17 @@ class CritRateUp(BaseEffect):
                 log_text = "\n{}'s crit rate is increased by {}% by {} ({})" \
                             .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.crit_rate -= self.up
         super().kill()
 
 
-class CritRateDown(BaseEffect):
-    def __init__(self, source, holder, down, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.down = down
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class CritRateDown(StatDown):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_rate -= self.down
@@ -3081,28 +3125,17 @@ class CritRateDown(BaseEffect):
                 log_text = "\n{}'s crit rate is reduced by {}% by {} ({})" \
                             .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.crit_rate += self.down
         super().kill()
 
 
-class CritDamageUp(BaseEffect):
-    def __init__(self, source, holder, up, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.up = up
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class CritDamageUp(StatUp):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_damage += self.up
@@ -3118,28 +3151,17 @@ class CritDamageUp(BaseEffect):
                 log_text = "\n{}'s crit damage is increased by {}% by {} ({})" \
                             .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.crit_damage -= self.up
         super().kill()
 
 
-class CritDamageDown(BaseEffect):
-    def __init__(self, source, holder, down, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.down = down
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class CritDamageDown(StatDown):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.crit_damage -= self.down
@@ -3155,28 +3177,303 @@ class CritDamageDown(BaseEffect):
                 log_text = "\n{}'s crit damage is reduced by {}% by {} ({})" \
                             .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.crit_damage += self.down
         super().kill()
 
 
-class ArmorBreakUp(BaseEffect):
-    def __init__(self, source, holder, up, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.up = up
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class HitRateUp(StatUp):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.hit_rate += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s hit rate is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s hit rate is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.hit_rate -= self.up
+        super().kill()
+
+
+class HitRateDown(StatDown):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.hit_rate -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s hit rate is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s hit rate is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.hit_rate += self.down
+        super().kill()
+
+
+class DodgeUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.dodge += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s dodge rate is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s dodge rate is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.dodge -= self.up
+        super().kill()
+
+
+class DodgeDown(StatDown):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.dodge -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s dodge rate is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s dodge rate is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.dodge += self.down
+        super().kill()
+
+
+class SkillDamageUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.skill_damage += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s skill damage is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s skill damage is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.skill_damage -= self.up
+        super().kill()
+
+
+class SkillDamageDown(StatDown):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.skill_damage -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s skill damage is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s skill damage is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.skill_damage += self.down
+        super().kill()
+
+
+class ControlImmuneUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.control_immune += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s control resistance is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s control resistance is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.control_immune -= self.up
+        super().kill()
+
+
+class ControlImmuneDown(StatDown):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.control_immune -= self.down
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s control resistance is reduced by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s control resistance is reduced by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.control_immune += self.down
+        super().kill()
+
+
+class SilenceImmuneUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.silence_immune += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s silence resistance is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s silence resistance is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.silence_immune -= self.up
+        super().kill()
+
+
+class DamageReductionUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.damage_reduction += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s damage reduction is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s damage reduction is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.damage_reduction -= self.up
+        super().kill()
+
+
+class TrueDamageUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.true_damage += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = "\n{}'s true damage is increased by {}% by {} ({}), {} turns left" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name, self.turns)
+            else:
+                log_text = "\n{}'s true damage is increased by {}% by {} ({})" \
+                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                            self.name)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.true_damage -= self.up
+        super().kill()
+
+
+class ArmorBreakUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.armor_break += self.up
@@ -3192,28 +3489,17 @@ class ArmorBreakUp(BaseEffect):
                 log_text = "\n{}'s armor break is increased by {} by {} ({})" \
                             .format(self.holder.str_id, self.up, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.armor_break -= self.up
         super().kill()
 
 
-class ArmorBreakDown(BaseEffect):
-    def __init__(self, source, holder, down, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.down = down
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class ArmorBreakDown(StatDown):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.armor_break -= self.down
@@ -3229,28 +3515,17 @@ class ArmorBreakDown(BaseEffect):
                 log_text = "\n{}'s armor break is reduced by {} by {} ({})" \
                             .format(self.holder.str_id, self.down, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.armor_break += self.down
         super().kill()
 
 
-class ArmorUp(BaseEffect):
-    def __init__(self, source, holder, up, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.up = up
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class ArmorUp(StatUp):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.armor += self.up
@@ -3266,28 +3541,17 @@ class ArmorUp(BaseEffect):
                 log_text = "\n{}'s defense is increased by {} by {} ({})" \
                             .format(self.holder.str_id, self.up, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.armor -= self.up
         super().kill()
 
 
-class ArmorDown(BaseEffect):
-    def __init__(self, source, holder, down, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.down = down
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class ArmorDown(StatDown):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.armor -= self.down
@@ -3303,28 +3567,17 @@ class ArmorDown(BaseEffect):
                 log_text = "\n{}'s defense is reduced by {} by {} ({})" \
                             .format(self.holder.str_id, self.down, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.armor += self.down
         super().kill()
 
 
-class SpeedUp(BaseEffect):
-    def __init__(self, source, holder, up, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.up = up
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class SpeedUp(StatUp):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.speed += self.up
@@ -3340,28 +3593,17 @@ class SpeedUp(BaseEffect):
                 log_text = "\n{}'s speed is increased by {} by {} ({})" \
                             .format(self.holder.str_id, self.up, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.speed -= self.up
         super().kill()
 
 
-class SpeedDown(BaseEffect):
-    def __init__(self, source, holder, down, turns, name=''):
-        self.source = source
-        self.holder = holder
-        self.down = down
-        self.turns = turns
-        self.name = name
-        self.has_been_set = False
-        self.infinite = False
-        if self.turns is None:
-            self.turns = 15
-            self.infinite = True
-        super().__init__()
-
+class SpeedDown(StatDown):
     def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
         if not self.holder.is_dead:
             if not self.has_been_set:
                 self.holder.speed -= self.down
@@ -3377,10 +3619,115 @@ class SpeedDown(BaseEffect):
                 log_text = "\n{}'s speed is reduced by {} by {} ({})" \
                             .format(self.holder.str_id, self.down, self.source.str_id, 
                             self.name)
-            self.source.game.log += log_text
+            if self.verbose:
+                self.source.game.log += log_text
 
     def kill(self):
         self.holder.speed += self.down
+        super().kill()
+
+
+class DamageToBleeding(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.damage_to_bleeding += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = '\n{} deals {}% extra damage to bleeding targets ({} from {}), {} turns left' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id, self.turns)
+            else:
+                log_text = '\n{} deals {}% extra damage to bleeding targets ({} from {})' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.damage_to_bleeding -= self.up
+        super().kill()
+
+
+class DamageToPoisoned(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.damage_to_poisoned += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = '\n{} deals {}% extra damage to poisoned targets ({} from {}), {} turns left' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id, self.turns)
+            else:
+                log_text = '\n{} deals {}% extra damage to poisoned targets ({} from {})' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.damage_to_poisoned -= self.up
+        super().kill()
+
+
+class DamageToStunned(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.damage_to_stunned += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = '\n{} deals {}% extra damage to stunned targets ({} from {}), {} turns left' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id, self.turns)
+            else:
+                log_text = '\n{} deals {}% extra damage to stunned targets ({} from {})' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.damage_to_stunned -= self.up
+        super().kill()
+
+
+class DamageToWarriors(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.damage_to_warriors += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            log_text = None
+            if not self.infinite:
+                log_text = '\n{} deals {}% extra damage to warriors ({} from {}), {} turns left' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id, self.turns)
+            else:
+                log_text = '\n{} deals {}% extra damage to warriors ({} from {})' \
+                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                            self.source.str_id)
+            if self.verbose:
+                self.source.game.log += log_text
+
+    def kill(self):
+        self.holder.damage_to_warriors -= self.up
         super().kill()
 
 
@@ -3395,15 +3742,32 @@ class Effect:
     stun = Stun
     petrify = Petrify
     freeze = Freeze
-    attack_down = AttackDown
     attack_up = AttackUp
+    attack_down = AttackDown
+    hp_up = HpUp
+    hp_down = HpDown
     crit_rate_up = CritRateUp
     crit_rate_down = CritRateDown
     crit_damage_up = CritDamageUp
     crit_damage_down = CritDamageDown
+    hit_rate_up = HitRateUp
+    hit_rate_down = HitRateDown
+    dodge_up = DodgeUp
+    dodge_down = DodgeDown
+    skill_damage_up = SkillDamageUp
+    skill_damage_down = SkillDamageDown
+    control_immune_up = ControlImmuneUp
+    control_immune_down = ControlImmuneDown
+    silence_immune_up = SilenceImmuneUp
+    damage_reduction_up = DamageReductionUp
+    true_damage_up = TrueDamageUp
     armor_break_up = ArmorBreakUp
     armor_break_down = ArmorBreakDown
     armor_up = ArmorUp
     armor_down = ArmorDown
     speed_up = SpeedUp
     speed_down = SpeedDown
+    damage_to_bleeding = DamageToBleeding
+    damage_to_poisoned = DamageToPoisoned
+    damage_to_stunned = DamageToStunned
+    damage_to_warriors = DamageToWarriors
