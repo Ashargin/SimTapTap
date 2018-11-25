@@ -74,7 +74,6 @@ class Game:
             fastest = fastest_heroes[rd.randint(0, len(fastest_heroes) - 1)]
             self.log += "\n\n# {}'s turn #".format(fastest.str_id)
             fastest.turn()
-            self.log += '\n' + str([h.energy for h in self.heroes])
 
         # familiars
         first_pet = None
