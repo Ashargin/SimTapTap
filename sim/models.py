@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from utils import targets_at_random
 
+
 ## Heroes names, types and factions
 class Faction(Enum):
     EMPTY = 'EMPTY'
@@ -27,7 +28,7 @@ class HeroName(Enum):
     EMPTY = 'Empty Hero'
 
     SIR_CONRAD = 'Sir_Conrad'
-    LONE_HERO = 'Lone_Hero' 
+    LONE_HERO = 'Lone_Hero'
     OLIVIA = 'Olivia'
     KING_LIONHEART = 'King_Lionheart'
     TESLA = 'Tesla'
@@ -65,7 +66,7 @@ class HeroName(Enum):
     PUPPET_MAID = 'Puppet_Maid'
     EXDEATH = 'Exdeath'
     HESTER = 'Hester'
-    DZIEWONA =  'Dziewona'
+    DZIEWONA = 'Dziewona'
     WOLNIR = 'Wolnir'
     CURSED_ONE = 'Cursed_One'
     GERALD = 'Gerald'
@@ -116,76 +117,106 @@ class SetEmpty:
     hp_bonus_1 = 0
     atk_bonus = 0
     hp_bonus_2 = 0
+
+
 @dataclass
 class SetG1:
     hp_bonus_1 = 0
     atk_bonus = 0
     hp_bonus_2 = 0
+
+
 @dataclass
 class SetG2:
     hp_bonus_1 = 0
     atk_bonus = 0
     hp_bonus_2 = 0
+
+
 @dataclass
 class SetB1:
     hp_bonus_1 = 0
     atk_bonus = 0
     hp_bonus_2 = 0
+
+
 @dataclass
 class SetB2:
     hp_bonus_1 = 0
     atk_bonus = 0
     hp_bonus_2 = 0
+
+
 @dataclass
 class SetY1:
     hp_bonus_1 = 0
     atk_bonus = 0
     hp_bonus_2 = 0
+
+
 @dataclass
 class SetY2:
     hp_bonus_1 = 0
     atk_bonus = 0
     hp_bonus_2 = 0
+
+
 @dataclass
 class SetY3:
     hp_bonus_1 = 0.02
     atk_bonus = 0.03
     hp_bonus_2 = 0.01
+
+
 @dataclass
 class SetP1:
     hp_bonus_1 = 0.04
     atk_bonus = 0.05
     hp_bonus_2 = 0.02
+
+
 @dataclass
 class SetP2:
     hp_bonus_1 = 0.05
     atk_bonus = 0.07
     hp_bonus_2 = 0.04
+
+
 @dataclass
 class SetP3:
     hp_bonus_1 = 0.07
     atk_bonus = 0.09
     hp_bonus_2 = 0.04
+
+
 @dataclass
 class SetP4:
     hp_bonus_1 = 0.08
     atk_bonus = 0.11
     hp_bonus_2 = 0.05
+
+
 @dataclass
 class SetO1:
     hp_bonus_1 = 0.1
     atk_bonus = 0.13
     hp_bonus_2 = 0.05
+
+
 @dataclass
 class SetO2:
     hp_bonus_1 = 0.11
     atk_bonus = 0.15
     hp_bonus_2 = 0.06
+
+
 @dataclass
 class SetO3:
     hp_bonus_1 = 0.12
     atk_bonus = 0.17
     hp_bonus_2 = 0.07
+
+
 @dataclass
 class SetO4:
     hp_bonus_1 = 0.14
@@ -204,58 +235,86 @@ class EmptyItem:
 class ArmorG1:
     hp = 141
     set = SetG1
+
+
 @dataclass
 class ArmorG2:
     hp = 169
     set = SetG2
+
+
 @dataclass
 class ArmorB1:
     hp = 337
     set = SetB1
+
+
 @dataclass
 class ArmorB2:
     hp = 434
     set = SetB2
+
+
 @dataclass
 class ArmorY1:
     hp = 970
     set = SetY1
+
+
 @dataclass
 class ArmorY2:
     hp = 1255
     set = SetY2
+
+
 @dataclass
 class ArmorY3:
     hp = 1541
     set = SetY3
+
+
 @dataclass
 class ArmorP1:
     hp = 2645
     set = SetP1
+
+
 @dataclass
 class ArmorP2:
     hp = 3207
     set = SetP2
+
+
 @dataclass
 class ArmorP3:
     hp = 3770
     set = SetP3
+
+
 @dataclass
 class ArmorP4:
     hp = 4333
     set = SetP4
+
+
 @dataclass
 class ArmorO1:
     hp = 6401
     set = SetO1
+
+
 @dataclass
 class ArmorO2:
     hp = 7811
     set = SetO2
+
+
 @dataclass
 class ArmorO3:
     hp = 9222
     set = SetO3
+
+
 @dataclass
 class ArmorO4:
     hp = 10632
@@ -266,58 +325,86 @@ class ArmorO4:
 class HelmetG1:
     hp = 94
     set = SetG1
+
+
 @dataclass
 class HelmetG2:
     hp = 113
     set = SetG2
+
+
 @dataclass
 class HelmetB1:
     hp = 223
     set = SetB1
+
+
 @dataclass
 class HelmetB2:
     hp = 289
     set = SetB2
+
+
 @dataclass
 class HelmetY1:
     hp = 647
     set = SetY1
+
+
 @dataclass
 class HelmetY2:
     hp = 837
     set = SetY2
+
+
 @dataclass
 class HelmetY3:
     hp = 1027
     set = SetY3
+
+
 @dataclass
 class HelmetP1:
     hp = 1763
     set = SetP1
+
+
 @dataclass
 class HelmetP2:
     hp = 2183
     set = SetP2
+
+
 @dataclass
 class HelmetP3:
     hp = 2513
     set = SetP3
+
+
 @dataclass
 class HelmetP4:
     hp = 2889
     set = SetP4
+
+
 @dataclass
 class HelmetO1:
     hp = 4267
     set = SetO1
+
+
 @dataclass
 class HelmetO2:
     hp = 5207
     set = SetO2
+
+
 @dataclass
 class HelmetO3:
     hp = 6148
     set = SetO3
+
+
 @dataclass
 class HelmetO4:
     hp = 7088
@@ -328,58 +415,86 @@ class HelmetO4:
 class WeaponG1:
     atk = 32
     set = SetG1
+
+
 @dataclass
 class WeaponG2:
     atk = 38
     set = SetG2
+
+
 @dataclass
 class WeaponB1:
     atk = 66
     set = SetB1
+
+
 @dataclass
 class WeaponB2:
     atk = 85
     set = SetB2
+
+
 @dataclass
 class WeaponY1:
     atk = 168
     set = SetY1
+
+
 @dataclass
 class WeaponY2:
     atk = 218
     set = SetY2
+
+
 @dataclass
 class WeaponY3:
     atk = 256
     set = SetY3
+
+
 @dataclass
 class WeaponP1:
     atk = 414
     set = SetP1
+
+
 @dataclass
 class WeaponP2:
     atk = 502
     set = SetP2
+
+
 @dataclass
 class WeaponP3:
     atk = 590
     set = SetP3
+
+
 @dataclass
 class WeaponP4:
     atk = 678
     set = SetP4
+
+
 @dataclass
 class WeaponO1:
     atk = 914
     set = SetO1
+
+
 @dataclass
 class WeaponO2:
     atk = 1116
     set = SetO2
+
+
 @dataclass
 class WeaponO3:
     atk = 1317
     set = SetO3
+
+
 @dataclass
 class WeaponO4:
     atk = 1519
@@ -390,58 +505,86 @@ class WeaponO4:
 class PendantG1:
     atk = 21
     set = SetG1
+
+
 @dataclass
 class PendantG2:
     atk = 25
     set = SetG2
+
+
 @dataclass
 class PendantB1:
     atk = 44
     set = SetB1
+
+
 @dataclass
 class PendantB2:
     atk = 57
     set = SetB2
+
+
 @dataclass
 class PendantY1:
     atk = 112
     set = SetY1
+
+
 @dataclass
 class PendantY2:
     atk = 145
     set = SetY2
+
+
 @dataclass
 class PendantY3:
     atk = 178
     set = SetY3
+
+
 @dataclass
 class PendantP1:
     atk = 276
     set = SetP1
+
+
 @dataclass
 class PendantP2:
     atk = 335
     set = SetP2
+
+
 @dataclass
 class PendantP3:
     atk = 393
     set = SetP3
+
+
 @dataclass
 class PendantP4:
     atk = 452
     set = SetP4
+
+
 @dataclass
 class PendantO1:
     atk = 610
     set = SetO1
+
+
 @dataclass
 class PendantO2:
     atk = 744
     set = SetO2
+
+
 @dataclass
 class PendantO3:
     atk = 878
     set = SetO3
+
+
 @dataclass
 class PendantO4:
     atk = 1013
@@ -469,23 +612,23 @@ class Armor:
 
 
 armor_from_request = {
-                    'EMPTY': Armor.empty, 
-                    'GREEN1': Armor.G1, 
-                    'GREEN2': Armor.G2, 
-                    'BLUE1': Armor.B1, 
-                    'BLUE2': Armor.B2, 
-                    'YELLOW1': Armor.Y1, 
-                    'YELLOW2': Armor.Y2, 
-                    'YELLOW3': Armor.Y3, 
-                    'PURPLE1': Armor.P1, 
-                    'PURPLE2': Armor.P2, 
-                    'PURPLE3': Armor.P3, 
-                    'PURPLE4': Armor.P4, 
-                    'ORANGE1': Armor.O1, 
-                    'ORANGE2': Armor.O2, 
-                    'ORANGE3': Armor.O3, 
-                    'ORANGE4': Armor.O4
-                    }
+    'EMPTY': Armor.empty,
+    'GREEN1': Armor.G1,
+    'GREEN2': Armor.G2,
+    'BLUE1': Armor.B1,
+    'BLUE2': Armor.B2,
+    'YELLOW1': Armor.Y1,
+    'YELLOW2': Armor.Y2,
+    'YELLOW3': Armor.Y3,
+    'PURPLE1': Armor.P1,
+    'PURPLE2': Armor.P2,
+    'PURPLE3': Armor.P3,
+    'PURPLE4': Armor.P4,
+    'ORANGE1': Armor.O1,
+    'ORANGE2': Armor.O2,
+    'ORANGE3': Armor.O3,
+    'ORANGE4': Armor.O4
+}
 
 
 @dataclass
@@ -509,23 +652,23 @@ class Helmet:
 
 
 helmet_from_request = {
-                    'EMPTY': Helmet.empty, 
-                    'GREEN1': Helmet.G1, 
-                    'GREEN2': Helmet.G2, 
-                    'BLUE1': Helmet.B1, 
-                    'BLUE2': Helmet.B2, 
-                    'YELLOW1': Helmet.Y1, 
-                    'YELLOW2': Helmet.Y2, 
-                    'YELLOW3': Helmet.Y3, 
-                    'PURPLE1': Helmet.P1, 
-                    'PURPLE2': Helmet.P2, 
-                    'PURPLE3': Helmet.P3, 
-                    'PURPLE4': Helmet.P4, 
-                    'ORANGE1': Helmet.O1, 
-                    'ORANGE2': Helmet.O2, 
-                    'ORANGE3': Helmet.O3, 
-                    'ORANGE4': Helmet.O4
-                    }
+    'EMPTY': Helmet.empty,
+    'GREEN1': Helmet.G1,
+    'GREEN2': Helmet.G2,
+    'BLUE1': Helmet.B1,
+    'BLUE2': Helmet.B2,
+    'YELLOW1': Helmet.Y1,
+    'YELLOW2': Helmet.Y2,
+    'YELLOW3': Helmet.Y3,
+    'PURPLE1': Helmet.P1,
+    'PURPLE2': Helmet.P2,
+    'PURPLE3': Helmet.P3,
+    'PURPLE4': Helmet.P4,
+    'ORANGE1': Helmet.O1,
+    'ORANGE2': Helmet.O2,
+    'ORANGE3': Helmet.O3,
+    'ORANGE4': Helmet.O4
+}
 
 
 @dataclass
@@ -549,23 +692,23 @@ class Weapon:
 
 
 weapon_from_request = {
-                    'EMPTY': Weapon.empty, 
-                    'GREEN1': Weapon.G1, 
-                    'GREEN2': Weapon.G2, 
-                    'BLUE1': Weapon.B1, 
-                    'BLUE2': Weapon.B2, 
-                    'YELLOW1': Weapon.Y1, 
-                    'YELLOW2': Weapon.Y2, 
-                    'YELLOW3': Weapon.Y3, 
-                    'PURPLE1': Weapon.P1, 
-                    'PURPLE2': Weapon.P2, 
-                    'PURPLE3': Weapon.P3, 
-                    'PURPLE4': Weapon.P4, 
-                    'ORANGE1': Weapon.O1, 
-                    'ORANGE2': Weapon.O2, 
-                    'ORANGE3': Weapon.O3, 
-                    'ORANGE4': Weapon.O4
-                    }
+    'EMPTY': Weapon.empty,
+    'GREEN1': Weapon.G1,
+    'GREEN2': Weapon.G2,
+    'BLUE1': Weapon.B1,
+    'BLUE2': Weapon.B2,
+    'YELLOW1': Weapon.Y1,
+    'YELLOW2': Weapon.Y2,
+    'YELLOW3': Weapon.Y3,
+    'PURPLE1': Weapon.P1,
+    'PURPLE2': Weapon.P2,
+    'PURPLE3': Weapon.P3,
+    'PURPLE4': Weapon.P4,
+    'ORANGE1': Weapon.O1,
+    'ORANGE2': Weapon.O2,
+    'ORANGE3': Weapon.O3,
+    'ORANGE4': Weapon.O4
+}
 
 
 @dataclass
@@ -589,23 +732,23 @@ class Pendant:
 
 
 pendant_from_request = {
-                    'EMPTY': Pendant.empty, 
-                    'GREEN1': Pendant.G1, 
-                    'GREEN2': Pendant.G2, 
-                    'BLUE1': Pendant.B1, 
-                    'BLUE2': Pendant.B2, 
-                    'YELLOW1': Pendant.Y1, 
-                    'YELLOW2': Pendant.Y2, 
-                    'YELLOW3': Pendant.Y3, 
-                    'PURPLE1': Pendant.P1, 
-                    'PURPLE2': Pendant.P2, 
-                    'PURPLE3': Pendant.P3, 
-                    'PURPLE4': Pendant.P4, 
-                    'ORANGE1': Pendant.O1, 
-                    'ORANGE2': Pendant.O2, 
-                    'ORANGE3': Pendant.O3, 
-                    'ORANGE4': Pendant.O4
-                    }
+    'EMPTY': Pendant.empty,
+    'GREEN1': Pendant.G1,
+    'GREEN2': Pendant.G2,
+    'BLUE1': Pendant.B1,
+    'BLUE2': Pendant.B2,
+    'YELLOW1': Pendant.Y1,
+    'YELLOW2': Pendant.Y2,
+    'YELLOW3': Pendant.Y3,
+    'PURPLE1': Pendant.P1,
+    'PURPLE2': Pendant.P2,
+    'PURPLE3': Pendant.P3,
+    'PURPLE4': Pendant.P4,
+    'ORANGE1': Pendant.O1,
+    'ORANGE2': Pendant.O2,
+    'ORANGE3': Pendant.O3,
+    'ORANGE4': Pendant.O4
+}
 
 
 ## Rune
@@ -630,62 +773,92 @@ class AccuracyRuneB1(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneB2(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneG1(BaseRune):
     atk = 50
     atk_bonus = 0
     hit_rate = 0.02
+
+
 class AccuracyRuneG2(BaseRune):
     atk = 70
     atk_bonus = 0
     hit_rate = 0.03
+
+
 class AccuracyRuneY1(BaseRune):
     atk = 125
     atk_bonus = 0
     hit_rate = 0.05
+
+
 class AccuracyRuneY2(BaseRune):
     atk = 155
     atk_bonus = 0
     hit_rate = 0.06
+
+
 class AccuracyRuneY3(BaseRune):
     atk = 185
     atk_bonus = 0
     hit_rate = 0.07
+
+
 class AccuracyRuneP1(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneP2(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneP3(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneO1(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneO2(BaseRune):
     atk = 420
     atk_bonus = 0
     hit_rate = 0.14
+
+
 class AccuracyRuneO3(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneO4(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneR1(BaseRune):
     atk = 0
     atk_bonus = 0
     hit_rate = 0
+
+
 class AccuracyRuneR2(BaseRune):
     atk = 620
     atk_bonus = 0.09
@@ -696,62 +869,92 @@ class CritRateRuneB1(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneB2(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneG1(BaseRune):
     hp = 300
     hp_bonus = 0
     crit_rate = 0.02
+
+
 class CritRateRuneG2(BaseRune):
     hp = 600
     hp_bonus = 0
     crit_rate = 0.03
+
+
 class CritRateRuneY1(BaseRune):
     hp = 920
     hp_bonus = 0
     crit_rate = 0.05
+
+
 class CritRateRuneY2(BaseRune):
     hp = 1200
     hp_bonus = 0
     crit_rate = 0.06
+
+
 class CritRateRuneY3(BaseRune):
     hp = 1480
     hp_bonus = 0
     crit_rate = 0.07
+
+
 class CritRateRuneP1(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneP2(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneP3(BaseRune):
     hp = 2280
     hp_bonus = 0
     crit_rate = 0.11
+
+
 class CritRateRuneO1(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneO2(BaseRune):
     hp = 3460
     hp_bonus = 0
     crit_rate = 0.14
+
+
 class CritRateRuneO3(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneO4(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneR1(BaseRune):
     hp = 0
     hp_bonus = 0
     crit_rate = 0
+
+
 class CritRateRuneR2(BaseRune):
     hp = 0
     hp_bonus = 0.13
@@ -761,48 +964,78 @@ class CritRateRuneR2(BaseRune):
 class AttackRuneB1(BaseRune):
     atk = 55
     atk_bonus = 0
+
+
 class AttackRuneB2(BaseRune):
     atk = 72
     atk_bonus = 0
+
+
 class AttackRuneG1(BaseRune):
     atk = 110
     atk_bonus = 0
+
+
 class AttackRuneG2(BaseRune):
     atk = 150
     atk_bonus = 0
+
+
 class AttackRuneY1(BaseRune):
     atk = 210
     atk_bonus = 0.04
+
+
 class AttackRuneY2(BaseRune):
     atk = 270
     atk_bonus = 0.05
+
+
 class AttackRuneY3(BaseRune):
     atk = 330
     atk_bonus = 0.06
+
+
 class AttackRuneP1(BaseRune):
     atk = 0
     atk_bonus = 0
+
+
 class AttackRuneP2(BaseRune):
     atk = 0
     atk_bonus = 0
+
+
 class AttackRuneP3(BaseRune):
     atk = 0
     atk_bonus = 0
+
+
 class AttackRuneO1(BaseRune):
     atk = 640
     atk_bonus = 0.135
+
+
 class AttackRuneO2(BaseRune):
     atk = 0
     atk_bonus = 0
+
+
 class AttackRuneO3(BaseRune):
     atk = 0
     atk_bonus = 0
+
+
 class AttackRuneO4(BaseRune):
     atk = 0
     atk_bonus = 0
+
+
 class AttackRuneR1(BaseRune):
     atk = 0
     atk_bonus = 0
+
+
 class AttackRuneR2(BaseRune):
     atk = 1200
     atk_bonus = 0.22
@@ -812,62 +1045,92 @@ class EvasionRuneB1(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneB2(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneG1(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneG2(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneY1(BaseRune):
     hp = 920
     hp_bonus = 0
     dodge = 0.035
+
+
 class EvasionRuneY2(BaseRune):
     hp = 1200
     hp_bonus = 0
     dodge = 0.045
+
+
 class EvasionRuneY3(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneP1(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneP2(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneP3(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneO1(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneO2(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneO3(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneO4(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneR1(BaseRune):
     hp = 0
     hp_bonus = 0
     dodge = 0
+
+
 class EvasionRuneR2(BaseRune):
     hp = 0
     hp_bonus = 0.12
@@ -878,62 +1141,92 @@ class ArmorBreakRuneB1(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneB2(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneG1(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneG2(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneY1(BaseRune):
     atk = 125
     atk_bonus = 0
     armor_break = 2
+
+
 class ArmorBreakRuneY2(BaseRune):
     atk = 155
     atk_bonus = 0
     armor_break = 3
+
+
 class ArmorBreakRuneY3(BaseRune):
     atk = 185
     atk_bonus = 0
     armor_break = 4
+
+
 class ArmorBreakRuneP1(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneP2(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneP3(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneO1(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneO2(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneO3(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneO4(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneR1(BaseRune):
     atk = 0
     atk_bonus = 0
     armor_break = 0
+
+
 class ArmorBreakRuneR2(BaseRune):
     atk = 620
     atk_bonus = 0.09
@@ -943,48 +1236,78 @@ class ArmorBreakRuneR2(BaseRune):
 class SkillDamageRuneB1(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneB2(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneG1(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneG2(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneY1(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneY2(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneY3(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneP1(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneP2(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneP3(BaseRune):
     skill_damage = 0.14
     hit_rate = 0.05
+
+
 class SkillDamageRuneO1(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneO2(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneO3(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneO4(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneR1(BaseRune):
     skill_damage = 0
     hit_rate = 0
+
+
 class SkillDamageRuneR2(BaseRune):
     skill_damage = 0.26
     hit_rate = 0.13
@@ -993,48 +1316,78 @@ class SkillDamageRuneR2(BaseRune):
 class CritDamageRuneB1(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneB2(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneG1(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneG2(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneY1(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneY2(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneY3(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneP1(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneP2(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneP3(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneO1(BaseRune):
     crit_rate = 0.07
     crit_damage = 0.24
+
+
 class CritDamageRuneO2(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneO3(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneO4(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneR1(BaseRune):
     crit_rate = 0
     crit_damage = 0
+
+
 class CritDamageRuneR2(BaseRune):
     crit_rate = 0.13
     crit_damage = 0.44
@@ -1044,62 +1397,92 @@ class HpRuneB1(BaseRune):
     hp = 450
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneB2(BaseRune):
     hp = 582
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneG1(BaseRune):
     hp = 880
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneG2(BaseRune):
     hp = 1120
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneY1(BaseRune):
     hp = 1480
     atk_bonus = 0
     hp_bonus = 0.07
+
+
 class HpRuneY2(BaseRune):
     hp = 1960
     atk_bonus = 0
     hp_bonus = 0.08
+
+
 class HpRuneY3(BaseRune):
     hp = 2440
     atk_bonus = 0
     hp_bonus = 0.09
+
+
 class HpRuneP1(BaseRune):
     hp = 0
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneP2(BaseRune):
     hp = 0
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneP3(BaseRune):
     hp = 4120
     atk_bonus = 0
     hp_bonus = 0.15
+
+
 class HpRuneO1(BaseRune):
     hp = 0
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneO2(BaseRune):
     hp = 0
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneO3(BaseRune):
     hp = 6120
     atk_bonus = 0
     hp_bonus = 0.22
+
+
 class HpRuneO4(BaseRune):
     hp = 0
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneR1(BaseRune):
     hp = 0
     atk_bonus = 0
     hp_bonus = 0
+
+
 class HpRuneR2(BaseRune):
     hp = 8960
     atk_bonus = 0.06
@@ -1127,23 +1510,23 @@ class AccuracyRune:
 
 
 accuracy_rune_from_request = {
-                    'BLUE1': AccuracyRune.B1, 
-                    'BLUE2': AccuracyRune.B2, 
-                    'GREEN1': AccuracyRune.G1, 
-                    'GREEN2': AccuracyRune.G2, 
-                    'YELLOW1': AccuracyRune.Y1, 
-                    'YELLOW2': AccuracyRune.Y2, 
-                    'YELLOW3': AccuracyRune.Y3, 
-                    'PURPLE1': AccuracyRune.P1, 
-                    'PURPLE2': AccuracyRune.P2, 
-                    'PURPLE3': AccuracyRune.P3, 
-                    'ORANGE1': AccuracyRune.O1, 
-                    'ORANGE2': AccuracyRune.O2, 
-                    'ORANGE3': AccuracyRune.O3, 
-                    'ORANGE4': AccuracyRune.O4, 
-                    'RED1': AccuracyRune.R1, 
-                    'RED2': AccuracyRune.R2
-                    }
+    'BLUE1': AccuracyRune.B1,
+    'BLUE2': AccuracyRune.B2,
+    'GREEN1': AccuracyRune.G1,
+    'GREEN2': AccuracyRune.G2,
+    'YELLOW1': AccuracyRune.Y1,
+    'YELLOW2': AccuracyRune.Y2,
+    'YELLOW3': AccuracyRune.Y3,
+    'PURPLE1': AccuracyRune.P1,
+    'PURPLE2': AccuracyRune.P2,
+    'PURPLE3': AccuracyRune.P3,
+    'ORANGE1': AccuracyRune.O1,
+    'ORANGE2': AccuracyRune.O2,
+    'ORANGE3': AccuracyRune.O3,
+    'ORANGE4': AccuracyRune.O4,
+    'RED1': AccuracyRune.R1,
+    'RED2': AccuracyRune.R2
+}
 
 
 @dataclass
@@ -1167,23 +1550,23 @@ class CritRateRune:
 
 
 crit_rate_rune_from_request = {
-                    'BLUE1': CritRateRune.B1, 
-                    'BLUE2': CritRateRune.B2, 
-                    'GREEN1': CritRateRune.G1, 
-                    'GREEN2': CritRateRune.G2, 
-                    'YELLOW1': CritRateRune.Y1, 
-                    'YELLOW2': CritRateRune.Y2, 
-                    'YELLOW3': CritRateRune.Y3, 
-                    'PURPLE1': CritRateRune.P1, 
-                    'PURPLE2': CritRateRune.P2, 
-                    'PURPLE3': CritRateRune.P3, 
-                    'ORANGE1': CritRateRune.O1, 
-                    'ORANGE2': CritRateRune.O2, 
-                    'ORANGE3': CritRateRune.O3, 
-                    'ORANGE4': CritRateRune.O4, 
-                    'RED1': CritRateRune.R1, 
-                    'RED2': CritRateRune.R2
-                    }
+    'BLUE1': CritRateRune.B1,
+    'BLUE2': CritRateRune.B2,
+    'GREEN1': CritRateRune.G1,
+    'GREEN2': CritRateRune.G2,
+    'YELLOW1': CritRateRune.Y1,
+    'YELLOW2': CritRateRune.Y2,
+    'YELLOW3': CritRateRune.Y3,
+    'PURPLE1': CritRateRune.P1,
+    'PURPLE2': CritRateRune.P2,
+    'PURPLE3': CritRateRune.P3,
+    'ORANGE1': CritRateRune.O1,
+    'ORANGE2': CritRateRune.O2,
+    'ORANGE3': CritRateRune.O3,
+    'ORANGE4': CritRateRune.O4,
+    'RED1': CritRateRune.R1,
+    'RED2': CritRateRune.R2
+}
 
 
 @dataclass
@@ -1207,23 +1590,23 @@ class AttackRune:
 
 
 attack_rune_from_request = {
-                    'BLUE1': AttackRune.B1, 
-                    'BLUE2': AttackRune.B2, 
-                    'GREEN1': AttackRune.G1, 
-                    'GREEN2': AttackRune.G2, 
-                    'YELLOW1': AttackRune.Y1, 
-                    'YELLOW2': AttackRune.Y2, 
-                    'YELLOW3': AttackRune.Y3, 
-                    'PURPLE1': AttackRune.P1, 
-                    'PURPLE2': AttackRune.P2, 
-                    'PURPLE3': AttackRune.P3, 
-                    'ORANGE1': AttackRune.O1, 
-                    'ORANGE2': AttackRune.O2, 
-                    'ORANGE3': AttackRune.O3, 
-                    'ORANGE4': AttackRune.O4, 
-                    'RED1': AttackRune.R1, 
-                    'RED2': AttackRune.R2
-                    }
+    'BLUE1': AttackRune.B1,
+    'BLUE2': AttackRune.B2,
+    'GREEN1': AttackRune.G1,
+    'GREEN2': AttackRune.G2,
+    'YELLOW1': AttackRune.Y1,
+    'YELLOW2': AttackRune.Y2,
+    'YELLOW3': AttackRune.Y3,
+    'PURPLE1': AttackRune.P1,
+    'PURPLE2': AttackRune.P2,
+    'PURPLE3': AttackRune.P3,
+    'ORANGE1': AttackRune.O1,
+    'ORANGE2': AttackRune.O2,
+    'ORANGE3': AttackRune.O3,
+    'ORANGE4': AttackRune.O4,
+    'RED1': AttackRune.R1,
+    'RED2': AttackRune.R2
+}
 
 
 @dataclass
@@ -1247,23 +1630,23 @@ class EvasionRune:
 
 
 evasion_rune_from_request = {
-                    'BLUE1': EvasionRune.B1, 
-                    'BLUE2': EvasionRune.B2, 
-                    'GREEN1': EvasionRune.G1, 
-                    'GREEN2': EvasionRune.G2, 
-                    'YELLOW1': EvasionRune.Y1, 
-                    'YELLOW2': EvasionRune.Y2, 
-                    'YELLOW3': EvasionRune.Y3, 
-                    'PURPLE1': EvasionRune.P1, 
-                    'PURPLE2': EvasionRune.P2, 
-                    'PURPLE3': EvasionRune.P3, 
-                    'ORANGE1': EvasionRune.O1, 
-                    'ORANGE2': EvasionRune.O2, 
-                    'ORANGE3': EvasionRune.O3, 
-                    'ORANGE4': EvasionRune.O4, 
-                    'RED1': EvasionRune.R1, 
-                    'RED2': EvasionRune.R2
-                    }
+    'BLUE1': EvasionRune.B1,
+    'BLUE2': EvasionRune.B2,
+    'GREEN1': EvasionRune.G1,
+    'GREEN2': EvasionRune.G2,
+    'YELLOW1': EvasionRune.Y1,
+    'YELLOW2': EvasionRune.Y2,
+    'YELLOW3': EvasionRune.Y3,
+    'PURPLE1': EvasionRune.P1,
+    'PURPLE2': EvasionRune.P2,
+    'PURPLE3': EvasionRune.P3,
+    'ORANGE1': EvasionRune.O1,
+    'ORANGE2': EvasionRune.O2,
+    'ORANGE3': EvasionRune.O3,
+    'ORANGE4': EvasionRune.O4,
+    'RED1': EvasionRune.R1,
+    'RED2': EvasionRune.R2
+}
 
 
 @dataclass
@@ -1287,23 +1670,23 @@ class ArmorBreakRune:
 
 
 armor_break_rune_from_request = {
-                    'BLUE1': ArmorBreakRune.B1, 
-                    'BLUE2': ArmorBreakRune.B2, 
-                    'GREEN1': ArmorBreakRune.G1, 
-                    'GREEN2': ArmorBreakRune.G2, 
-                    'YELLOW1': ArmorBreakRune.Y1, 
-                    'YELLOW2': ArmorBreakRune.Y2, 
-                    'YELLOW3': ArmorBreakRune.Y3, 
-                    'PURPLE1': ArmorBreakRune.P1, 
-                    'PURPLE2': ArmorBreakRune.P2, 
-                    'PURPLE3': ArmorBreakRune.P3, 
-                    'ORANGE1': ArmorBreakRune.O1, 
-                    'ORANGE2': ArmorBreakRune.O2, 
-                    'ORANGE3': ArmorBreakRune.O3, 
-                    'ORANGE4': ArmorBreakRune.O4, 
-                    'RED1': ArmorBreakRune.R1, 
-                    'RED2': ArmorBreakRune.R2
-                    }
+    'BLUE1': ArmorBreakRune.B1,
+    'BLUE2': ArmorBreakRune.B2,
+    'GREEN1': ArmorBreakRune.G1,
+    'GREEN2': ArmorBreakRune.G2,
+    'YELLOW1': ArmorBreakRune.Y1,
+    'YELLOW2': ArmorBreakRune.Y2,
+    'YELLOW3': ArmorBreakRune.Y3,
+    'PURPLE1': ArmorBreakRune.P1,
+    'PURPLE2': ArmorBreakRune.P2,
+    'PURPLE3': ArmorBreakRune.P3,
+    'ORANGE1': ArmorBreakRune.O1,
+    'ORANGE2': ArmorBreakRune.O2,
+    'ORANGE3': ArmorBreakRune.O3,
+    'ORANGE4': ArmorBreakRune.O4,
+    'RED1': ArmorBreakRune.R1,
+    'RED2': ArmorBreakRune.R2
+}
 
 
 @dataclass
@@ -1327,23 +1710,23 @@ class SkillDamageRune:
 
 
 skill_damage_rune_from_request = {
-                    'BLUE1': SkillDamageRune.B1, 
-                    'BLUE2': SkillDamageRune.B2, 
-                    'GREEN1': SkillDamageRune.G1, 
-                    'GREEN2': SkillDamageRune.G2, 
-                    'YELLOW1': SkillDamageRune.Y1, 
-                    'YELLOW2': SkillDamageRune.Y2, 
-                    'YELLOW3': SkillDamageRune.Y3, 
-                    'PURPLE1': SkillDamageRune.P1, 
-                    'PURPLE2': SkillDamageRune.P2, 
-                    'PURPLE3': SkillDamageRune.P3, 
-                    'ORANGE1': SkillDamageRune.O1, 
-                    'ORANGE2': SkillDamageRune.O2, 
-                    'ORANGE3': SkillDamageRune.O3, 
-                    'ORANGE4': SkillDamageRune.O4, 
-                    'RED1': SkillDamageRune.R1, 
-                    'RED2': SkillDamageRune.R2
-                    }
+    'BLUE1': SkillDamageRune.B1,
+    'BLUE2': SkillDamageRune.B2,
+    'GREEN1': SkillDamageRune.G1,
+    'GREEN2': SkillDamageRune.G2,
+    'YELLOW1': SkillDamageRune.Y1,
+    'YELLOW2': SkillDamageRune.Y2,
+    'YELLOW3': SkillDamageRune.Y3,
+    'PURPLE1': SkillDamageRune.P1,
+    'PURPLE2': SkillDamageRune.P2,
+    'PURPLE3': SkillDamageRune.P3,
+    'ORANGE1': SkillDamageRune.O1,
+    'ORANGE2': SkillDamageRune.O2,
+    'ORANGE3': SkillDamageRune.O3,
+    'ORANGE4': SkillDamageRune.O4,
+    'RED1': SkillDamageRune.R1,
+    'RED2': SkillDamageRune.R2
+}
 
 
 @dataclass
@@ -1367,23 +1750,23 @@ class CritDamageRune:
 
 
 crit_damage_rune_from_request = {
-                    'BLUE1': CritDamageRune.B1, 
-                    'BLUE2': CritDamageRune.B2, 
-                    'GREEN1': CritDamageRune.G1, 
-                    'GREEN2': CritDamageRune.G2, 
-                    'YELLOW1': CritDamageRune.Y1, 
-                    'YELLOW2': CritDamageRune.Y2, 
-                    'YELLOW3': CritDamageRune.Y3, 
-                    'PURPLE1': CritDamageRune.P1, 
-                    'PURPLE2': CritDamageRune.P2, 
-                    'PURPLE3': CritDamageRune.P3, 
-                    'ORANGE1': CritDamageRune.O1, 
-                    'ORANGE2': CritDamageRune.O2, 
-                    'ORANGE3': CritDamageRune.O3, 
-                    'ORANGE4': CritDamageRune.O4, 
-                    'RED1': CritDamageRune.R1, 
-                    'RED2': CritDamageRune.R2
-                    }
+    'BLUE1': CritDamageRune.B1,
+    'BLUE2': CritDamageRune.B2,
+    'GREEN1': CritDamageRune.G1,
+    'GREEN2': CritDamageRune.G2,
+    'YELLOW1': CritDamageRune.Y1,
+    'YELLOW2': CritDamageRune.Y2,
+    'YELLOW3': CritDamageRune.Y3,
+    'PURPLE1': CritDamageRune.P1,
+    'PURPLE2': CritDamageRune.P2,
+    'PURPLE3': CritDamageRune.P3,
+    'ORANGE1': CritDamageRune.O1,
+    'ORANGE2': CritDamageRune.O2,
+    'ORANGE3': CritDamageRune.O3,
+    'ORANGE4': CritDamageRune.O4,
+    'RED1': CritDamageRune.R1,
+    'RED2': CritDamageRune.R2
+}
 
 
 @dataclass
@@ -1407,23 +1790,23 @@ class HpRune:
 
 
 hp_rune_from_request = {
-                    'BLUE1': HpRune.B1, 
-                    'BLUE2': HpRune.B2, 
-                    'GREEN1': HpRune.G1, 
-                    'GREEN2': HpRune.G2, 
-                    'YELLOW1': HpRune.Y1, 
-                    'YELLOW2': HpRune.Y2, 
-                    'YELLOW3': HpRune.Y3, 
-                    'PURPLE1': HpRune.P1, 
-                    'PURPLE2': HpRune.P2, 
-                    'PURPLE3': HpRune.P3, 
-                    'ORANGE1': HpRune.O1, 
-                    'ORANGE2': HpRune.O2, 
-                    'ORANGE3': HpRune.O3, 
-                    'ORANGE4': HpRune.O4, 
-                    'RED1': HpRune.R1, 
-                    'RED2': HpRune.R2
-                    }
+    'BLUE1': HpRune.B1,
+    'BLUE2': HpRune.B2,
+    'GREEN1': HpRune.G1,
+    'GREEN2': HpRune.G2,
+    'YELLOW1': HpRune.Y1,
+    'YELLOW2': HpRune.Y2,
+    'YELLOW3': HpRune.Y3,
+    'PURPLE1': HpRune.P1,
+    'PURPLE2': HpRune.P2,
+    'PURPLE3': HpRune.P3,
+    'ORANGE1': HpRune.O1,
+    'ORANGE2': HpRune.O2,
+    'ORANGE3': HpRune.O3,
+    'ORANGE4': HpRune.O4,
+    'RED1': HpRune.R1,
+    'RED2': HpRune.R2
+}
 
 
 @dataclass
@@ -1440,16 +1823,16 @@ class Rune:
 
 
 rune_from_request = {
-                    'EMPTY': Rune.empty, 
-                    'ACCURACY': accuracy_rune_from_request, 
-                    'CRIT_RATE': crit_rate_rune_from_request, 
-                    'ATTACK': attack_rune_from_request, 
-                    'EVASION': evasion_rune_from_request, 
-                    'ARMOR_BREAK': armor_break_rune_from_request, 
-                    'SKILL_DAMAGE': skill_damage_rune_from_request, 
-                    'CRIT_DAMAGE': crit_damage_rune_from_request, 
-                    'HP': hp_rune_from_request
-                    }
+    'EMPTY': Rune.empty,
+    'ACCURACY': accuracy_rune_from_request,
+    'CRIT_RATE': crit_rate_rune_from_request,
+    'ATTACK': attack_rune_from_request,
+    'EVASION': evasion_rune_from_request,
+    'ARMOR_BREAK': armor_break_rune_from_request,
+    'SKILL_DAMAGE': skill_damage_rune_from_request,
+    'CRIT_DAMAGE': crit_damage_rune_from_request,
+    'HP': hp_rune_from_request
+}
 
 
 ## Artifact
@@ -1483,72 +1866,118 @@ class EmptyArtifact(BaseArtifact):
 class WarriorArtifactG1(BaseArtifact):
     atk = 150
     damage_to_warriors = 0.05
+
+
 class WarriorArtifactG2(BaseArtifact):
     atk = 195
     damage_to_warriors = 0.065
+
+
 class WarriorArtifactG3(BaseArtifact):
     atk = 240
     damage_to_warriors = 0.08
+
+
 class WarriorArtifactG4(BaseArtifact):
     atk = 300
     damage_to_warriors = 0.1
+
+
 class WarriorArtifactB1(BaseArtifact):
     atk = 240
     damage_to_warriors = 0.08
+
+
 class WarriorArtifactB2(BaseArtifact):
     atk = 300
     damage_to_warriors = 0.1
+
+
 class WarriorArtifactB3(BaseArtifact):
     atk = 360
     damage_to_warriors = 0.12
+
+
 class WarriorArtifactB4(BaseArtifact):
     atk = 450
     damage_to_warriors = 0.15
+
+
 class WarriorArtifactY1(BaseArtifact):
     atk = 360
     damage_to_warriors = 0.12
+
+
 class WarriorArtifactY2(BaseArtifact):
     atk = 420
     damage_to_warriors = 0.14
+
+
 class WarriorArtifactY3(BaseArtifact):
     atk = 480
     damage_to_warriors = 0.16
+
+
 class WarriorArtifactY4(BaseArtifact):
     atk = 540
     damage_to_warriors = 0.18
+
+
 class WarriorArtifactY5(BaseArtifact):
     atk = 600
     damage_to_warriors = 0.2
+
+
 class WarriorArtifactP1(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactP2(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactP3(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactP4(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactP5(BaseArtifact):
     atk = 840
     damage_to_warriors = 0.28
+
+
 class WarriorArtifactO1(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactO2(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactO3(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactO4(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactO5(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
+
+
 class WarriorArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_warriors = 0.42
@@ -1557,72 +1986,118 @@ class WarriorArtifactO6(BaseArtifact):
 class AssassinArtifactG1(BaseArtifact):
     atk = 150
     damage_to_assassins = 0.05
+
+
 class AssassinArtifactG2(BaseArtifact):
     atk = 195
     damage_to_assassins = 0.065
+
+
 class AssassinArtifactG3(BaseArtifact):
     atk = 240
     damage_to_assassins = 0.08
+
+
 class AssassinArtifactG4(BaseArtifact):
     atk = 300
     damage_to_assassins = 0.1
+
+
 class AssassinArtifactB1(BaseArtifact):
     atk = 240
     damage_to_assassins = 0.08
+
+
 class AssassinArtifactB2(BaseArtifact):
     atk = 300
     damage_to_assassins = 0.1
+
+
 class AssassinArtifactB3(BaseArtifact):
     atk = 360
     damage_to_assassins = 0.12
+
+
 class AssassinArtifactB4(BaseArtifact):
     atk = 450
     damage_to_assassins = 0.15
+
+
 class AssassinArtifactY1(BaseArtifact):
     atk = 360
     damage_to_assassins = 0.12
+
+
 class AssassinArtifactY2(BaseArtifact):
     atk = 420
     damage_to_assassins = 0.14
+
+
 class AssassinArtifactY3(BaseArtifact):
     atk = 480
     damage_to_assassins = 0.16
+
+
 class AssassinArtifactY4(BaseArtifact):
     atk = 540
     damage_to_assassins = 0.18
+
+
 class AssassinArtifactY5(BaseArtifact):
     atk = 600
     damage_to_assassins = 0.2
+
+
 class AssassinArtifactP1(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactP2(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactP3(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactP4(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactP5(BaseArtifact):
     atk = 840
     damage_to_assassins = 0.28
+
+
 class AssassinArtifactO1(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactO2(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactO3(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactO4(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactO5(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
+
+
 class AssassinArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_assassins = 0.42
@@ -1631,72 +2106,118 @@ class AssassinArtifactO6(BaseArtifact):
 class WandererArtifactG1(BaseArtifact):
     atk = 150
     damage_to_wanderers = 0.05
+
+
 class WandererArtifactG2(BaseArtifact):
     atk = 195
     damage_to_wanderers = 0.065
+
+
 class WandererArtifactG3(BaseArtifact):
     atk = 240
     damage_to_wanderers = 0.08
+
+
 class WandererArtifactG4(BaseArtifact):
     atk = 300
     damage_to_wanderers = 0.1
+
+
 class WandererArtifactB1(BaseArtifact):
     atk = 240
     damage_to_wanderers = 0.08
+
+
 class WandererArtifactB2(BaseArtifact):
     atk = 300
     damage_to_wanderers = 0.1
+
+
 class WandererArtifactB3(BaseArtifact):
     atk = 360
     damage_to_wanderers = 0.12
+
+
 class WandererArtifactB4(BaseArtifact):
     atk = 450
     damage_to_wanderers = 0.15
+
+
 class WandererArtifactY1(BaseArtifact):
     atk = 360
     damage_to_wanderers = 0.12
+
+
 class WandererArtifactY2(BaseArtifact):
     atk = 420
     damage_to_wanderers = 0.14
+
+
 class WandererArtifactY3(BaseArtifact):
     atk = 480
     damage_to_wanderers = 0.16
+
+
 class WandererArtifactY4(BaseArtifact):
     atk = 540
     damage_to_wanderers = 0.18
+
+
 class WandererArtifactY5(BaseArtifact):
     atk = 600
     damage_to_wanderers = 0.2
+
+
 class WandererArtifactP1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactP2(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactP3(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactP4(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactP5(BaseArtifact):
     atk = 840
     damage_to_wanderers = 0.28
+
+
 class WandererArtifactO1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactO2(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactO3(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactO4(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactO5(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
+
+
 class WandererArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_wanderers = 0.42
@@ -1705,72 +2226,118 @@ class WandererArtifactO6(BaseArtifact):
 class ClericArtifactG1(BaseArtifact):
     atk = 150
     damage_to_clerics = 0.05
+
+
 class ClericArtifactG2(BaseArtifact):
     atk = 195
     damage_to_clerics = 0.065
+
+
 class ClericArtifactG3(BaseArtifact):
     atk = 240
     damage_to_clerics = 0.08
+
+
 class ClericArtifactG4(BaseArtifact):
     atk = 300
     damage_to_clerics = 0.1
+
+
 class ClericArtifactB1(BaseArtifact):
     atk = 240
     damage_to_clerics = 0.08
+
+
 class ClericArtifactB2(BaseArtifact):
     atk = 300
     damage_to_clerics = 0.1
+
+
 class ClericArtifactB3(BaseArtifact):
     atk = 360
     damage_to_clerics = 0.12
+
+
 class ClericArtifactB4(BaseArtifact):
     atk = 450
     damage_to_clerics = 0.15
+
+
 class ClericArtifactY1(BaseArtifact):
     atk = 360
     damage_to_clerics = 0.12
+
+
 class ClericArtifactY2(BaseArtifact):
     atk = 420
     damage_to_clerics = 0.14
+
+
 class ClericArtifactY3(BaseArtifact):
     atk = 480
     damage_to_clerics = 0.16
+
+
 class ClericArtifactY4(BaseArtifact):
     atk = 540
     damage_to_clerics = 0.18
+
+
 class ClericArtifactY5(BaseArtifact):
     atk = 600
     damage_to_clerics = 0.2
+
+
 class ClericArtifactP1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactP2(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactP3(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactP4(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactP5(BaseArtifact):
     atk = 840
     damage_to_clerics = 0.28
+
+
 class ClericArtifactO1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactO2(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactO3(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactO4(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactO5(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
+
+
 class ClericArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_clerics = 0.42
@@ -1779,72 +2346,118 @@ class ClericArtifactO6(BaseArtifact):
 class MageArtifactG1(BaseArtifact):
     atk = 150
     damage_to_mages = 0.05
+
+
 class MageArtifactG2(BaseArtifact):
     atk = 195
     damage_to_mages = 0.065
+
+
 class MageArtifactG3(BaseArtifact):
     atk = 240
     damage_to_mages = 0.08
+
+
 class MageArtifactG4(BaseArtifact):
     atk = 300
     damage_to_mages = 0.1
+
+
 class MageArtifactB1(BaseArtifact):
     atk = 240
     damage_to_mages = 0.08
+
+
 class MageArtifactB2(BaseArtifact):
     atk = 300
     damage_to_mages = 0.1
+
+
 class MageArtifactB3(BaseArtifact):
     atk = 360
     damage_to_mages = 0.12
+
+
 class MageArtifactB4(BaseArtifact):
     atk = 450
     damage_to_mages = 0.15
+
+
 class MageArtifactY1(BaseArtifact):
     atk = 360
     damage_to_mages = 0.12
+
+
 class MageArtifactY2(BaseArtifact):
     atk = 420
     damage_to_mages = 0.14
+
+
 class MageArtifactY3(BaseArtifact):
     atk = 480
     damage_to_mages = 0.16
+
+
 class MageArtifactY4(BaseArtifact):
     atk = 540
     damage_to_mages = 0.18
+
+
 class MageArtifactY5(BaseArtifact):
     atk = 600
     damage_to_mages = 0.2
+
+
 class MageArtifactP1(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactP2(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactP3(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactP4(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactP5(BaseArtifact):
     atk = 840
     damage_to_mages = 0.28
+
+
 class MageArtifactO1(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactO2(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactO3(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactO4(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactO5(BaseArtifact):
     atk = 0
     damage_to_mages = 0
+
+
 class MageArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_mages = 0.42
@@ -1853,18 +2466,28 @@ class MageArtifactO6(BaseArtifact):
 class EyeOfHeavenO1(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
+
+
 class EyeOfHeavenO2(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
+
+
 class EyeOfHeavenO3(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
+
+
 class EyeOfHeavenO4(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
+
+
 class EyeOfHeavenO5(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
+
+
 class EyeOfHeavenO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
@@ -1873,18 +2496,28 @@ class EyeOfHeavenO6(BaseArtifact):
 class WindWalkerO1(BaseArtifact):
     speed = 0
     hp_bonus = 0
+
+
 class WindWalkerO2(BaseArtifact):
     speed = 0
     hp_bonus = 0
+
+
 class WindWalkerO3(BaseArtifact):
     speed = 0
     hp_bonus = 0
+
+
 class WindWalkerO4(BaseArtifact):
     speed = 0
     hp_bonus = 0
+
+
 class WindWalkerO5(BaseArtifact):
     speed = 0
     hp_bonus = 0
+
+
 class WindWalkerO6(BaseArtifact):
     speed = 42
     hp_bonus = 0.1
@@ -1893,18 +2526,28 @@ class WindWalkerO6(BaseArtifact):
 class ScorchingSunO1(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
+
+
 class ScorchingSunO2(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
+
+
 class ScorchingSunO3(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
+
+
 class ScorchingSunO4(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
+
+
 class ScorchingSunO5(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
+
+
 class ScorchingSunO6(BaseArtifact):
     hp_bonus = 0.08
     damage_reduction = 0.12
@@ -1913,18 +2556,28 @@ class ScorchingSunO6(BaseArtifact):
 class DragonbloodO1(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
+
+
 class DragonbloodO2(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
+
+
 class DragonbloodO3(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
+
+
 class DragonbloodO4(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
+
+
 class DragonbloodO5(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
+
+
 class DragonbloodO6(BaseArtifact):
     atk_bonus = 0.08
     true_damage = 0.12
@@ -1933,18 +2586,28 @@ class DragonbloodO6(BaseArtifact):
 class SoundStepO1(BaseArtifact):
     energy = 0
     atk = 0
+
+
 class SoundStepO2(BaseArtifact):
     energy = 0
     atk = 0
+
+
 class SoundStepO3(BaseArtifact):
     energy = 0
     atk = 0
+
+
 class SoundStepO4(BaseArtifact):
     energy = 0
     atk = 0
+
+
 class SoundStepO5(BaseArtifact):
     energy = 0
     atk = 0
+
+
 class SoundStepO6(BaseArtifact):
     energy = 240
     atk = 240
@@ -1954,22 +2617,32 @@ class KnightsVowO1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
     skill_damage_if_alliance = 0
+
+
 class KnightsVowO2(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
     skill_damage_if_alliance = 0
+
+
 class KnightsVowO3(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
     skill_damage_if_alliance = 0
+
+
 class KnightsVowO4(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
     skill_damage_if_alliance = 0
+
+
 class KnightsVowO5(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
     skill_damage_if_alliance = 0
+
+
 class KnightsVowO6(BaseArtifact):
     atk = 1280
     damage_to_clerics = 0.42
@@ -1980,22 +2653,32 @@ class PrimevalSoulO1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
     crit_rate_if_horde = 0
+
+
 class PrimevalSoulO2(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
     crit_rate_if_horde = 0
+
+
 class PrimevalSoulO3(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
     crit_rate_if_horde = 0
+
+
 class PrimevalSoulO4(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
     crit_rate_if_horde = 0
+
+
 class PrimevalSoulO5(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
     crit_rate_if_horde = 0
+
+
 class PrimevalSoulO6(BaseArtifact):
     atk = 1280
     damage_to_wanderers = 0.42
@@ -2006,22 +2689,32 @@ class QueensCrownO1(BaseArtifact):
     speed = 0
     hp_bonus = 0
     crit_rate_if_elf = 0
+
+
 class QueensCrownO2(BaseArtifact):
     speed = 0
     hp_bonus = 0
     crit_rate_if_elf = 0
+
+
 class QueensCrownO3(BaseArtifact):
     speed = 0
     hp_bonus = 0
     crit_rate_if_elf = 0
+
+
 class QueensCrownO4(BaseArtifact):
     speed = 0
     hp_bonus = 0
     crit_rate_if_elf = 0
+
+
 class QueensCrownO5(BaseArtifact):
     speed = 0
     hp_bonus = 0
     crit_rate_if_elf = 0
+
+
 class QueensCrownO6(BaseArtifact):
     speed = 42
     hp_bonus = 0.1
@@ -2032,22 +2725,32 @@ class SoulTorrentO1(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
     skill_damage_if_undead = 0
+
+
 class SoulTorrentO2(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
     skill_damage_if_undead = 0
+
+
 class SoulTorrentO3(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
     skill_damage_if_undead = 0
+
+
 class SoulTorrentO4(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
     skill_damage_if_undead = 0
+
+
 class SoulTorrentO5(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
     skill_damage_if_undead = 0
+
+
 class SoulTorrentO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
@@ -2058,22 +2761,32 @@ class GiftOfCreationO1(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
+
+
 class GiftOfCreationO2(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
+
+
 class GiftOfCreationO3(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
+
+
 class GiftOfCreationO4(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
+
+
 class GiftOfCreationO5(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
+
+
 class GiftOfCreationO6(BaseArtifact):
     hp_bonus = 0.1
     damage_reduction = 0.15
@@ -2084,22 +2797,32 @@ class EternalCurseO1(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
     skill_damage_if_hell = 0
+
+
 class EternalCurseO2(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
     skill_damage_if_hell = 0
+
+
 class EternalCurseO3(BaseArtifact):
     atk_bonus = 0.075
     hit_rate = 0.05
     skill_damage_if_hell = 0.25
+
+
 class EternalCurseO4(BaseArtifact):
     atk_bonus = 0.09
     hit_rate = 0.06
     skill_damage_if_hell = 0.25
+
+
 class EternalCurseO5(BaseArtifact):
     atk_bonus = 0.105
     hit_rate = 0.07
     skill_damage_if_hell = 0.25
+
+
 class EternalCurseO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
@@ -2135,13 +2858,13 @@ class WarriorArtifact:
 
 
 satans_power_artifact_from_request = {
-                    1: WarriorArtifact.O1, 
-                    2: WarriorArtifact.O2, 
-                    3: WarriorArtifact.O3, 
-                    4: WarriorArtifact.O4, 
-                    5: WarriorArtifact.O5, 
-                    6: WarriorArtifact.O6
-                    }
+    1: WarriorArtifact.O1,
+    2: WarriorArtifact.O2,
+    3: WarriorArtifact.O3,
+    4: WarriorArtifact.O4,
+    5: WarriorArtifact.O5,
+    6: WarriorArtifact.O6
+}
 
 
 @dataclass
@@ -2173,13 +2896,13 @@ class AssassinArtifact:
 
 
 yaksha_artifact_from_request = {
-                    1: AssassinArtifact.O1, 
-                    2: AssassinArtifact.O2, 
-                    3: AssassinArtifact.O3, 
-                    4: AssassinArtifact.O4, 
-                    5: AssassinArtifact.O5, 
-                    6: AssassinArtifact.O6
-                    }
+    1: AssassinArtifact.O1,
+    2: AssassinArtifact.O2,
+    3: AssassinArtifact.O3,
+    4: AssassinArtifact.O4,
+    5: AssassinArtifact.O5,
+    6: AssassinArtifact.O6
+}
 
 
 @dataclass
@@ -2211,13 +2934,13 @@ class WandererArtifact:
 
 
 dark_destroyer_artifact_from_request = {
-                    1: WandererArtifact.O1, 
-                    2: WandererArtifact.O2, 
-                    3: WandererArtifact.O3, 
-                    4: WandererArtifact.O4, 
-                    5: WandererArtifact.O5, 
-                    6: WandererArtifact.O6
-                    }
+    1: WandererArtifact.O1,
+    2: WandererArtifact.O2,
+    3: WandererArtifact.O3,
+    4: WandererArtifact.O4,
+    5: WandererArtifact.O5,
+    6: WandererArtifact.O6
+}
 
 
 @dataclass
@@ -2249,13 +2972,13 @@ class ClericArtifact:
 
 
 suns_hymn_artifact_from_request = {
-                    1: ClericArtifact.O1, 
-                    2: ClericArtifact.O2, 
-                    3: ClericArtifact.O3, 
-                    4: ClericArtifact.O4, 
-                    5: ClericArtifact.O5, 
-                    6: ClericArtifact.O6
-                    }
+    1: ClericArtifact.O1,
+    2: ClericArtifact.O2,
+    3: ClericArtifact.O3,
+    4: ClericArtifact.O4,
+    5: ClericArtifact.O5,
+    6: ClericArtifact.O6
+}
 
 
 @dataclass
@@ -2287,13 +3010,13 @@ class MageArtifact:
 
 
 burning_soul_artifact_from_request = {
-                    1: MageArtifact.O1, 
-                    2: MageArtifact.O2, 
-                    3: MageArtifact.O3, 
-                    4: MageArtifact.O4, 
-                    5: MageArtifact.O5, 
-                    6: MageArtifact.O6
-                    }
+    1: MageArtifact.O1,
+    2: MageArtifact.O2,
+    3: MageArtifact.O3,
+    4: MageArtifact.O4,
+    5: MageArtifact.O5,
+    6: MageArtifact.O6
+}
 
 
 @dataclass
@@ -2307,13 +3030,13 @@ class EyeOfHeaven:
 
 
 eye_of_heaven_artifact_from_request = {
-                    1: EyeOfHeaven.O1, 
-                    2: EyeOfHeaven.O2, 
-                    3: EyeOfHeaven.O3, 
-                    4: EyeOfHeaven.O4, 
-                    5: EyeOfHeaven.O5, 
-                    6: EyeOfHeaven.O6
-                    }
+    1: EyeOfHeaven.O1,
+    2: EyeOfHeaven.O2,
+    3: EyeOfHeaven.O3,
+    4: EyeOfHeaven.O4,
+    5: EyeOfHeaven.O5,
+    6: EyeOfHeaven.O6
+}
 
 
 @dataclass
@@ -2327,13 +3050,13 @@ class WindWalker:
 
 
 wind_walker_artifact_from_request = {
-                    1: WindWalker.O1, 
-                    2: WindWalker.O2, 
-                    3: WindWalker.O3, 
-                    4: WindWalker.O4, 
-                    5: WindWalker.O5, 
-                    6: WindWalker.O6
-                    }
+    1: WindWalker.O1,
+    2: WindWalker.O2,
+    3: WindWalker.O3,
+    4: WindWalker.O4,
+    5: WindWalker.O5,
+    6: WindWalker.O6
+}
 
 
 @dataclass
@@ -2347,13 +3070,13 @@ class ScorchingSun:
 
 
 scorching_sun_artifact_from_request = {
-                    1: ScorchingSun.O1, 
-                    2: ScorchingSun.O2, 
-                    3: ScorchingSun.O3, 
-                    4: ScorchingSun.O4, 
-                    5: ScorchingSun.O5, 
-                    6: ScorchingSun.O6
-                    }
+    1: ScorchingSun.O1,
+    2: ScorchingSun.O2,
+    3: ScorchingSun.O3,
+    4: ScorchingSun.O4,
+    5: ScorchingSun.O5,
+    6: ScorchingSun.O6
+}
 
 
 @dataclass
@@ -2367,13 +3090,13 @@ class Dragonblood:
 
 
 dragonblood_artifact_from_request = {
-                    1: Dragonblood.O1, 
-                    2: Dragonblood.O2, 
-                    3: Dragonblood.O3, 
-                    4: Dragonblood.O4, 
-                    5: Dragonblood.O5, 
-                    6: Dragonblood.O6
-                    }
+    1: Dragonblood.O1,
+    2: Dragonblood.O2,
+    3: Dragonblood.O3,
+    4: Dragonblood.O4,
+    5: Dragonblood.O5,
+    6: Dragonblood.O6
+}
 
 
 @dataclass
@@ -2387,13 +3110,13 @@ class SoundStep:
 
 
 sound_step_artifact_from_request = {
-                    1: SoundStep.O1, 
-                    2: SoundStep.O2, 
-                    3: SoundStep.O3, 
-                    4: SoundStep.O4, 
-                    5: SoundStep.O5, 
-                    6: SoundStep.O6
-                    }
+    1: SoundStep.O1,
+    2: SoundStep.O2,
+    3: SoundStep.O3,
+    4: SoundStep.O4,
+    5: SoundStep.O5,
+    6: SoundStep.O6
+}
 
 
 @dataclass
@@ -2407,13 +3130,13 @@ class KnightsVow:
 
 
 knights_vow_artifact_from_request = {
-                    1: KnightsVow.O1, 
-                    2: KnightsVow.O2, 
-                    3: KnightsVow.O3, 
-                    4: KnightsVow.O4, 
-                    5: KnightsVow.O5, 
-                    6: KnightsVow.O6
-                    }
+    1: KnightsVow.O1,
+    2: KnightsVow.O2,
+    3: KnightsVow.O3,
+    4: KnightsVow.O4,
+    5: KnightsVow.O5,
+    6: KnightsVow.O6
+}
 
 
 @dataclass
@@ -2427,13 +3150,13 @@ class PrimevalSoul:
 
 
 primeval_soul_artifact_from_request = {
-                    1: PrimevalSoul.O1, 
-                    2: PrimevalSoul.O2, 
-                    3: PrimevalSoul.O3, 
-                    4: PrimevalSoul.O4, 
-                    5: PrimevalSoul.O5, 
-                    6: PrimevalSoul.O6
-                    }
+    1: PrimevalSoul.O1,
+    2: PrimevalSoul.O2,
+    3: PrimevalSoul.O3,
+    4: PrimevalSoul.O4,
+    5: PrimevalSoul.O5,
+    6: PrimevalSoul.O6
+}
 
 
 @dataclass
@@ -2447,13 +3170,13 @@ class QueensCrown:
 
 
 queens_crown_artifact_from_request = {
-                    1: QueensCrown.O1, 
-                    2: QueensCrown.O2, 
-                    3: QueensCrown.O3, 
-                    4: QueensCrown.O4, 
-                    5: QueensCrown.O5, 
-                    6: QueensCrown.O6
-                    }
+    1: QueensCrown.O1,
+    2: QueensCrown.O2,
+    3: QueensCrown.O3,
+    4: QueensCrown.O4,
+    5: QueensCrown.O5,
+    6: QueensCrown.O6
+}
 
 
 @dataclass
@@ -2467,13 +3190,13 @@ class SoulTorrent:
 
 
 soul_torrent_artifact_from_request = {
-                    1: SoulTorrent.O1, 
-                    2: SoulTorrent.O2, 
-                    3: SoulTorrent.O3, 
-                    4: SoulTorrent.O4, 
-                    5: SoulTorrent.O5, 
-                    6: SoulTorrent.O6
-                    }
+    1: SoulTorrent.O1,
+    2: SoulTorrent.O2,
+    3: SoulTorrent.O3,
+    4: SoulTorrent.O4,
+    5: SoulTorrent.O5,
+    6: SoulTorrent.O6
+}
 
 
 @dataclass
@@ -2487,13 +3210,13 @@ class GiftOfCreation:
 
 
 gift_of_creation_artifact_from_request = {
-                    1: GiftOfCreation.O1, 
-                    2: GiftOfCreation.O2, 
-                    3: GiftOfCreation.O3, 
-                    4: GiftOfCreation.O4, 
-                    5: GiftOfCreation.O5, 
-                    6: GiftOfCreation.O6
-                    }
+    1: GiftOfCreation.O1,
+    2: GiftOfCreation.O2,
+    3: GiftOfCreation.O3,
+    4: GiftOfCreation.O4,
+    5: GiftOfCreation.O5,
+    6: GiftOfCreation.O6
+}
 
 
 @dataclass
@@ -2507,13 +3230,13 @@ class EternalCurse:
 
 
 eternal_curse_artifact_from_request = {
-                    1: EternalCurse.O1, 
-                    2: EternalCurse.O2, 
-                    3: EternalCurse.O3, 
-                    4: EternalCurse.O4, 
-                    5: EternalCurse.O5, 
-                    6: EternalCurse.O6
-                    }
+    1: EternalCurse.O1,
+    2: EternalCurse.O2,
+    3: EternalCurse.O3,
+    4: EternalCurse.O4,
+    5: EternalCurse.O5,
+    6: EternalCurse.O6
+}
 
 
 @dataclass
@@ -2538,24 +3261,24 @@ class Artifact:
 
 
 artifact_from_request = {
-                    'EMPTY': Artifact.empty, 
-                    'SATANS_POWER': satans_power_artifact_from_request, 
-                    'YAKSHA': yaksha_artifact_from_request, 
-                    'DARK_DESTROYER': dark_destroyer_artifact_from_request, 
-                    'SUNS_HYMN': suns_hymn_artifact_from_request, 
-                    'BURNING_SOUL': burning_soul_artifact_from_request, 
-                    'EYE_OF_HEAVEN': eye_of_heaven_artifact_from_request, 
-                    'WIND_WALKER': wind_walker_artifact_from_request, 
-                    'SCORCHING_SUN': scorching_sun_artifact_from_request, 
-                    'DRAGONBLOOD': dragonblood_artifact_from_request, 
-                    'SOUND_STEP': sound_step_artifact_from_request, 
-                    'KNIGHTS_VOW': knights_vow_artifact_from_request, 
-                    'PRIMEVAL_SOUL': primeval_soul_artifact_from_request, 
-                    'QUEENS_CROWN': queens_crown_artifact_from_request, 
-                    'SOUL_TORRENT': soul_torrent_artifact_from_request, 
-                    'GIFT_OF_CREATION': gift_of_creation_artifact_from_request, 
-                    'ETERNAL_CURSE': eternal_curse_artifact_from_request
-                    }
+    'EMPTY': Artifact.empty,
+    'SATANS_POWER': satans_power_artifact_from_request,
+    'YAKSHA': yaksha_artifact_from_request,
+    'DARK_DESTROYER': dark_destroyer_artifact_from_request,
+    'SUNS_HYMN': suns_hymn_artifact_from_request,
+    'BURNING_SOUL': burning_soul_artifact_from_request,
+    'EYE_OF_HEAVEN': eye_of_heaven_artifact_from_request,
+    'WIND_WALKER': wind_walker_artifact_from_request,
+    'SCORCHING_SUN': scorching_sun_artifact_from_request,
+    'DRAGONBLOOD': dragonblood_artifact_from_request,
+    'SOUND_STEP': sound_step_artifact_from_request,
+    'KNIGHTS_VOW': knights_vow_artifact_from_request,
+    'PRIMEVAL_SOUL': primeval_soul_artifact_from_request,
+    'QUEENS_CROWN': queens_crown_artifact_from_request,
+    'SOUL_TORRENT': soul_torrent_artifact_from_request,
+    'GIFT_OF_CREATION': gift_of_creation_artifact_from_request,
+    'ETERNAL_CURSE': eternal_curse_artifact_from_request
+}
 
 
 ## Aura
@@ -2665,10 +3388,10 @@ class BaseFamiliar:
 
     def attack(self):
         targets = targets_at_random(self.op_team.heroes, self.n_targets)
-        for target in targets: # check : can be dodged?
+        for target in targets:  # check : can be dodged?
             target.hp -= self.damage
             log_text = '\n{} takes {} damage from {} ({})' \
-                        .format(target.str_id, self.damage, self.str_id, self.skill_name)
+                .format(target.str_id, self.damage, self.str_id, self.skill_name)
             self.game.log += log_text
         for target in targets:
             target.has_taken_damage(attacker=None)
@@ -2682,6 +3405,7 @@ class EmptyFamiliar(BaseFamiliar):
 class Edison(BaseFamiliar):
     name = 'Edison'
     skill_name = "Thundergod's wrath"
+
     def __init__(self, level, skill_1, skill_2, skill_3, skill_4):
         self.level = level
         self.pet_crit_rate = skill_2 * 0.005
@@ -2693,6 +3417,7 @@ class Edison(BaseFamiliar):
 class Vinci(BaseFamiliar):
     name = 'Vinci'
     skill_name = 'Chaotic storm'
+
     def __init__(self, level, skill_1, skill_2, skill_3, skill_4):
         self.level = level
         self.pet_skill_damage = skill_2 * 0.01
@@ -2704,6 +3429,7 @@ class Vinci(BaseFamiliar):
 class Raphael(BaseFamiliar):
     name = 'Raphael'
     skill_name = 'Bloom doom'
+
     def __init__(self, level, skill_1, skill_2, skill_3, skill_4):
         self.level = level
         self.pet_true_damage = skill_2 * 0.01
@@ -2722,6 +3448,7 @@ class Familiar:
 
 ## Effects
 effect_id = 0
+
 
 class BaseEffect:
     def __init__(self):
@@ -2784,7 +3511,7 @@ class Dot(BaseEffect):
             self.holder.hp -= dmg
             self.turns -= 1
             log_text = '\n{} takes {} damage (dot from {} ({}{}), {} turns left)' \
-                        .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
             self.source.game.log += log_text
             self.holder.has_taken_damage(self.source)
 
@@ -2805,12 +3532,12 @@ class Heal(BaseEffect):
             self.turns -= 1
             if self.hot:
                 log_text = '\n{} is healed {} by {} ({}, {} turns left)' \
-                        .format(self.holder.str_id, round(self.power), 
-                        self.source.str_id, self.name, self.turns)
+                    .format(self.holder.str_id, round(self.power),
+                            self.source.str_id, self.name, self.turns)
             else:
                 log_text = '\n{} is healed {} by {} ({})' \
-                        .format(self.holder.str_id, round(self.power), 
-                        self.source.str_id, self.name)
+                    .format(self.holder.str_id, round(self.power),
+                            self.source.str_id, self.name)
             self.source.game.log += log_text
             self.holder.has_taken_damage(self.source)
 
@@ -2834,7 +3561,7 @@ class Poison(BaseEffect):
             self.holder.hp -= dmg
             self.turns -= 1
             log_text = '\n{} takes {} damage (poison from {} ({}{}), {} turns left)' \
-                        .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
             self.source.game.log += log_text
             self.holder.has_taken_damage(self.source)
 
@@ -2858,7 +3585,7 @@ class Bleed(BaseEffect):
             self.holder.hp -= dmg
             self.turns -= 1
             log_text = '\n{} takes {} damage (bleed from {} ({}{}), {} turns left)' \
-                        .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
             self.source.game.log += log_text
             self.holder.has_taken_damage(self.source)
 
@@ -2881,10 +3608,10 @@ class TimedMark(BaseEffect):
                 dmg = damage_components['Total damage']
                 crit = True if damage_components['Crit damage'] > 0 else False
                 crit_str = ', crit' if crit else ''
-        
+
                 self.holder.hp -= dmg
                 log_text = '\n{} takes {} damage (timed mark from {} ({}{}))' \
-                            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
+                    .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
                 self.source.game.log += log_text
                 self.holder.has_taken_damage(self.source)
             elif self.first_turn:
@@ -2896,6 +3623,36 @@ class TimedMark(BaseEffect):
                 log_text = '\n{} has a timed mark from {} ({}, {} turns left)' \
                     .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
                 self.source.game.log += log_text
+
+
+class CritMark(BaseEffect):
+    def __init__(self, source, holder, power, name=''):
+        self.source = source
+        self.holder = holder
+        self.power = power
+        self.turns = 1000
+        self.name = name
+        super().__init__()
+
+    def tick(self):
+        if not self.holder.is_dead:
+            log_text = '\n{} has a crit mark from {} ({})' \
+                .format(self.holder.str_id, self.source.str_id, self.name)
+            self.source.game.log += log_text
+
+    def trigger(self):
+        damage_components = self.source.compute_damage(self.holder, self.power)
+        dmg = damage_components['Total damage']
+        crit = True if damage_components['Crit damage'] > 0 else False
+        crit_str = ', crit' if crit else ''
+
+        self.holder.hp -= dmg
+        log_text = '\n{} takes {} damage (crit mark from {} ({}{}))' \
+            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
+        self.source.game.log += log_text
+        self.holder.has_taken_damage(self.source)
+
+        self.kill()
 
 
 class Silence(BaseEffect):
@@ -2910,7 +3667,7 @@ class Silence(BaseEffect):
         if not self.holder.is_dead:
             self.turns -= 1
             log_text = '\n{} is silenced by {} ({}), {} turns left' \
-                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+                .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
             self.source.game.log += log_text
 
 
@@ -2926,7 +3683,7 @@ class Stun(BaseEffect):
         if not self.holder.is_dead:
             self.turns -= 1
             log_text = '\n{} is stunned by {} ({}), {} turns left' \
-                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+                .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
             self.source.game.log += log_text
 
 
@@ -2942,7 +3699,7 @@ class Petrify(BaseEffect):
         if not self.holder.is_dead:
             self.turns -= 1
             log_text = '\n{} is petrified by {} ({}), {} turns left' \
-                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+                .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
             self.source.game.log += log_text
 
 
@@ -2958,7 +3715,7 @@ class Freeze(BaseEffect):
         if not self.holder.is_dead:
             self.turns -= 1
             log_text = '\n{} is frozen by {} ({}), {} turns left' \
-                        .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
+                .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
             self.source.game.log += log_text
 
 
@@ -2969,18 +3726,18 @@ class AttackUp(StatUp):
             if not self.has_been_set:
                 previous_bonus = self.holder.atk_bonus
                 self.holder.atk_bonus += self.up
-                self.holder.atk *= (1 + self.holder.atk_bonus) / (1 + previous_bonus)  
+                self.holder.atk *= (1 + self.holder.atk_bonus) / (1 + previous_bonus)
                 self.has_been_set = True
 
             self.turns -= 1
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s attack is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s attack is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3004,11 +3761,11 @@ class AttackDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s attack is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s attack is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3036,11 +3793,11 @@ class HpUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s hp is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s hp is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3066,11 +3823,11 @@ class HpDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s hp is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s hp is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3093,11 +3850,11 @@ class CritRateUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s crit rate is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s crit rate is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3119,11 +3876,11 @@ class CritRateDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s crit rate is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s crit rate is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3145,11 +3902,11 @@ class CritDamageUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s crit damage is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s crit damage is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3171,11 +3928,11 @@ class CritDamageDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s crit damage is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s crit damage is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3197,11 +3954,11 @@ class HitRateUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s hit rate is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s hit rate is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3223,11 +3980,11 @@ class HitRateDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s hit rate is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s hit rate is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3249,11 +4006,11 @@ class DodgeUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s dodge rate is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s dodge rate is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3275,11 +4032,11 @@ class DodgeDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s dodge rate is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s dodge rate is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3301,11 +4058,11 @@ class SkillDamageUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s skill damage is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s skill damage is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3327,11 +4084,11 @@ class SkillDamageDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s skill damage is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s skill damage is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3353,11 +4110,11 @@ class ControlImmuneUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s control resistance is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s control resistance is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3379,11 +4136,11 @@ class ControlImmuneDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s control resistance is reduced by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s control resistance is reduced by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.down, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3405,11 +4162,11 @@ class SilenceImmuneUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s silence resistance is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s silence resistance is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3431,11 +4188,11 @@ class DamageReductionUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s damage reduction is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s damage reduction is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3457,11 +4214,11 @@ class TrueDamageUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s true damage is increased by {}% by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s true damage is increased by {}% by {} ({})" \
-                            .format(self.holder.str_id, 100 * self.up, self.source.str_id, 
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3483,11 +4240,11 @@ class ArmorBreakUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s armor break is increased by {} by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                    .format(self.holder.str_id, self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s armor break is increased by {} by {} ({})" \
-                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                    .format(self.holder.str_id, self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3509,11 +4266,11 @@ class ArmorBreakDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s armor break is reduced by {} by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                    .format(self.holder.str_id, self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s armor break is reduced by {} by {} ({})" \
-                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                    .format(self.holder.str_id, self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3535,11 +4292,11 @@ class ArmorUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s defense is increased by {} by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                    .format(self.holder.str_id, self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s defense is increased by {} by {} ({})" \
-                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                    .format(self.holder.str_id, self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3561,11 +4318,11 @@ class ArmorDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s defense is reduced by {} by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                    .format(self.holder.str_id, self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s defense is reduced by {} by {} ({})" \
-                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                    .format(self.holder.str_id, self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3587,11 +4344,11 @@ class SpeedUp(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s speed is increased by {} by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                    .format(self.holder.str_id, self.up, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s speed is increased by {} by {} ({})" \
-                            .format(self.holder.str_id, self.up, self.source.str_id, 
+                    .format(self.holder.str_id, self.up, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3613,11 +4370,11 @@ class SpeedDown(StatDown):
             log_text = None
             if not self.infinite:
                 log_text = "\n{}'s speed is reduced by {} by {} ({}), {} turns left" \
-                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                    .format(self.holder.str_id, self.down, self.source.str_id,
                             self.name, self.turns)
             else:
                 log_text = "\n{}'s speed is reduced by {} by {} ({})" \
-                            .format(self.holder.str_id, self.down, self.source.str_id, 
+                    .format(self.holder.str_id, self.down, self.source.str_id,
                             self.name)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3639,11 +4396,11 @@ class DamageToBleeding(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = '\n{} deals {}% extra damage to bleeding targets ({} from {}), {} turns left' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id, self.turns)
             else:
                 log_text = '\n{} deals {}% extra damage to bleeding targets ({} from {})' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3665,11 +4422,11 @@ class DamageToPoisoned(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = '\n{} deals {}% extra damage to poisoned targets ({} from {}), {} turns left' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id, self.turns)
             else:
                 log_text = '\n{} deals {}% extra damage to poisoned targets ({} from {})' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3691,11 +4448,11 @@ class DamageToStunned(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = '\n{} deals {}% extra damage to stunned targets ({} from {}), {} turns left' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id, self.turns)
             else:
                 log_text = '\n{} deals {}% extra damage to stunned targets ({} from {})' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3717,11 +4474,11 @@ class DamageToWarriors(StatUp):
             log_text = None
             if not self.infinite:
                 log_text = '\n{} deals {}% extra damage to warriors ({} from {}), {} turns left' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id, self.turns)
             else:
                 log_text = '\n{} deals {}% extra damage to warriors ({} from {})' \
-                            .format(self.holder.str_id, 100 * self.up, self.name, 
+                    .format(self.holder.str_id, 100 * self.up, self.name,
                             self.source.str_id)
             if self.verbose:
                 self.source.game.log += log_text
@@ -3738,6 +4495,7 @@ class Effect:
     poison = Poison
     bleed = Bleed
     timed_mark = TimedMark
+    crit_mark = CritMark
     silence = Silence
     stun = Stun
     petrify = Petrify

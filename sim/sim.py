@@ -69,8 +69,8 @@ class Game:
         # heroes
         while any([h.can_attack for h in self.heroes]) and not self.is_finished():
             max_speed = max([h.speed for h in self.heroes if h.can_attack])
-            fastest_heroes = [h for h in self.heroes 
-                            if h.speed == max_speed and h.can_attack]
+            fastest_heroes = [h for h in self.heroes
+                              if h.speed == max_speed and h.can_attack]
             fastest = fastest_heroes[rd.randint(0, len(fastest_heroes) - 1)]
             self.log += "\n\n# {}'s turn #".format(fastest.str_id)
             fastest.turn()
@@ -110,51 +110,51 @@ class Game:
         len_max_3 = max([len(self.heroes[i].str_id) for i in (2, 5, 8, 11)])
         teams_str += '\nAttack team  : Backline  : '
         teams_str += '[{}{}, {}{}, {}{}]' \
-            .format(self.attack_team.heroes[3].str_id, 
-                    ' ' * (len_max_1 - len(self.attack_team.heroes[3].str_id)), 
-                    self.attack_team.heroes[4].str_id, 
-                    ' ' * (len_max_2 - len(self.attack_team.heroes[4].str_id)), 
-                    self.attack_team.heroes[5].str_id, 
+            .format(self.attack_team.heroes[3].str_id,
+                    ' ' * (len_max_1 - len(self.attack_team.heroes[3].str_id)),
+                    self.attack_team.heroes[4].str_id,
+                    ' ' * (len_max_2 - len(self.attack_team.heroes[4].str_id)),
+                    self.attack_team.heroes[5].str_id,
                     ' ' * (len_max_3 - len(self.attack_team.heroes[5].str_id)))
         teams_str += '\n               Frontline : '
         teams_str += '[{}{}, {}{}, {}{}]' \
-            .format(self.attack_team.heroes[0].str_id, 
-                    ' ' * (len_max_1 - len(self.attack_team.heroes[0].str_id)), 
-                    self.attack_team.heroes[1].str_id, 
-                    ' ' * (len_max_2 - len(self.attack_team.heroes[1].str_id)), 
-                    self.attack_team.heroes[2].str_id, 
+            .format(self.attack_team.heroes[0].str_id,
+                    ' ' * (len_max_1 - len(self.attack_team.heroes[0].str_id)),
+                    self.attack_team.heroes[1].str_id,
+                    ' ' * (len_max_2 - len(self.attack_team.heroes[1].str_id)),
+                    self.attack_team.heroes[2].str_id,
                     ' ' * (len_max_3 - len(self.attack_team.heroes[2].str_id)))
         teams_str += '\nDefense team : Frontline : '
         teams_str += '[{}{}, {}{}, {}{}]' \
-            .format(self.defense_team.heroes[0].str_id, 
-                    ' ' * (len_max_1 - len(self.defense_team.heroes[0].str_id)), 
-                    self.defense_team.heroes[1].str_id, 
-                    ' ' * (len_max_2 - len(self.defense_team.heroes[1].str_id)), 
-                    self.defense_team.heroes[2].str_id, 
+            .format(self.defense_team.heroes[0].str_id,
+                    ' ' * (len_max_1 - len(self.defense_team.heroes[0].str_id)),
+                    self.defense_team.heroes[1].str_id,
+                    ' ' * (len_max_2 - len(self.defense_team.heroes[1].str_id)),
+                    self.defense_team.heroes[2].str_id,
                     ' ' * (len_max_3 - len(self.defense_team.heroes[2].str_id)))
         teams_str += '\n               Backline  : '
         teams_str += '[{}{}, {}{}, {}{}]' \
-            .format(self.defense_team.heroes[3].str_id, 
-                    ' ' * (len_max_1 - len(self.defense_team.heroes[3].str_id)), 
-                    self.defense_team.heroes[4].str_id, 
-                    ' ' * (len_max_2 - len(self.defense_team.heroes[4].str_id)), 
-                    self.defense_team.heroes[5].str_id, 
+            .format(self.defense_team.heroes[3].str_id,
+                    ' ' * (len_max_1 - len(self.defense_team.heroes[3].str_id)),
+                    self.defense_team.heroes[4].str_id,
+                    ' ' * (len_max_2 - len(self.defense_team.heroes[4].str_id)),
+                    self.defense_team.heroes[5].str_id,
                     ' ' * (len_max_3 - len(self.defense_team.heroes[5].str_id)))
         return teams_str
 
     def state(self):
-        attack_team_hps = np.array([[self.attack_team.heroes[3].hp, 
-                                    self.attack_team.heroes[4].hp, 
-                                    self.attack_team.heroes[5].hp], 
-                                    [self.attack_team.heroes[0].hp, 
-                                    self.attack_team.heroes[1].hp, 
-                                    self.attack_team.heroes[2].hp]]).astype(int)
-        defense_team_hps = np.array([[self.defense_team.heroes[0].hp, 
-                                    self.defense_team.heroes[1].hp, 
-                                    self.defense_team.heroes[2].hp], 
-                                    [self.defense_team.heroes[3].hp, 
-                                    self.defense_team.heroes[4].hp, 
-                                    self.defense_team.heroes[5].hp]]).astype(int)
+        attack_team_hps = np.array([[self.attack_team.heroes[3].hp,
+                                     self.attack_team.heroes[4].hp,
+                                     self.attack_team.heroes[5].hp],
+                                    [self.attack_team.heroes[0].hp,
+                                     self.attack_team.heroes[1].hp,
+                                     self.attack_team.heroes[2].hp]]).astype(int)
+        defense_team_hps = np.array([[self.defense_team.heroes[0].hp,
+                                      self.defense_team.heroes[1].hp,
+                                      self.defense_team.heroes[2].hp],
+                                     [self.defense_team.heroes[3].hp,
+                                      self.defense_team.heroes[4].hp,
+                                      self.defense_team.heroes[5].hp]]).astype(int)
         return '{}\n{}'.format(str(attack_team_hps), str(defense_team_hps))
 
     def is_finished(self):
@@ -170,7 +170,7 @@ class Game:
         self.log += '\n\n{}'.format(self.state())
 
         if self.defense_team.is_dead() and self.attack_team.is_dead() or \
-                        not self.defense_team.is_dead() and not self.attack_team.is_dead():
+                not self.defense_team.is_dead() and not self.attack_team.is_dead():
             self.winner = 0
         elif self.defense_team.is_dead():
             self.winner = 1

@@ -18,10 +18,10 @@ class Team:
         for i, h in enumerate(self.heroes):
             h.pos = i
 
-        aura = Aura(heroes) # aura
+        aura = Aura(heroes)  # aura
         self.compute_aura(aura)
 
-        self.compute_pet(pet) # familiar
+        self.compute_pet(pet)  # familiar
 
         for h in self.heroes:
             if isinstance(h, Vegvisir):
@@ -29,18 +29,18 @@ class Team:
                 hp_up = 0.4
                 crit_damage_up = 0.2
                 crit_rate_up = 0.2
-                if h.star >= 8: ### add value
+                if h.star >= 8:  ### add value
                     hp_up = 0.6
                     crit_damage_up = 0.3
                     crit_rate_up = 0.3
                 if h.pos <= 2:
-                    h.hp_up(h, up=hp_up, turns=None, 
-                                name=name, passive=True)
+                    h.hp_up(h, up=hp_up, turns=None,
+                            name=name, passive=True)
                 else:
-                    h.crit_damage_up(h, up=crit_damage_up, turns=None, 
-                                name=name, passive=True)
-                    h.crit_rate_up(h, up=crit_rate_up, turns=None, 
-                                name=name, passive=True)
+                    h.crit_damage_up(h, up=crit_damage_up, turns=None,
+                                     name=name, passive=True)
+                    h.crit_rate_up(h, up=crit_rate_up, turns=None,
+                                   name=name, passive=True)
 
         for h in self.heroes:
             h.hp_max = h.hp
@@ -136,10 +136,10 @@ class BaseHero:
         self.atk += familiar_stats[1]
 
     def compute_items(self, armor, helmet, weapon, pendant, rune, artifact):
-        equipment = Equipment(armor, helmet, weapon, pendant) # equipment
+        equipment = Equipment(armor, helmet, weapon, pendant)  # equipment
         self.atk += equipment.atk
         self.hp += equipment.hp
-        self.atk += rune.atk # rune
+        self.atk += rune.atk  # rune
         self.hp += rune.hp
         self.armor_break += rune.armor_break
         self.skill_damage += rune.skill_damage
@@ -147,7 +147,7 @@ class BaseHero:
         self.dodge += rune.dodge
         self.crit_rate += rune.crit_rate
         self.crit_damage += rune.crit_damage
-        self.energy += artifact.energy # artifact
+        self.energy += artifact.energy  # artifact
         self.atk += artifact.atk
         self.hp += artifact.hp
         self.speed += artifact.speed
@@ -247,7 +247,7 @@ class BaseHero:
         type_damage_base, type_damage = self.type_damage(target)
 
         op_armor = target.armor - self.armor_break
-        damage_reduction_from_armor = op_armor * 0.00992543 + 0.20597124 # check armor behaviour
+        damage_reduction_from_armor = op_armor * 0.00992543 + 0.20597124  # check armor behaviour
 
         crit_damage = 0
         crit = self.compute_crit(target)
@@ -269,29 +269,29 @@ class BaseHero:
             stunned_extra_damage = self.damage_to_stunned
 
         dmg = (power + skill_damage * self.atk) * (1 - damage_reduction_from_armor) \
-                    * (1 + crit_damage) * (1 + faction_damage) \
-                    * (1 + self.true_damage) * (1 - target.damage_reduction) \
-                    * (1 + type_damage_base) * (1 + type_damage) \
-                    * (1 + poisoned_extra_damage) * (1 + bleeding_extra_damage) \
-                    * (1 + stunned_extra_damage)
-                    # check faction damage behaviour
-                    # check type damage behaviour
-                    # check skill damage behaviour
-                    # check extra damage to poisoned/bleeding/stunned behaviour
+              * (1 + crit_damage) * (1 + faction_damage) \
+              * (1 + self.true_damage) * (1 - target.damage_reduction) \
+              * (1 + type_damage_base) * (1 + type_damage) \
+              * (1 + poisoned_extra_damage) * (1 + bleeding_extra_damage) \
+              * (1 + stunned_extra_damage)
+        # check faction damage behaviour
+        # check type damage behaviour
+        # check skill damage behaviour
+        # check extra damage to poisoned/bleeding/stunned behaviour
 
-        damage_components = {'Power': power, 
-                            'Skill damage': skill_damage, 
-                            'Damage reduction from armor': damage_reduction_from_armor, 
-                            'Crit damage': crit_damage, 
-                            'True damage': self.true_damage, 
-                            'Damage reduction': target.damage_reduction, 
-                            'Faction damage': faction_damage, 
-                            'Base type damage': type_damage_base, 
-                            'Extra type damage': type_damage, 
-                            'Poisoned extra damage': poisoned_extra_damage, 
-                            'Bleeding extra damage': bleeding_extra_damage, 
-                            'Stunned extra damage': stunned_extra_damage, 
-                            'Total damage': dmg}
+        damage_components = {'Power': power,
+                             'Skill damage': skill_damage,
+                             'Damage reduction from armor': damage_reduction_from_armor,
+                             'Crit damage': crit_damage,
+                             'True damage': self.true_damage,
+                             'Damage reduction': target.damage_reduction,
+                             'Faction damage': faction_damage,
+                             'Base type damage': type_damage_base,
+                             'Extra type damage': type_damage,
+                             'Poisoned extra damage': poisoned_extra_damage,
+                             'Bleeding extra damage': bleeding_extra_damage,
+                             'Stunned extra damage': stunned_extra_damage,
+                             'Total damage': dmg}
 
         return damage_components
 
@@ -300,12 +300,12 @@ class BaseHero:
         hit_rate = self.hit_rate
         if self.faction_bonus(target):
             hit_rate += 0.15
-        if rd.random() <= target.dodge - hit_rate and not target.is_dead: # check dodge behaviour
+        if rd.random() <= target.dodge - hit_rate and not target.is_dead:  # check dodge behaviour
             dodged = True
 
         if dodged:
             self.game.log += '\n{} dodges {} from {}' \
-                        .format(target.str_id, name, self.str_id)
+                .format(target.str_id, name, self.str_id)
 
         return dodged
 
@@ -330,23 +330,23 @@ class BaseHero:
         if self.is_stunned() or self.is_petrified() or self.is_frozen():
             for e in [e for e in self.effects if isinstance(e, Effect.stun)]:
                 self.game.log += '\n{} is stunned by {} ({}, {} turns left) ' \
-                        'and cannot play' \
-                        .format(self.str_id, e.source.str_id, e.name, e.turns)
+                                 'and cannot play' \
+                    .format(self.str_id, e.source.str_id, e.name, e.turns)
             for e in [e for e in self.effects if isinstance(e, Effect.petrify)]:
                 self.game.log += '\n{} is petrified by {} ({}, {} turns left) ' \
-                        'and cannot play' \
-                        .format(self.str_id, e.source.str_id, e.name, e.turns)
+                                 'and cannot play' \
+                    .format(self.str_id, e.source.str_id, e.name, e.turns)
             for e in [e for e in self.effects if isinstance(e, Effect.freeze)]:
                 self.game.log += '\n{} is frozen by {} ({}, {} turns left) ' \
-                        'and cannot play' \
-                        .format(self.str_id, e.source.str_id, e.name, e.turns)
+                                 'and cannot play' \
+                    .format(self.str_id, e.source.str_id, e.name, e.turns)
         else:
             if self.energy >= 100 and self.is_silenced():
                 for e in [e for e in self.effects if isinstance(e, Effect.silence)]:
                     self.game.log += '\n{} is silenced by {} ({}, {} turns left) ' \
-                            'and cannot use its skill' \
-                            .format(self.str_id, e.source.str_id, e.name, e.turns)
-    
+                                     'and cannot use its skill' \
+                        .format(self.str_id, e.source.str_id, e.name, e.turns)
+
             if self.energy >= 100 and not self.is_silenced():
                 self.skill()
             else:
@@ -379,7 +379,7 @@ class BaseHero:
             self.on_attack(target)
         if active and crit:
             self.on_crit(target)
-        if active: # only triggered by active? dots/counters?
+        if active:  # only triggered by active? dots/counters?
             target.on_hit(self)
 
     def hit(self, target, power, skill, active, on_attack, multi, update=True, name=''):
@@ -389,12 +389,12 @@ class BaseHero:
                 dmg = damage_components['Total damage']
                 crit = True if damage_components['Crit damage'] > 0 else False
                 crit_str = ', crit' if crit else ''
-    
+
                 target.hp -= dmg
                 log_text = '\n{} takes {} damage from {} ({}{})' \
-                            .format(target.str_id, round(dmg), self.str_id, name, crit_str)
+                    .format(target.str_id, round(dmg), self.str_id, name, crit_str)
                 self.game.log += log_text
-    
+
                 if update:
                     self.update_state(target, on_attack, active, crit)
 
@@ -405,8 +405,8 @@ class BaseHero:
             crits = []
             for i, t in enumerate(target):
                 p = power[i]
-                crit = self.hit(t, p, skill, active, on_attack, 
-                        multi=False, update=False, name=name)[0]
+                crit = self.hit(t, p, skill, active, on_attack,
+                                multi=False, update=False, name=name)[0]
                 crits.append(crit)
             for i, t in enumerate(target):
                 if not t.is_dead:
@@ -415,22 +415,21 @@ class BaseHero:
 
             return crits
 
-
     def hit_attack(self, target, power, multi=False, name='attack'):
-        crits = self.hit(target, power, skill=False, active=True, 
-                        on_attack=True, multi=multi, name=name)
+        crits = self.hit(target, power, skill=False, active=True,
+                         on_attack=True, multi=multi, name=name)
 
         return crits
 
     def hit_skill(self, target, power, multi=False, name=''):
-        crits = self.hit(target, power, skill=True, active=True, 
-                        on_attack=False, multi=multi, name=name)
+        crits = self.hit(target, power, skill=True, active=True,
+                         on_attack=False, multi=multi, name=name)
 
         return crits
 
     def hit_passive(self, target, power, multi=False, name=''):
-        crits = self.hit(target, power, skill=False, active=False, 
-                        on_attack=False, multi=multi, name=name)
+        crits = self.hit(target, power, skill=False, active=False,
+                         on_attack=False, multi=multi, name=name)
 
         return crits
 
@@ -489,6 +488,12 @@ class BaseHero:
             target.effects.append(timed_mark)
             timed_mark.tick()
 
+    def crit_mark(self, target, power, name=''):
+        if not target.is_dead:
+            crit_mark = Effect.crit_mark(self, target, power, name=name)
+            target.effects.append(crit_mark)
+            crit_mark.tick()
+
     def silence(self, target, turns, name=''):
         if not target.is_dead:
             silence = Effect.silence(self, target, turns, name=name)
@@ -497,7 +502,7 @@ class BaseHero:
 
     def try_silence(self, target, turns, chance, name=''):
         if rd.random() <= chance and rd.random() >= target.control_immune \
-                                and rd.random() >= target.silence_immune: # check control/silence immune behaviour
+                and rd.random() >= target.silence_immune:  # check control/silence immune behaviour
             self.silence(target, turns, name=name)
             return True
 
@@ -508,7 +513,7 @@ class BaseHero:
             stun.tick()
 
     def try_stun(self, target, turns, chance, name=''):
-        if rd.random() <= chance and rd.random() >= target.control_immune: # check control immune behaviour
+        if rd.random() <= chance and rd.random() >= target.control_immune:  # check control immune behaviour
             self.stun(target, turns, name=name)
             return True
 
@@ -519,7 +524,7 @@ class BaseHero:
             petrify.tick()
 
     def try_petrify(self, target, turns, chance, name=''):
-        if rd.random() <= chance and rd.random() >= target.control_immune: # check control immune behaviour
+        if rd.random() <= chance and rd.random() >= target.control_immune:  # check control immune behaviour
             self.petrify(target, turns, name=name)
             return True
 
@@ -530,7 +535,7 @@ class BaseHero:
             freeze.tick()
 
     def try_freeze(self, target, turns, chance, name=''):
-        if rd.random() <= chance and rd.random() >= target.control_immune: # check control immune behaviour
+        if rd.random() <= chance and rd.random() >= target.control_immune:  # check control immune behaviour
             self.freeze(target, turns, name=name)
             return True
 
@@ -547,8 +552,8 @@ class BaseHero:
 
     def attack_down(self, target, down, turns, name='', passive=False):
         if not target.is_dead:
-            attack_down = Effect.attack_down(self, target, down, turns, 
-                                                name=name, passive=passive)
+            attack_down = Effect.attack_down(self, target, down, turns,
+                                             name=name, passive=passive)
             target.effects.append(attack_down)
             attack_down.tick()
 
@@ -571,8 +576,8 @@ class BaseHero:
 
     def crit_rate_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            crit_rate_up = Effect.crit_rate_up(self, target, up, turns, 
-                                                    name=name, passive=passive)
+            crit_rate_up = Effect.crit_rate_up(self, target, up, turns,
+                                               name=name, passive=passive)
             target.effects.append(crit_rate_up)
             crit_rate_up.tick()
 
@@ -583,8 +588,8 @@ class BaseHero:
 
     def crit_rate_down(self, target, down, turns, name='', passive=False):
         if not target.is_dead:
-            crit_rate_down = Effect.crit_rate_down(self, target, down, turns, 
-                                                    name=name, passive=passive)
+            crit_rate_down = Effect.crit_rate_down(self, target, down, turns,
+                                                   name=name, passive=passive)
             target.effects.append(crit_rate_down)
             crit_rate_down.tick()
 
@@ -595,8 +600,8 @@ class BaseHero:
 
     def crit_damage_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            crit_damage_up = Effect.crit_damage_up(self, target, up, turns, 
-                                                        name=name, passive=passive)
+            crit_damage_up = Effect.crit_damage_up(self, target, up, turns,
+                                                   name=name, passive=passive)
             target.effects.append(crit_damage_up)
             crit_damage_up.tick()
 
@@ -607,8 +612,8 @@ class BaseHero:
 
     def crit_damage_down(self, target, down, turns, name='', passive=False):
         if not target.is_dead:
-            crit_damage_down = Effect.crit_damage_down(self, target, down, turns, 
-                                                        name=name, passive=passive)
+            crit_damage_down = Effect.crit_damage_down(self, target, down, turns,
+                                                       name=name, passive=passive)
             target.effects.append(crit_damage_down)
             crit_damage_down.tick()
 
@@ -625,8 +630,8 @@ class BaseHero:
 
     def hit_rate_down(self, target, down, turns, name='', passive=False):
         if not target.is_dead:
-            hit_rate_down = Effect.hit_rate_down(self, target, down, turns, 
-                                                    name=name, passive=passive)
+            hit_rate_down = Effect.hit_rate_down(self, target, down, turns,
+                                                 name=name, passive=passive)
             target.effects.append(hit_rate_down)
             hit_rate_down.tick()
 
@@ -644,58 +649,57 @@ class BaseHero:
 
     def skill_damage_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            skill_damage_up = Effect.skill_damage_up(self, target, up, turns, 
-                                                    name=name, passive=passive)
+            skill_damage_up = Effect.skill_damage_up(self, target, up, turns,
+                                                     name=name, passive=passive)
             target.effects.append(skill_damage_up)
             skill_damage_up.tick()
 
     def skill_damage_down(self, target, down, turns, name='', passive=False):
         if not target.is_dead:
-            skill_damage_down = Effect.skill_damage_down(self, target, down, turns, 
-                                                    name=name, passive=passive)
+            skill_damage_down = Effect.skill_damage_down(self, target, down, turns,
+                                                         name=name, passive=passive)
             target.effects.append(skill_damage_down)
             skill_damage_down.tick()
 
     def control_immune_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            control_immune_up = Effect.control_immune_up(self, target, up, turns, 
-                                                    name=name, passive=passive)
+            control_immune_up = Effect.control_immune_up(self, target, up, turns,
+                                                         name=name, passive=passive)
             target.effects.append(control_immune_up)
             control_immune_up.tick()
 
     def control_immune_down(self, target, down, turns, name='', passive=False):
         if not target.is_dead:
-            control_immune_down = Effect.control_immune_down(self, target, down, turns, 
-                                                    name=name, passive=passive)
+            control_immune_down = Effect.control_immune_down(self, target, down, turns,
+                                                             name=name, passive=passive)
             target.effects.append(control_immune_down)
             control_immune_down.tick()
 
     def silence_immune_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            silence_immune_up = Effect.silence_immune_up(self, target, up, turns, 
-                                                    name=name, passive=passive)
+            silence_immune_up = Effect.silence_immune_up(self, target, up, turns,
+                                                         name=name, passive=passive)
             target.effects.append(silence_immune_up)
             silence_immune_up.tick()
 
     def damage_reduction_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            damage_reduction_up = Effect.damage_reduction_up(self, target, up, turns, 
-                                                    name=name, passive=passive)
+            damage_reduction_up = Effect.damage_reduction_up(self, target, up, turns,
+                                                             name=name, passive=passive)
             target.effects.append(damage_reduction_up)
             damage_reduction_up.tick()
 
     def true_damage_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            true_damage_up = Effect.true_damage_up(self, target, up, turns, 
-                                                    name=name, passive=passive)
+            true_damage_up = Effect.true_damage_up(self, target, up, turns,
+                                                   name=name, passive=passive)
             target.effects.append(true_damage_up)
             true_damage_up.tick()
 
-
     def armor_break_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            armor_break_up = Effect.armor_break_up(self, target, up, turns, 
-                                                    name=name, passive=passive)
+            armor_break_up = Effect.armor_break_up(self, target, up, turns,
+                                                   name=name, passive=passive)
             target.effects.append(armor_break_up)
             armor_break_up.tick()
 
@@ -706,8 +710,8 @@ class BaseHero:
 
     def armor_break_down(self, target, down, turns, name='', passive=False):
         if not target.is_dead:
-            armor_break_down = Effect.armor_break_down(self, target, down, turns, 
-                                                    name=name, passive=passive)
+            armor_break_down = Effect.armor_break_down(self, target, down, turns,
+                                                       name=name, passive=passive)
             target.effects.append(armor_break_down)
             armor_break_down.tick()
 
@@ -743,38 +747,38 @@ class BaseHero:
     def energy_up(self, target, up, name='', passive=False):
         target.energy = max(min(target.energy + up, 100), self.energy)
         self.game.log += "\n{}'s energy is increased by {} by {} ({})" \
-                            .format(target.str_id, up, self.str_id, name)
+            .format(target.str_id, up, self.str_id, name)
 
     def energy_down(self, target, down, name='', passive=False):
         target.energy = max(target.energy - down, 0)
         self.game.log += "\n{}'s energy is reduced by {} by {} ({})" \
-                            .format(target.str_id, down, self.str_id, name)
+            .format(target.str_id, down, self.str_id, name)
 
     def damage_to_bleeding_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            damage_to_bleeding = Effect.damage_to_bleeding(self, target, up, turns, 
-                                                        name=name, passive=passive)
+            damage_to_bleeding = Effect.damage_to_bleeding(self, target, up, turns,
+                                                           name=name, passive=passive)
             target.effects.append(damage_to_bleeding)
             damage_to_bleeding.tick()
 
     def damage_to_poisoned_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            damage_to_poisoned = Effect.damage_to_poisoned(self, target, up, turns, 
-                                                        name=name, passive=passive)
+            damage_to_poisoned = Effect.damage_to_poisoned(self, target, up, turns,
+                                                           name=name, passive=passive)
             target.effects.append(damage_to_poisoned)
             damage_to_poisoned.tick()
 
     def damage_to_stunned_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            damage_to_stunned = Effect.damage_to_stunned(self, target, up, turns, 
-                                                        name=name, passive=passive)
+            damage_to_stunned = Effect.damage_to_stunned(self, target, up, turns,
+                                                         name=name, passive=passive)
             target.effects.append(damage_to_stunned)
             damage_to_stunned.tick()
 
     def damage_to_warriors_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
-            damage_to_warriors = Effect.damage_to_warriors(self, target, up, turns, 
-                                                        name=name, passive=passive)
+            damage_to_warriors = Effect.damage_to_warriors(self, target, up, turns,
+                                                           name=name, passive=passive)
             target.effects.append(damage_to_warriors)
             damage_to_warriors.tick()
 
@@ -834,7 +838,8 @@ class BaseHero:
             self.energy = max(min(self.energy + 50, 100), self.energy)
 
     def on_crit(self, target):
-        pass
+        for e in [e for e in target.effects if isinstance(e, Effect.crit_mark)]:
+            e.trigger()
 
     def on_hit(self, attacker):
         if not isinstance(self, Chessia):
@@ -859,7 +864,7 @@ class BaseHero:
             if isinstance(h, BloodTooth) and not h.is_dead:
                 name = 'Executioner'
                 up = 0.2
-                if h.star >= 8: ### add value
+                if h.star >= 8:  ### add value
                     up = 0.3
                 h.attack_up(h, up=up, turns=None, name=name)
 
@@ -886,18 +891,18 @@ class BaseHero:
                 h.attack_up(h, up=attack_up, turns=None, name=name)
 
     def print_stats(self):
-        stats = [self.hp, self.atk, self.armor, self.speed, 
-                self.armor_break, self.skill_damage, self.hit_rate, self.dodge, 
-                self.crit_rate, self.crit_damage, self.true_damage, self.damage_reduction, 
-                self.control_immune, self.damage_to_warriors, 
-                self.damage_to_assassins, self.damage_to_wanderers, 
-                self.damage_to_clerics, self.damage_to_mages]
-        stats_names = ['Hp', 'Atk', 'Armor', 'Speed', 
-                    'Armor break', 'Skill damage', 'Hit rate', 'Dodge', 
-                    'Crit rate', 'Crit damage', 'True damage', 'Damage reduction', 
-                    'Control immune', 'Damage to warriors', 
-                    'Damage to assassins', 'Damage to wanderers', 
-                    'Damage to clerics', 'Damage to mages']
+        stats = [self.hp, self.atk, self.armor, self.speed,
+                 self.armor_break, self.skill_damage, self.hit_rate, self.dodge,
+                 self.crit_rate, self.crit_damage, self.true_damage, self.damage_reduction,
+                 self.control_immune, self.damage_to_warriors,
+                 self.damage_to_assassins, self.damage_to_wanderers,
+                 self.damage_to_clerics, self.damage_to_mages]
+        stats_names = ['Hp', 'Atk', 'Armor', 'Speed',
+                       'Armor break', 'Skill damage', 'Hit rate', 'Dodge',
+                       'Crit rate', 'Crit damage', 'True damage', 'Damage reduction',
+                       'Control immune', 'Damage to warriors',
+                       'Damage to assassins', 'Damage to wanderers',
+                       'Damage to clerics', 'Damage to mages']
         for stat, name in zip(stats, stats_names):
             print('{}\t{}'.format(name, stat))
 
@@ -923,24 +928,24 @@ class Aden(BaseHero):
     faction = Faction.UNDEAD
     type = HeroType.ASSASSIN
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Blood Craving'
         hit_rate_up = 0.2
@@ -950,12 +955,12 @@ class Aden(BaseHero):
             hit_rate_up += 0.25
             armor_break_up += 9.6
             damage_to_bleeding_up += 0.5
-        self.hit_rate_up(self, up=hit_rate_up, turns=None, 
-                    name=name, passive=True)
-        self.armor_break_up(self, up=armor_break_up, turns=None, 
-                    name=name, passive=True)
-        self.damage_to_bleeding_up(self, up=damage_to_bleeding_up, turns=None, 
-                    name=name, passive=True)
+        self.hit_rate_up(self, up=hit_rate_up, turns=None,
+                         name=name, passive=True)
+        self.armor_break_up(self, up=armor_break_up, turns=None,
+                            name=name, passive=True)
+        self.damage_to_bleeding_up(self, up=damage_to_bleeding_up, turns=None,
+                                   name=name, passive=True)
 
     def skill(self):
         name = 'Strangle'
@@ -977,45 +982,44 @@ class BloodTooth(BaseHero):
     faction = Faction.HORDE
     type = HeroType.ASSASSIN
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
-        
         name = 'Rabid'
         attack_up = 0.25
         crit_rate_up = 0.3
         hp_up = 0.15
-        if self.star >= 7: ### add value
+        if self.star >= 7:  ### add value
             attack_up = 0.35
             crit_rate_up = 0.3
             hp_up = 0.2
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
-        self.crit_rate_up(self, up=crit_rate_up, turns=None, 
-                    name=name, passive=True)
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
+        self.crit_rate_up(self, up=crit_rate_up, turns=None,
+                          name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
 
     def attack(self):
         name = 'attack (Weakness Strike)'
         power = self.atk * 1.1
-        if self.star >= 9: ### add value
+        if self.star >= 9:  ### add value
             power = self.atk * 1.3
         min_enemy_hp = min([h.hp for h in self.op_team.heroes if not h.is_dead])
         candidates = [h for h in self.op_team.heroes if h.hp == min_enemy_hp]
@@ -1030,7 +1034,7 @@ class BloodTooth(BaseHero):
 
         hit_power = [self.atk * 1.76] * len(targets_hit)
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
-        for target in targets_hit: # check skill drain behaviour
+        for target in targets_hit:  # check skill drain behaviour
             self.attack_down(target, down=0.22, turns=2, name=name)
             self.attack_up(self, up=0.22, turns=2, name=name)
         super().skill()
@@ -1041,24 +1045,24 @@ class Centaur(BaseHero):
     faction = Faction.ELF
     type = HeroType.WANDERER
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 224121.1 # should depend on the level
-        self.atk = 13402.1 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 983 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 224121.1  # should depend on the level
+        self.atk = 13402.1  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 983  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = "Earth's Power"
         crit_rate_up = 0.3
@@ -1066,17 +1070,17 @@ class Centaur(BaseHero):
         if self.star >= 7:
             crit_rate_up = 0.4
             attack_up = 0.3
-        self.crit_rate_up(self, up=crit_rate_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.crit_rate_up(self, up=crit_rate_up, turns=None,
+                          name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
         name = 'Majestic Countenance'
         damage_to_poisoned_up = 0.5
         if self.star >= 9:
             damage_to_poisoned_up = 0.6
-        self.damage_to_poisoned_up(self, up=damage_to_poisoned_up, turns=None, 
-                    name=name, passive=True)
+        self.damage_to_poisoned_up(self, up=damage_to_poisoned_up, turns=None,
+                                   name=name, passive=True)
 
     def on_crit(self, target):
         name = 'Toxic Blade'
@@ -1104,24 +1108,24 @@ class Chessia(BaseHero):
     faction = Faction.HELL
     type = HeroType.WANDERER
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Shadow Queen'
         skill_damage_up = 0.5
@@ -1131,12 +1135,12 @@ class Chessia(BaseHero):
             skill_damage_up = 0.625
             attack_up = 0.3
             silence_immune_up = 0.5
-        self.skill_damage_up(self, up=skill_damage_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
-        self.silence_immune_up(self, up=silence_immune_up, turns=None, 
-                    name=name, passive=True)
+        self.skill_damage_up(self, up=skill_damage_up, turns=None,
+                             name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
+        self.silence_immune_up(self, up=silence_immune_up, turns=None,
+                               name=name, passive=True)
 
     def skill(self):
         name = 'Black Hole Generated'
@@ -1171,24 +1175,24 @@ class Dziewona(BaseHero):
     faction = Faction.UNDEAD
     type = HeroType.ASSASSIN
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 168584.5 # should depend on the level
-        self.atk = 13496.1 # should depend on the level
-        self.armor = 9 # should depend on the level
-        self.speed = 1008 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 168584.5  # should depend on the level
+        self.atk = 13496.1  # should depend on the level
+        self.armor = 9  # should depend on the level
+        self.speed = 1008  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         self.has_triggered = False
 
@@ -1198,10 +1202,10 @@ class Dziewona(BaseHero):
         if self.star >= 7:
             armor_break_up = 12
             attack_up = 0.25
-        self.armor_break_up(self, up=armor_break_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.armor_break_up(self, up=armor_break_up, turns=None,
+                            name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def attack(self):
         target = self.op_team.next_target()
@@ -1244,31 +1248,31 @@ class ForestHealer(BaseHero):
     faction = Faction.ELF
     type = HeroType.CLERIC
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 191062.2 # should depend on the level
-        self.atk = 11944.0 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 973 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 191062.2  # should depend on the level
+        self.atk = 11944.0  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 973  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Longevity'
         hp_up = 0.3
         if self.star >= 8:
             hp_up = 0.4
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
 
     def skill(self):
         name = "Nature's Hymn"
@@ -1310,24 +1314,24 @@ class Freya(BaseHero):
     faction = Faction.HELL
     type = HeroType.MAGE
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 155323.2 # should depend on the level
-        self.atk = 14530.4 # should depend on the level
-        self.armor = 9 # should depend on the level
-        self.speed = 971 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 155323.2  # should depend on the level
+        self.atk = 14530.4  # should depend on the level
+        self.armor = 9  # should depend on the level
+        self.speed = 971  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Demonisation'
         skill_damage_up = 0.875
@@ -1337,12 +1341,12 @@ class Freya(BaseHero):
             skill_damage_up = 1.0
             hp_up = 0.4
             speed_up = 60
-        self.skill_damage_up(self, up=skill_damage_up, turns=None, 
-                    name=name, passive=True)
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
-        self.speed_up(self, up=speed_up, turns=None, 
-                    name=name, passive=True)
+        self.skill_damage_up(self, up=skill_damage_up, turns=None,
+                             name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
+        self.speed_up(self, up=speed_up, turns=None,
+                      name=name, passive=True)
 
     def skill(self):
         name = 'Hollow Descent'
@@ -1380,31 +1384,31 @@ class Gerald(BaseHero):
     faction = Faction.UNDEAD
     type = HeroType.WANDERER
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 238557.7 # should depend on the level
-        self.atk = 12320.2 # should depend on the level
-        self.armor = 13 # should depend on the level
-        self.speed = 983 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 238557.7  # should depend on the level
+        self.atk = 12320.2  # should depend on the level
+        self.armor = 13  # should depend on the level
+        self.speed = 983  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Faith Ruin'
         damage_to_stunned = 0.75
         if self.star >= 8:
             damage_to_stunned = 0.95
-        self.damage_to_stunned_up(self, up=damage_to_stunned, turns=None, 
-                    name=name, passive=True)
+        self.damage_to_stunned_up(self, up=damage_to_stunned, turns=None,
+                                  name=name, passive=True)
 
         name = 'Berserker'
         armor_break_up = 9.6
@@ -1412,10 +1416,10 @@ class Gerald(BaseHero):
         if self.star >= 9:
             armor_break_up = 12
             attack_up = 0.35
-        self.armor_break_up(self, up=armor_break_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.armor_break_up(self, up=armor_break_up, turns=None,
+                            name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def skill(self):
         name = 'Wheel Of Torture'
@@ -1445,24 +1449,24 @@ class Luna(BaseHero):
     faction = Faction.ELF
     type = HeroType.WANDERER
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 208931.4 # should depend on the level
-        self.atk = 12837.8 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 1017 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 208931.4  # should depend on the level
+        self.atk = 12837.8  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 1017  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Full Moon Blessing'
         crit_rate_up = 0.3
@@ -1472,13 +1476,13 @@ class Luna(BaseHero):
             crit_rate_up = 0.3
             crit_damage_up = 0.3
             attack_up = 0.3
-        self.crit_rate_up(self, up=crit_rate_up, turns=None, 
-                    name=name, passive=True)
-        self.crit_damage_up(self, up=crit_damage_up, turns=None, 
-                    name=name, passive=True)
+        self.crit_rate_up(self, up=crit_rate_up, turns=None,
+                          name=name, passive=True)
+        self.crit_damage_up(self, up=crit_damage_up, turns=None,
+                            name=name, passive=True)
         if attack_up is not None:
-            self.attack_up(self, up=attack_up, turns=None, 
-                        name=name, passive=True)
+            self.attack_up(self, up=attack_up, turns=None,
+                           name=name, passive=True)
 
     def attack(self):
         name = 'attack (Bountiful Moonlight)'
@@ -1488,8 +1492,8 @@ class Luna(BaseHero):
         if self.star >= 9:
             power = [self.atk * 0.85] * len(targets_hit)
 
-        self.hit(targets_hit, power, skill=False, active=True, 
-                    on_attack=False, multi=True, name=name)
+        self.hit(targets_hit, power, skill=False, active=True,
+                 on_attack=False, multi=True, name=name)
         if targets_hit:
             self.on_attack(targets_hit[0])
 
@@ -1509,31 +1513,31 @@ class Medusa(BaseHero):
     faction = Faction.HORDE
     type = HeroType.WANDERER
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200043.7 # should depend on the level
-        self.atk = 12790.5 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 991 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200043.7  # should depend on the level
+        self.atk = 12790.5  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 991  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Eyes Of Chaos'
         attack_up = 0.4
         if self.star >= 8:
             attack_up = 0.5
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def skill(self):
         name = 'Viper Arrow'
@@ -1572,24 +1576,24 @@ class Minotaur(BaseHero):
     faction = Faction.HORDE
     type = HeroType.WARRIOR
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Ancestor Totem'
         armor_up = 23
@@ -1597,17 +1601,17 @@ class Minotaur(BaseHero):
         if self.star >= 7:
             armor_up = 25
             attack_up = 0.25
-        self.armor_up(self, up=armor_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.armor_up(self, up=armor_up, turns=None,
+                      name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
         name = 'Warrior Killer'
         damage_to_warriors = 0.45
         if self.star >= 8:
             damage_to_warriors = 0.6
-        self.damage_to_warriors_up(self, up=damage_to_warriors, turns=None, 
-                    name=name, passive=True)
+        self.damage_to_warriors_up(self, up=damage_to_warriors, turns=None,
+                                   name=name, passive=True)
 
     def skill(self):
         name = 'Fury Swipes'
@@ -1624,7 +1628,7 @@ class Minotaur(BaseHero):
         name = 'Rebirth'
         power = self.atk * 0.32
         if self.star >= 9:
-            power = self.atk * 0.4 ### add value
+            power = self.atk * 0.4  ### add value
         self.heal(self, power=power, turns=1, name=name)
         super().on_hit(attacker)
 
@@ -1634,24 +1638,24 @@ class MonkeyKing(BaseHero):
     faction = Faction.HELL
     type = HeroType.WARRIOR
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         self.has_revived = False
 
@@ -1675,15 +1679,15 @@ class MonkeyKing(BaseHero):
             power = self.atk * 1.2
         self.try_petrify(target, turns=1, chance=chance, name=name)
         self.timed_mark(target, power=power, turns=2, name=name)
+        super().on_attack(target)
 
     def on_hit(self, attacker):
         name = 'Fight Against Buddha'
         power = self.atk * 1.5
         if self.star >= 8:
-            power = self.atk * 1.85 ### add value
+            power = self.atk * 1.85  ### add value
         self.try_hit_passive(attacker, power=power, chance=0.7, name=name)
         super().on_hit(attacker)
-
 
     def on_death(self, attacker):
         if not self.has_revived:
@@ -1696,29 +1700,101 @@ class MonkeyKing(BaseHero):
         super().on_death(attacker)
 
 
-class Reaper(BaseHero):
-    name = HeroName.REAPER
-    faction = Faction.UNDEAD
-    type = HeroType.MAGE
+class NamelessKing(BaseHero):
+    name = HeroName.NAMELESS_KING
+    faction = Faction.HEAVEN
+    type = HeroType.WARRIOR
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 175732.3 # should depend on the level
-        self.atk = 14624.2 # should depend on the level
-        self.armor = 8 # should depend on the level
-        self.speed = 984 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
+                         guild_tech=guild_tech, familiar_stats=familiar_stats)
+
+        name = 'Heir Of Sunlight'
+        hp_up = 0.25
+        true_damage_up = 0.3
+        crit_rate_up = 0.22
+        if self.star >= 7: ### add value
+            hp_up = 0.3
+            true_damage_up = 0.35
+            crit_rate_up = 0.25
+        self.hp_up(self, up=hp_up, turns=None,
+                            name=name, passive=True)
+        self.true_damage_up(self, up=true_damage_up, turns=None,
+                   name=name, passive=True)
+        self.crit_rate_up(self, up=crit_rate_up, turns=None,
+                       name=name, passive=True)
+
+    def skill(self):
+        name = 'Lightning Storm'
+        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+
+        hit_power = [self.atk * 0.84] * len(targets_hit)
+        mark_power = self.atk * 1.2
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        for target in targets_hit:
+            self.crit_mark(target, power=mark_power, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Sign Of Sun'
+        up = 0.08
+        power = self.atk * 0.53
+        if self.star >= 8: ### add value
+            up = 0.1
+            power = self.atk * 0.75
+        self.crit_rate_up(self, up=up, turns=3, name=name)
+        self.crit_mark(target, power=power, name=name)
+        super().on_attack(target)
+
+    def on_hit(self, attacker):
+        name = 'Dragon Sphere'
+        up = 0.1
+        power = self.atk * 0.53
+        if self.star >= 9:
+            up = 0.15  ### add value
+            power = self.atk * 0.75
+        self.crit_damage_up(self, up=up, turns=3, name=name)
+        self.crit_mark(attacker, power=power, name=name)
+        super().on_hit(attacker)
+
+
+class Reaper(BaseHero):
+    name = HeroName.REAPER
+    faction = Faction.UNDEAD
+    type = HeroType.MAGE
+
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 175732.3  # should depend on the level
+        self.atk = 14624.2  # should depend on the level
+        self.armor = 8  # should depend on the level
+        self.speed = 984  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Necromancy'
         armor_break_up = 9.6
@@ -1728,12 +1804,12 @@ class Reaper(BaseHero):
             armor_break_up = 9.6
             hp_up = 0.3
             attack_up = 0.3
-        self.armor_break_up(self, up=armor_break_up, turns=None, 
-                    name=name, passive=True)
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.armor_break_up(self, up=armor_break_up, turns=None,
+                            name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def skill(self):
         name = 'Fatal Wave'
@@ -1761,37 +1837,37 @@ class Ripper(BaseHero):
     faction = Faction.UNDEAD
     type = HeroType.ASSASSIN
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         self.has_triggered = False
 
         name = 'Killer In Mist'
         armor_break_up = 9.6
         attack_up = 0.3
-        if self.star >= 7: ### add value
+        if self.star >= 7:  ### add value
             armor_break_up = 12
             attack_up = 0.4
-        self.armor_break_up(self, up=armor_break_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.armor_break_up(self, up=armor_break_up, turns=None,
+                            name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def skill(self):
         name = 'Venom Wind'
@@ -1810,7 +1886,7 @@ class Ripper(BaseHero):
     def on_attack(self, target):
         name = 'Poison Dagger'
         power = self.atk * 0.38
-        if self.star >= 8: ### add value
+        if self.star >= 8:  ### add value
             power = self.atk * 0.5
         self.poison(target, power=power, turns=6, name=name)
         super().on_attack(target)
@@ -1821,7 +1897,7 @@ class Ripper(BaseHero):
             name = 'Poison Nova'
             power = self.atk * 0.4
             if self.star >= 9:
-                power = self.atk * 0.6 ### add value
+                power = self.atk * 0.6  ### add value
             targets = targets_at_random(self.op_team.get_backline(), 2)
             for target in targets:
                 self.poison(target, power=power, turns=5, name=name)
@@ -1833,24 +1909,24 @@ class Rlyeh(BaseHero):
     faction = Faction.HORDE
     type = HeroType.CLERIC
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 153254.1 # should depend on the level
-        self.atk = 13636.6 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 951 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 153254.1  # should depend on the level
+        self.atk = 13636.6  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 951  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = "Old Gods' Protection"
         attack_up = 0.2
@@ -1858,10 +1934,10 @@ class Rlyeh(BaseHero):
         if self.star >= 9:
             attack_up = 0.25
             hp_up = 0.2
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
 
     def skill(self):
         name = 'Nightmare'
@@ -1909,24 +1985,24 @@ class SawMachine(BaseHero):
     faction = Faction.ALLIANCE
     type = HeroType.MAGE
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 207944.3 # should depend on the level
-        self.atk = 11661.9 # should depend on the level
-        self.armor = 13 # should depend on the level
-        self.speed = 984 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 207944.3  # should depend on the level
+        self.atk = 11661.9  # should depend on the level
+        self.armor = 13  # should depend on the level
+        self.speed = 984  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Destruction Mode'
         hp_up = 0.2
@@ -1934,10 +2010,10 @@ class SawMachine(BaseHero):
         if self.star >= 8:
             hp_up = 0.3
             skill_damage_up = 0.95
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
-        self.skill_damage_up(self, up=skill_damage_up, turns=None, 
-                    name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
+        self.skill_damage_up(self, up=skill_damage_up, turns=None,
+                             name=name, passive=True)
 
     def skill(self):
         name = 'Whirlwind Of Death'
@@ -1973,31 +2049,31 @@ class Scarlet(BaseHero):
     faction = Faction.HORDE
     type = HeroType.MAGE
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.primeval_soul.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 151937.2 # should depend on the level
-        self.atk = 16505.5 # should depend on the level
-        self.armor = 9 # should depend on the level
-        self.speed = 984 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 151937.2  # should depend on the level
+        self.atk = 16505.5  # should depend on the level
+        self.armor = 9  # should depend on the level
+        self.speed = 984  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
     def skill(self):
         name = 'Poison Nova'
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
         hit_power = [self.atk * 0.42] * len(targets_hit)
         poison_power = self.atk * 0.6
-        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name) # sequence order? same for all aoe damage
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)  # sequence order? same for all aoe damage
         for target in targets_hit:
             self.dot(target, power=poison_power, turns=3, name=name)
         super().skill()
@@ -2033,35 +2109,35 @@ class ShuddeMell(BaseHero):
     faction = Faction.UNDEAD
     type = HeroType.CLERIC
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         name = 'Psychic Blast'
         hp_up = 0.22
         attack_up = 0.15
-        if self.star >= 7: ### add value
+        if self.star >= 7:  ### add value
             hp_up = 0.3
             attack_up = 0.2
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def attack(self):
         name = 'attack (Dominoll)'
@@ -2069,11 +2145,11 @@ class ShuddeMell(BaseHero):
         targets_hit = self.targets_hit(targets, name=name)
         power = [self.atk * 0.7] * len(targets_hit)
         if self.star >= 8:
-            power = [self.atk * 0.85] * len(targets_hit) ### add value
+            power = [self.atk * 0.85] * len(targets_hit)  ### add value
 
-        self.hit(targets_hit, power, skill=False, active=True, 
-                    on_attack=False, multi=True, name=name)
-        for target in targets_hit: # check skill behaviour (multi silence?)
+        self.hit(targets_hit, power, skill=False, active=True,
+                 on_attack=False, multi=True, name=name)
+        for target in targets_hit:  # check skill behaviour (multi silence?)
             name = 'Dominoll'
             self.try_silence(target, turns=2, chance=0.4, name=name)
         if targets_hit:
@@ -2094,7 +2170,7 @@ class ShuddeMell(BaseHero):
     def on_hit(self, attacker):
         name = 'Creation'
         chance = 0.4
-        if self.star >= 9: ### add value
+        if self.star >= 9:  ### add value
             chance = 0.5
         if rd.random() <= chance:
             self.energy_up(self, up=30, name=name)
@@ -2106,37 +2182,37 @@ class Ultima(BaseHero):
     faction = Faction.ALLIANCE
     type = HeroType.CLERIC
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         self.has_triggered = False
 
         name = 'Essential Dignity'
         hp_up = 0.3
         speed_up = 0.30
-        if self.star >= 7: ### add value
+        if self.star >= 7:  ### add value
             hp_up = 0.4
             speed_up = 0.40
-        self.hp_up(self, up=hp_up, turns=None, 
-                    name=name, passive=True)
-        self.speed_up(self, up=speed_up, turns=None, 
-                    name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
+        self.speed_up(self, up=speed_up, turns=None,
+                      name=name, passive=True)
 
     def attack(self):
         name = 'attack (Binary Stars)'
@@ -2144,10 +2220,10 @@ class Ultima(BaseHero):
         targets_hit = self.targets_hit(targets, name=name)
         power = [self.atk * 0.7] * len(targets_hit)
         if self.star >= 8:
-            power = [self.atk * 0.85] * len(targets_hit) ### add value
+            power = [self.atk * 0.85] * len(targets_hit)  ### add value
 
-        self.hit(targets_hit, power, skill=False, active=True, 
-                    on_attack=False, multi=True, name=name)
+        self.hit(targets_hit, power, skill=False, active=True,
+                 on_attack=False, multi=True, name=name)
         if targets_hit:
             self.on_attack(targets_hit[0])
 
@@ -2170,7 +2246,7 @@ class Ultima(BaseHero):
             atk_up = 0.22
             armor_down = 7
             if self.star >= 9:
-                atk_up = 0.25 ### add value
+                atk_up = 0.25  ### add value
                 armor_down = 9
             for target in self.own_team.heroes:
                 self.attack_up(target, up=atk_up, turns=3, name=name)
@@ -2184,24 +2260,24 @@ class Vegvisir(BaseHero):
     faction = Faction.ELF
     type = HeroType.WARRIOR
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
 
         self.has_triggered = False
 
@@ -2219,7 +2295,7 @@ class Vegvisir(BaseHero):
         name = 'Glacier Echo'
         crit_rate_up = 0.07
         heal_power = self.atk * 0.3
-        if self.star >= 7: ### add value
+        if self.star >= 7:  ### add value
             crit_rate_up = 0.1
             heal_power = self.atk * 0.4
         self.crit_rate_up(self, up=crit_rate_up, turns=3, name=name)
@@ -2233,7 +2309,7 @@ class Vegvisir(BaseHero):
             atk_up = 0.6
             crit_rate_up = 0.3
             heal_power = self.atk * 2.4
-            if self.star >= 9: ### add value
+            if self.star >= 9:  ### add value
                 atk_up = 0.6
                 crit_rate_up = 0.3
                 heal_power = self.atk * 2.4
@@ -2248,24 +2324,23 @@ class Verthandi(BaseHero):
     faction = Faction.HEAVEN
     type = HeroType.CLERIC
 
-    def __init__(self, star=9, tier=6, level=200, 
-                    armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2, 
-                    rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6, 
-                    guild_tech=guild_tech_maxed, 
-                    familiar_stats=default_familiar_stats):
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 200000 # should depend on the level
-        self.atk = 14000 # should depend on the level
-        self.armor = 10 # should depend on the level
-        self.speed = 985 # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                            rune=rune, artifact=artifact, guild_tech=guild_tech, 
-                            familiar_stats=familiar_stats)
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
+                         guild_tech=guild_tech, familiar_stats=familiar_stats)
 
         name = 'Fate Drama'
         true_damage_up = 0.48
@@ -2273,10 +2348,10 @@ class Verthandi(BaseHero):
         if self.star >= 8:
             true_damage_up = 0.54
             attack_up = 0.45
-        self.true_damage_up(self, up=true_damage_up, turns=None, 
-                    name=name, passive=True)
-        self.attack_up(self, up=attack_up, turns=None, 
-                    name=name, passive=True)
+        self.true_damage_up(self, up=true_damage_up, turns=None,
+                            name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def skill(self):
         name = 'Goddess Benison'
@@ -2321,6 +2396,7 @@ class Hero:
     medusa = Medusa
     minotaur = Minotaur
     monkey_king = MonkeyKing
+    nameless_king = NamelessKing
     reaper = Reaper
     ripper = Ripper
     rlyeh = Rlyeh
@@ -2333,26 +2409,27 @@ class Hero:
 
 
 hero_from_request = {
-                    'EMPTY': Hero.empty, 
-                    'ADEN': Hero.aden, # add stats
-                    'BLOOD_TOOTH': Hero.blood_tooth, # add stats, add 9* skill values
-                    'CENTAUR': Hero.centaur, 
-                    'CHESSIA': Hero.chessia, # add stats, add 9* skills, being added
-                    'DZIEWONA': Hero.dziewona, 
-                    'FOREST_HEALER': Hero.forest_healer, 
-                    'FREYA': Hero.freya, 
-                    'GERALD': Hero.gerald, 
-                    'LUNA': Hero.luna, 
-                    'MEDUSA': Hero.medusa, 
-                    'MINOTAUR': Hero.minotaur, # add stats, add 9* skill values
-                    'MONKEY_KING': Hero.monkey_king, # add stats, add 9* skill values
-                    'REAPER': Hero.reaper, 
-                    'RIPPER': Hero.ripper, # add stats, add 9* skill values
-                    'RLYEH': Hero.rlyeh, 
-                    'SAW_MACHINE': Hero.saw_machine, 
-                    'SCARLET': Hero.scarlet, 
-                    'SHUDDE_M_ELL': Hero.shudde_m_ell, # add stats, add 9* skill values
-                    'ULTIMA': Hero.ultima, # add stats, add 9* skill values
-                    'VEGVISIR': Hero.vegvisir, # add stats, add 9* skill values
-                    'VERTHANDI': Hero.verthandi # add stats
-                    }
+    'EMPTY': Hero.empty,
+    'ADEN': Hero.aden, # add stats
+    'BLOOD_TOOTH': Hero.blood_tooth, # add stats, add 9* skill values
+    'CENTAUR': Hero.centaur,
+    'CHESSIA': Hero.chessia, # add stats, add 9* skills, being added
+    'DZIEWONA': Hero.dziewona,
+    'FOREST_HEALER': Hero.forest_healer,
+    'FREYA': Hero.freya,
+    'GERALD': Hero.gerald,
+    'LUNA': Hero.luna,
+    'MEDUSA': Hero.medusa,
+    'MINOTAUR': Hero.minotaur, # add stats, add 9* skill values
+    'MONKEY_KING': Hero.monkey_king, # add stats, add 9* skill values
+    'NAMELESS_KING': Hero.nameless_king, # add stats, add 9* skill values
+    'REAPER': Hero.reaper,
+    'RIPPER': Hero.ripper, # add stats, add 9* skill values
+    'RLYEH': Hero.rlyeh,
+    'SAW_MACHINE': Hero.saw_machine,
+    'SCARLET': Hero.scarlet,
+    'SHUDDE_M_ELL': Hero.shudde_m_ell, # add stats, add 9* skill values
+    'ULTIMA': Hero.ultima, # add stats, add 9* skill values
+    'VEGVISIR': Hero.vegvisir, # add stats, add 9* skill values
+    'VERTHANDI': Hero.verthandi # add stats
+}
