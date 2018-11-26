@@ -7,7 +7,7 @@ from swagger_server.models.stat_request import StatRequest  # noqa: E501
 from swagger_server.models.hero_stats import HeroStats  # noqa: E501
 from swagger_server.models.hero_stats_stats import HeroStatsStats  # noqa: E501
 from swagger_server import util
-from heroes import Hero
+from sim.heroes import Hero
 from sim.models import armor_from_request, helmet_from_request, weapon_from_request, pendant_from_request, rune_from_request, artifact_from_request
 from sim.heroes import hero_from_request
 
