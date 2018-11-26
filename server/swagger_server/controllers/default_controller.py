@@ -1,5 +1,8 @@
 import connexion
 import six
+import sys
+
+sys.path.append('../')
 
 from swagger_server.models.hero_stats import HeroStats  # noqa: E501
 from swagger_server.models.simulate_request import SimulateRequest  # noqa: E501
@@ -10,6 +13,7 @@ from swagger_server import util
 from sim.heroes import Hero
 from sim.models import armor_from_request, helmet_from_request, weapon_from_request, pendant_from_request, rune_from_request, artifact_from_request
 from sim.heroes import hero_from_request
+
 
 def battle_simulate_post(count=None):  # noqa: E501
     """Simulates a given number of battles
