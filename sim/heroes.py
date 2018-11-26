@@ -818,13 +818,13 @@ class BaseHero:
             self.has_dropped_below_30 = True
 
         if self.hp <= 0:
-            if isinstance(self, MonkeyKing):
+            if isinstance(self, MonkeyKing) or isinstance(self, Mars):
                 if self.has_revived:
                     self.kill()
             else:
                 self.kill()
 
-            if attacker is not None:
+            if attacker is not None and self.is_dead:
                 attacker.on_kill(self)
             self.on_death(attacker)
 
@@ -1508,6 +1508,88 @@ class Luna(BaseHero):
         super().skill()
 
 
+class Mars(BaseHero):
+    name = HeroName.MARS
+    faction = Faction.HEAVEN
+    type = HeroType.WANDERER
+
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 200000  # should depend on the level
+        self.atk = 14000  # should depend on the level
+        self.armor = 10  # should depend on the level
+        self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
+                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats)
+
+        self.has_revived = False
+
+        name = 'Fury Brand'
+        true_damage_up = 0.3
+        attack_up = 0.25
+        speed_up = 20
+        if self.star >= 7: ### add value
+            true_damage_up = 0.35
+            attack_up = 0.3
+            speed_up = 30
+        self.true_damage_up(self, up=true_damage_up, turns=None,
+                   name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                            name=name, passive=True)
+        self.speed_up(self, up=speed_up, turns=None,
+                            name=name, passive=True)
+
+    def skill(self):
+        name = 'Eye Of Thunderstorm'
+        targets = targets_at_random(self.op_team.heroes, 3)
+        targets_hit = self.targets_hit(targets, name=name)
+
+        power = [self.atk * 1.48] * len(targets_hit)
+        if self.hp <= 0.2 * self.hp_max:
+            power = [p + self.atk * 2.0 for p in power] # check skill behaviour (unclear)
+        self.hit_skill(targets_hit, power=power, multi=True, name=name)
+
+        name = 'Militant'
+        up = 0.2
+        if self.star >= 8: ### add value
+            up = 0.25
+        self.true_damage_up(self, up=up, turns=None, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Militant'
+        up = 0.25
+        if self.star >= 8: ### add value
+            up = 0.30
+        self.skill_damage_up(self, up=up, turns=None, name=name)
+        super().on_attack(target)
+
+    def on_death(self, attacker):
+        if not self.has_revived:
+            self.has_revived = True
+            name = 'Miracle Of Resurrection'
+            heal_power = self.hp_max * 0.12 - self.hp # check skill behaviour (unclear)
+            energy_up = 80
+            damage_reduction_up = 0.8
+            if self.star >= 9: ### add value
+                heal_power = self.hp_max * 0.2 - self.hp # check skill behaviour (unclear)
+                energy_up = 100
+                damage_reduction_up = 0.8
+            self.heal(self, power=heal_power, turns=1, name=name)
+            self.energy_up(self, up=energy_up, name=name)
+            self.damage_reduction_up(self, up=damage_reduction_up, turns=1, name=name) # check skill behaviour (unclear)
+        super().on_death(attacker)
+
+
 class Medusa(BaseHero):
     name = HeroName.MEDUSA
     faction = Faction.HORDE
@@ -1720,8 +1802,8 @@ class NamelessKing(BaseHero):
         self.atk = 14000  # should depend on the level
         self.armor = 10  # should depend on the level
         self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
-                         guild_tech=guild_tech, familiar_stats=familiar_stats)
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
+                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats)
 
         name = 'Heir Of Sunlight'
         hp_up = 0.25
@@ -2393,6 +2475,7 @@ class Hero:
     freya = Freya
     gerald = Gerald
     luna = Luna
+    mars = Mars
     medusa = Medusa
     minotaur = Minotaur
     monkey_king = MonkeyKing
@@ -2419,6 +2502,7 @@ hero_from_request = {
     'FREYA': Hero.freya,
     'GERALD': Hero.gerald,
     'LUNA': Hero.luna,
+    'MARS': Hero.mars, # add stats, add 9* skill values
     'MEDUSA': Hero.medusa,
     'MINOTAUR': Hero.minotaur, # add stats, add 9* skill values
     'MONKEY_KING': Hero.monkey_king, # add stats, add 9* skill values

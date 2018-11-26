@@ -8,7 +8,7 @@ from sim import Sim, Game
 heroes = [Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.dziewona, Hero.forest_healer, Hero.freya,
           Hero.gerald, Hero.luna, Hero.medusa, Hero.minotaur, Hero.monkey_king, Hero.reaper, Hero.ripper, Hero.rlyeh,
           Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.ultima, Hero.vegvisir, Hero.verthandi, 
-          Hero.nameless_king]
+          Hero.nameless_king, Hero.mars]
 
 
 def get_random_team():
