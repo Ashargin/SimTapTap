@@ -23,7 +23,7 @@ defense_team = get_random_team()
 
 game = Game(attack_team, defense_team)
 game.process()
-print(game.log)
+print(game.log.text)
 
 # todo:
 # connect the engine to the server

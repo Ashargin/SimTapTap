@@ -32,7 +32,8 @@ class Sim:
 
 class Game:
     def __init__(self, attack_team, defense_team, verbose_full=False):
-        self.log = ''
+        self.actions = []
+        self.rounds = []
         self.attack_team = copy.deepcopy(attack_team)
         self.defense_team = copy.deepcopy(defense_team)
         self.verbose_full = verbose_full
@@ -53,29 +54,35 @@ class Game:
         self.attack_team.pet.game = self
         self.defense_team.pet.game = self
 
-        self.log += self.teams() + '\n'
+        self.prefix = self.teams() + '\n'
 
     def turn(self):
-        self.log += '\n### Turn {} ###'.format(self.round)
+        round_prefix = '\n### Turn {} ###'.format(self.round)
 
         # effects
-        self.log += '\n# Active effects #'.format(self.round)
+        prefix = '\n# Active effects #'.format(self.round)
+        self.actions = []
         for h in self.heroes:
             if not h.is_dead:
                 h.can_attack = True
                 for e in h.effects:
                     e.tick()
+        effects_turn = EffectsTurn(self.actions, prefix=prefix)
 
         # heroes
+        heroes_turns = []
         while any([h.can_attack for h in self.heroes]) and not self.is_finished():
+            self.actions = []
             max_speed = max([h.speed for h in self.heroes if h.can_attack])
             fastest_heroes = [h for h in self.heroes
                               if h.speed == max_speed and h.can_attack]
             fastest = fastest_heroes[rd.randint(0, len(fastest_heroes) - 1)]
-            self.log += "\n\n# {}'s turn #".format(fastest.str_id)
+            prefix = "\n\n# {}'s turn #".format(fastest.str_id)
             fastest.turn()
+            heroes_turns.append(HeroTurn(self.actions, prefix=prefix))
 
         # familiars
+        pet_turns = []
         first_pet = None
         second_pet = None
         if self.pets[0].level == self.pets[1].level:
@@ -90,9 +97,11 @@ class Game:
             second_pet = self.pets[0]
         for pet in (first_pet, second_pet):
             if not self.is_finished():
-                if pet.energy == 100:
-                    self.log += "\n\n# {}'s turn #".format(pet.str_id)
+                self.actions = []
                 pet.turn()
+                if pet.energy == 100:
+                    prefix = "\n\n# {}'s turn #".format(pet.str_id)
+                    pet_turns.append(PetTurn(self.actions, prefix=prefix))
 
         # effects
         for h in self.heroes:
@@ -101,7 +110,11 @@ class Game:
                     if e.turns == 0:
                         e.kill()
 
-        self.log += '\n\n{}\n'.format(self.state())
+        round_suffix = '\n\n{}\n'.format(self.state())
+
+        round_turns = [effects_turn] + heroes_turns + pet_turns
+        round = Round(round_turns, prefix=round_prefix, suffix=round_suffix)
+        self.rounds.append(round)
 
     def teams(self):
         teams_str = '### Teams ###'
@@ -166,8 +179,8 @@ class Game:
             self.turn()
             self.round += 1
 
-        self.log += '\n### Final state ###\n'
-        self.log += '\n\n{}'.format(self.state())
+        self.suffix = '\n### Final state ###\n'
+        self.suffix += '\n\n{}'.format(self.state())
 
         if self.defense_team.is_dead() and self.attack_team.is_dead() or \
                 not self.defense_team.is_dead() and not self.attack_team.is_dead():
@@ -178,12 +191,44 @@ class Game:
             self.winner = -1
 
         if self.winner != 0:
-            self.log += '\n\nWinner : team {}'.format(1 if self.winner == 1 else 2)
+            self.suffix += '\n\nWinner : team {}'.format(1 if self.winner == 1 else 2)
         else:
-            self.log += '\n\nTie'.format(1 if self.winner == 1 else 2)
+            self.suffix += '\n\nTie'.format(1 if self.winner == 1 else 2)
+
+        self.log = Log(self.rounds, prefix=self.prefix, suffix=self.suffix)
 
 
 class EmptyGame:
     def __init__(self):
-        self.log = ''
+        self.actions = []
         self.verbose_full = False
+
+
+class Log:
+    def __init__(self, rounds, prefix='', suffix=''):
+        self.rounds = rounds
+        self.text = prefix + ''.join([r.text for r in self.rounds]) + suffix
+
+
+class Round:
+    def __init__(self, turns, prefix='', suffix=''):
+        self.turns = turns
+        self.text = prefix + ''.join([t.text for t in self.turns]) + suffix
+
+
+class EffectsTurn:
+    def __init__(self, actions, prefix=''):
+        self.actions = actions
+        self.text = prefix + ''.join([a.text for a in self.actions])
+
+
+class HeroTurn:
+    def __init__(self, actions, prefix=''):
+        self.actions = actions
+        self.text = prefix + ''.join([a.text for a in self.actions])
+
+
+class PetTurn:
+    def __init__(self, actions, prefix=''):
+        self.actions = actions
+        self.text = prefix + ''.join([a.text for a in self.actions])

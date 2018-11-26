@@ -1,7 +1,7 @@
 import random as rd
 from dataclasses import dataclass
 
-from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Effect
+from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Effect, Action
 from sim.settings import guild_tech_maxed, guild_tech_empty, default_familiar_stats, default_familiar
 from sim.sim import EmptyGame
 from sim.utils import targets_at_random
@@ -304,8 +304,10 @@ class BaseHero:
             dodged = True
 
         if dodged:
-            self.game.log += '\n{} dodges {} from {}' \
+            action = Action.dodge(self, target, name)
+            action.text = '\n{} dodges {} from {}' \
                 .format(target.str_id, name, self.str_id)
+            self.game.actions.append(action)
 
         return dodged
 
@@ -329,24 +331,31 @@ class BaseHero:
     def turn(self):
         if self.is_stunned() or self.is_petrified() or self.is_frozen():
             for e in [e for e in self.effects if isinstance(e, Effect.stun)]:
-                self.game.log += '\n{} is stunned by {} ({}, {} turns left) ' \
+                action = Action.is_stunned(e.source, self, e.turns, e.name)
+                action.text = '\n{} is stunned by {} ({}, {} turns left) ' \
                                  'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
+                self.game.actions.append(action)
             for e in [e for e in self.effects if isinstance(e, Effect.petrify)]:
-                self.game.log += '\n{} is petrified by {} ({}, {} turns left) ' \
+                action = Action.is_petrified(e.source, self, e.turns, e.name)
+                action.text = '\n{} is petrified by {} ({}, {} turns left) ' \
                                  'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
+                self.game.actions.append(action)
             for e in [e for e in self.effects if isinstance(e, Effect.freeze)]:
-                self.game.log += '\n{} is frozen by {} ({}, {} turns left) ' \
+                action = Action.is_frozen(e.source, self, e.turns, e.name)
+                action.text = '\n{} is frozen by {} ({}, {} turns left) ' \
                                  'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
+                self.game.actions.append(action)
         else:
             if self.energy >= 100 and self.is_silenced():
                 for e in [e for e in self.effects if isinstance(e, Effect.silence)]:
-                    self.game.log += '\n{} is silenced by {} ({}, {} turns left) ' \
+                    action = Action.is_silenced(e.source, self, e.turns, e.name)
+                    action.text = '\n{} is silenced by {} ({}, {} turns left) ' \
                                      'and cannot use its skill' \
                         .format(self.str_id, e.source.str_id, e.name, e.turns)
-
+                    self.game.actions.append(action)
             if self.energy >= 100 and not self.is_silenced():
                 self.skill()
             else:
@@ -391,9 +400,10 @@ class BaseHero:
                 crit_str = ', crit' if crit else ''
 
                 target.hp -= dmg
-                log_text = '\n{} takes {} damage from {} ({}{})' \
+                action = Action.hit(self, target, damage_components, name)
+                action.text = '\n{} takes {} damage from {} ({}{})' \
                     .format(target.str_id, round(dmg), self.str_id, name, crit_str)
-                self.game.log += log_text
+                self.game.actions.append(action)
 
                 if update:
                     self.update_state(target, on_attack, active, crit)
@@ -746,13 +756,17 @@ class BaseHero:
 
     def energy_up(self, target, up, name='', passive=False):
         target.energy = max(min(target.energy + up, 100), self.energy)
-        self.game.log += "\n{}'s energy is increased by {} by {} ({})" \
+        action = Action.energy_up(self, target, up, passive, name)
+        action.text = "\n{}'s energy is increased by {} by {} ({})" \
             .format(target.str_id, up, self.str_id, name)
+        self.game.actions.append(action)
 
     def energy_down(self, target, down, name='', passive=False):
         target.energy = max(target.energy - down, 0)
-        self.game.log += "\n{}'s energy is reduced by {} by {} ({})" \
+        action = Action.energy_down(self, target, down, passive, name)
+        action.text = "\n{}'s energy is reduced by {} by {} ({})" \
             .format(target.str_id, down, self.str_id, name)
+        self.game.actions.append(action)
 
     def damage_to_bleeding_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead:
@@ -831,7 +845,9 @@ class BaseHero:
     def kill(self):
         self.is_dead = True
         self.can_attack = False
-        self.game.log += '\n{} dies'.format(self.str_id)
+        action = Action.die(self)
+        action.text = '\n{} dies'.format(self.str_id)
+        self.game.actions.append(action)
 
     def on_attack(self, target):
         if not isinstance(self, Chessia):

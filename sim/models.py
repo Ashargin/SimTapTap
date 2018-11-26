@@ -3388,11 +3388,25 @@ class BaseFamiliar:
 
     def attack(self):
         targets = targets_at_random(self.op_team.heroes, self.n_targets)
+        damage_components = {'Power': self.damage,
+                             'Skill damage': 0,
+                             'Damage reduction from armor': 0,
+                             'Crit damage': 0,
+                             'True damage': 0,
+                             'Damage reduction': 0,
+                             'Faction damage': 0,
+                             'Base type damage': 0,
+                             'Extra type damage': 0,
+                             'Poisoned extra damage': 0,
+                             'Bleeding extra damage': 0,
+                             'Stunned extra damage': 0,
+                             'Total damage': self.damage}
         for target in targets:  # check : can be dodged?
             target.hp -= self.damage
-            log_text = '\n{} takes {} damage from {} ({})' \
+            action = Action.hit(self, target, damage_components, self.skill_name)
+            action.text = '\n{} takes {} damage from {} ({})' \
                 .format(target.str_id, self.damage, self.str_id, self.skill_name)
-            self.game.log += log_text
+            self.game.actions.append(action)
         for target in targets:
             target.has_taken_damage(attacker=None)
 
@@ -3510,9 +3524,10 @@ class Dot(BaseEffect):
 
             self.holder.hp -= dmg
             self.turns -= 1
-            log_text = '\n{} takes {} damage (dot from {} ({}{}), {} turns left)' \
+            action = Action.dot(self.source, self.holder, damage_components, self.turns, self.name)
+            action.text = '\n{} takes {} damage (dot from {} ({}{}), {} turns left)' \
                 .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
             self.holder.has_taken_damage(self.source)
 
 
@@ -3531,14 +3546,15 @@ class Heal(BaseEffect):
             self.holder.hp = min(self.holder.hp + self.power, self.holder.hp_max)
             self.turns -= 1
             if self.hot:
-                log_text = '\n{} is healed {} by {} ({}, {} turns left)' \
+                action = Action.hot(self.source, self.holder, self.power, self.turns, self.name)
+                action.text = '\n{} is healed {} by {} ({}, {} turns left)' \
                     .format(self.holder.str_id, round(self.power),
                             self.source.str_id, self.name, self.turns)
             else:
-                log_text = '\n{} is healed {} by {} ({})' \
+                action = Action.heal(self.source, self.holder, self.power, self.name)
+                action.text = '\n{} is healed {} by {} ({})' \
                     .format(self.holder.str_id, round(self.power),
                             self.source.str_id, self.name)
-            self.source.game.log += log_text
             self.holder.has_taken_damage(self.source)
 
 
@@ -3560,9 +3576,10 @@ class Poison(BaseEffect):
 
             self.holder.hp -= dmg
             self.turns -= 1
-            log_text = '\n{} takes {} damage (poison from {} ({}{}), {} turns left)' \
+            action = Action.poison(self.source, self.holder, damage_components, self.turns, self.name)
+            action.text = '\n{} takes {} damage (poison from {} ({}{}), {} turns left)' \
                 .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
             self.holder.has_taken_damage(self.source)
 
 
@@ -3584,9 +3601,10 @@ class Bleed(BaseEffect):
 
             self.holder.hp -= dmg
             self.turns -= 1
-            log_text = '\n{} takes {} damage (bleed from {} ({}{}), {} turns left)' \
+            action = Action.bleed(self.source, self.holder, damage_components, self.turns, self.name)
+            action.text = '\n{} takes {} damage (bleed from {} ({}{}), {} turns left)' \
                 .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
             self.holder.has_taken_damage(self.source)
 
 
@@ -3604,25 +3622,31 @@ class TimedMark(BaseEffect):
         if not self.holder.is_dead:
             self.turns -= 1
             if self.turns == 0:
-                damage_components = self.source.compute_damage(self.holder, self.power)
-                dmg = damage_components['Total damage']
-                crit = True if damage_components['Crit damage'] > 0 else False
-                crit_str = ', crit' if crit else ''
-
-                self.holder.hp -= dmg
-                log_text = '\n{} takes {} damage (timed mark from {} ({}{}))' \
-                    .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
-                self.source.game.log += log_text
-                self.holder.has_taken_damage(self.source)
+                self.trigger()
             elif self.first_turn:
                 self.first_turn = False
-                log_text = '\n{} receives a timed mark from {} ({}, {} turns)' \
+                action = Action.timed_mark_on(self.source, self.holder, self.turns - 1, self.name)
+                action.text = '\n{} has a timed mark from {} ({}, {} turns)' \
                     .format(self.holder.str_id, self.source.str_id, self.name, self.turns - 1)
-                self.source.game.log += log_text
+                self.source.game.actions.append(action)
             else:
-                log_text = '\n{} has a timed mark from {} ({}, {} turns left)' \
+                action = Action.timed_mark_countdown(self.source, self.holder, self.turns, self.name)
+                action.text = '\n{} has a timed mark from {} ({}, {} turns left)' \
                     .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
-                self.source.game.log += log_text
+                self.source.game.actions.append(action)
+
+    def trigger(self):
+        damage_components = self.source.compute_damage(self.holder, self.power)
+        dmg = damage_components['Total damage']
+        crit = True if damage_components['Crit damage'] > 0 else False
+        crit_str = ', crit' if crit else ''
+
+        self.holder.hp -= dmg
+        action = Action.timed_mark_trigger(self.source, self.holder, damage_components, self.name)
+        action.text = '\n{} takes {} damage (timed mark from {} ({}{}))' \
+            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
+        self.source.game.actions.append(action)
+        self.holder.has_taken_damage(self.source)
 
 
 class CritMark(BaseEffect):
@@ -3636,9 +3660,10 @@ class CritMark(BaseEffect):
 
     def tick(self):
         if not self.holder.is_dead:
-            log_text = '\n{} has a crit mark from {} ({})' \
+            action = Action.crit_mark_on(self.source, self.holder, self.name)
+            action.text = '\n{} has a crit mark from {} ({})' \
                 .format(self.holder.str_id, self.source.str_id, self.name)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
 
     def trigger(self):
         damage_components = self.source.compute_damage(self.holder, self.power)
@@ -3647,9 +3672,10 @@ class CritMark(BaseEffect):
         crit_str = ', crit' if crit else ''
 
         self.holder.hp -= dmg
-        log_text = '\n{} takes {} damage (crit mark from {} ({}{}))' \
+        action = Action.crit_mark_trigger(self.source, self.holder, damage_components, self.name)
+        action.text = '\n{} takes {} damage (crit mark from {} ({}{}))' \
             .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
-        self.source.game.log += log_text
+        self.source.game.actions.append(action)
         self.holder.has_taken_damage(self.source)
 
         self.kill()
@@ -3666,9 +3692,10 @@ class Silence(BaseEffect):
     def tick(self):
         if not self.holder.is_dead:
             self.turns -= 1
-            log_text = '\n{} is silenced by {} ({}), {} turns left' \
+            action = Action.silence(self.source, self.holder, self.turns, self.name)
+            action.text = '\n{} is silenced by {} ({}), {} turns left' \
                 .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
 
 
 class Stun(BaseEffect):
@@ -3682,9 +3709,10 @@ class Stun(BaseEffect):
     def tick(self):
         if not self.holder.is_dead:
             self.turns -= 1
-            log_text = '\n{} is stunned by {} ({}), {} turns left' \
+            action = Action.stun(self.source, self.holder, self.turns, self.name)
+            action.text = '\n{} is stunned by {} ({}), {} turns left' \
                 .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
 
 
 class Petrify(BaseEffect):
@@ -3698,9 +3726,10 @@ class Petrify(BaseEffect):
     def tick(self):
         if not self.holder.is_dead:
             self.turns -= 1
-            log_text = '\n{} is petrified by {} ({}), {} turns left' \
+            action = Action.petrify(self.source, self.holder, self.turns, self.name)
+            action.text = '\n{} is petrified by {} ({}), {} turns left' \
                 .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
 
 
 class Freeze(BaseEffect):
@@ -3714,9 +3743,10 @@ class Freeze(BaseEffect):
     def tick(self):
         if not self.holder.is_dead:
             self.turns -= 1
-            log_text = '\n{} is frozen by {} ({}), {} turns left' \
+            action = Action.freeze(self.source, self.holder, self.turns, self.name)
+            action.text = '\n{} is frozen by {} ({}), {} turns left' \
                 .format(self.holder.str_id, self.source.str_id, self.name, self.turns)
-            self.source.game.log += log_text
+            self.source.game.actions.append(action)
 
 
 class AttackUp(StatUp):
@@ -3730,17 +3760,18 @@ class AttackUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.attack_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s attack is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s attack is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s attack is increased by {}% by {} ({})" \
+                action.text = "\n{}'s attack is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         previous_bonus = self.holder.atk_bonus
@@ -3758,17 +3789,18 @@ class AttackDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.attack_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s attack is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s attack is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s attack is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s attack is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.atk /= 1 - self.down
@@ -3790,17 +3822,18 @@ class HpUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.hp_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s hp is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s hp is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s hp is increased by {}% by {} ({})" \
+                action.text = "\n{}'s hp is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         previous_bonus = self.holder.hp_bonus
@@ -3820,17 +3853,18 @@ class HpDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.hp_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s hp is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s hp is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s hp is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s hp is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.hp /= 1 - self.down
@@ -3847,17 +3881,18 @@ class CritRateUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.crit_rate_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s crit rate is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s crit rate is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s crit rate is increased by {}% by {} ({})" \
+                action.text = "\n{}'s crit rate is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.crit_rate -= self.up
@@ -3873,17 +3908,18 @@ class CritRateDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.crit_rate_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s crit rate is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s crit rate is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s crit rate is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s crit rate is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.crit_rate += self.down
@@ -3899,17 +3935,18 @@ class CritDamageUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.crit_damage_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s crit damage is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s crit damage is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s crit damage is increased by {}% by {} ({})" \
+                action.text = "\n{}'s crit damage is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.crit_damage -= self.up
@@ -3925,17 +3962,18 @@ class CritDamageDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.crit_damage_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s crit damage is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s crit damage is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s crit damage is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s crit damage is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.crit_damage += self.down
@@ -3951,17 +3989,18 @@ class HitRateUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.hit_rate_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s hit rate is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s hit rate is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s hit rate is increased by {}% by {} ({})" \
+                action.text = "\n{}'s hit rate is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.hit_rate -= self.up
@@ -3977,17 +4016,18 @@ class HitRateDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.hit_rate_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s hit rate is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s hit rate is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s hit rate is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s hit rate is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.hit_rate += self.down
@@ -4003,17 +4043,18 @@ class DodgeUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.dodge_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s dodge rate is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s dodge rate is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s dodge rate is increased by {}% by {} ({})" \
+                action.text = "\n{}'s dodge rate is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.dodge -= self.up
@@ -4029,17 +4070,18 @@ class DodgeDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.dodge_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s dodge rate is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s dodge rate is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s dodge rate is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s dodge rate is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.dodge += self.down
@@ -4055,17 +4097,18 @@ class SkillDamageUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.skill_damage_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s skill damage is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s skill damage is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s skill damage is increased by {}% by {} ({})" \
+                action.text = "\n{}'s skill damage is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.skill_damage -= self.up
@@ -4081,17 +4124,18 @@ class SkillDamageDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.skill_damage_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s skill damage is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s skill damage is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s skill damage is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s skill damage is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.skill_damage += self.down
@@ -4107,17 +4151,18 @@ class ControlImmuneUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.control_immune_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s control resistance is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s control resistance is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s control resistance is increased by {}% by {} ({})" \
+                action.text = "\n{}'s control resistance is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.control_immune -= self.up
@@ -4133,17 +4178,18 @@ class ControlImmuneDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.control_immune_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s control resistance is reduced by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s control resistance is reduced by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s control resistance is reduced by {}% by {} ({})" \
+                action.text = "\n{}'s control resistance is reduced by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.control_immune += self.down
@@ -4159,17 +4205,18 @@ class SilenceImmuneUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.silence_immune_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s silence resistance is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s silence resistance is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s silence resistance is increased by {}% by {} ({})" \
+                action.text = "\n{}'s silence resistance is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.silence_immune -= self.up
@@ -4185,17 +4232,18 @@ class DamageReductionUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.damage_reduction_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s damage reduction is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s damage reduction is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s damage reduction is increased by {}% by {} ({})" \
+                action.text = "\n{}'s damage reduction is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.damage_reduction -= self.up
@@ -4211,17 +4259,18 @@ class TrueDamageUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.true_damage_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s true damage is increased by {}% by {} ({}), {} turns left" \
+                action.text = "\n{}'s true damage is increased by {}% by {} ({}), {} turns left" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s true damage is increased by {}% by {} ({})" \
+                action.text = "\n{}'s true damage is increased by {}% by {} ({})" \
                     .format(self.holder.str_id, 100 * self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.true_damage -= self.up
@@ -4237,17 +4286,18 @@ class ArmorBreakUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.armor_break_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s armor break is increased by {} by {} ({}), {} turns left" \
+                action.text = "\n{}'s armor break is increased by {} by {} ({}), {} turns left" \
                     .format(self.holder.str_id, self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s armor break is increased by {} by {} ({})" \
+                action.text = "\n{}'s armor break is increased by {} by {} ({})" \
                     .format(self.holder.str_id, self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.armor_break -= self.up
@@ -4263,17 +4313,18 @@ class ArmorBreakDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.armor_break_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s armor break is reduced by {} by {} ({}), {} turns left" \
+                action.text = "\n{}'s armor break is reduced by {} by {} ({}), {} turns left" \
                     .format(self.holder.str_id, self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s armor break is reduced by {} by {} ({})" \
+                action.text = "\n{}'s armor break is reduced by {} by {} ({})" \
                     .format(self.holder.str_id, self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.armor_break += self.down
@@ -4289,17 +4340,18 @@ class ArmorUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.armor_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s defense is increased by {} by {} ({}), {} turns left" \
+                action.text = "\n{}'s defense is increased by {} by {} ({}), {} turns left" \
                     .format(self.holder.str_id, self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s defense is increased by {} by {} ({})" \
+                action.text = "\n{}'s defense is increased by {} by {} ({})" \
                     .format(self.holder.str_id, self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.armor -= self.up
@@ -4315,17 +4367,18 @@ class ArmorDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.armor_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s defense is reduced by {} by {} ({}), {} turns left" \
+                action.text = "\n{}'s defense is reduced by {} by {} ({}), {} turns left" \
                     .format(self.holder.str_id, self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s defense is reduced by {} by {} ({})" \
+                action.text = "\n{}'s defense is reduced by {} by {} ({})" \
                     .format(self.holder.str_id, self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.armor += self.down
@@ -4341,17 +4394,18 @@ class SpeedUp(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.speed_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s speed is increased by {} by {} ({}), {} turns left" \
+                action.text = "\n{}'s speed is increased by {} by {} ({}), {} turns left" \
                     .format(self.holder.str_id, self.up, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s speed is increased by {} by {} ({})" \
+                action.text = "\n{}'s speed is increased by {} by {} ({})" \
                     .format(self.holder.str_id, self.up, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.speed -= self.up
@@ -4367,17 +4421,18 @@ class SpeedDown(StatDown):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.speed_down(self.source, self.holder, self.down, self.turns, self.name)
             if not self.infinite:
-                log_text = "\n{}'s speed is reduced by {} by {} ({}), {} turns left" \
+                action.text = "\n{}'s speed is reduced by {} by {} ({}), {} turns left" \
                     .format(self.holder.str_id, self.down, self.source.str_id,
-                            self.name, self.turns)
+                            self.name, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = "\n{}'s speed is reduced by {} by {} ({})" \
+                action.text = "\n{}'s speed is reduced by {} by {} ({})" \
                     .format(self.holder.str_id, self.down, self.source.str_id,
-                            self.name)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.speed += self.down
@@ -4393,17 +4448,18 @@ class DamageToBleeding(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.damage_to_bleeding(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = '\n{} deals {}% extra damage to bleeding targets ({} from {}), {} turns left' \
+                action.text = '\n{} deals {}% extra damage to bleeding targets ({} from {}), {} turns left' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id, self.turns)
+                            self.source.str_id, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = '\n{} deals {}% extra damage to bleeding targets ({} from {})' \
+                action.text = '\n{} deals {}% extra damage to bleeding targets ({} from {})' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.source.str_id) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.damage_to_bleeding -= self.up
@@ -4419,17 +4475,18 @@ class DamageToPoisoned(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.damage_to_poisoned(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = '\n{} deals {}% extra damage to poisoned targets ({} from {}), {} turns left' \
+                action.text = '\n{} deals {}% extra damage to poisoned targets ({} from {}), {} turns left' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id, self.turns)
+                            self.source.str_id, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = '\n{} deals {}% extra damage to poisoned targets ({} from {})' \
+                action.text = '\n{} deals {}% extra damage to poisoned targets ({} from {})' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.source.str_id) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.damage_to_poisoned -= self.up
@@ -4445,17 +4502,18 @@ class DamageToStunned(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.damage_to_stunned(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = '\n{} deals {}% extra damage to stunned targets ({} from {}), {} turns left' \
+                action.text = '\n{} deals {}% extra damage to stunned targets ({} from {}), {} turns left' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id, self.turns)
+                            self.source.str_id, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = '\n{} deals {}% extra damage to stunned targets ({} from {})' \
+                action.text = '\n{} deals {}% extra damage to stunned targets ({} from {})' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.source.str_id) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.damage_to_stunned -= self.up
@@ -4471,17 +4529,18 @@ class DamageToWarriors(StatUp):
                 self.has_been_set = True
 
             self.turns -= 1
-            log_text = None
+            action = Action.damage_to_warriors(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
-                log_text = '\n{} deals {}% extra damage to warriors ({} from {}), {} turns left' \
+                action.text = '\n{} deals {}% extra damage to warriors ({} from {}), {} turns left' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id, self.turns)
+                            self.source.str_id, self.turns) \
+                            if self.verbose else ''
             else:
-                log_text = '\n{} deals {}% extra damage to warriors ({} from {})' \
+                action.text = '\n{} deals {}% extra damage to warriors ({} from {})' \
                     .format(self.holder.str_id, 100 * self.up, self.name,
-                            self.source.str_id)
-            if self.verbose:
-                self.source.game.log += log_text
+                            self.source.str_id) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
 
     def kill(self):
         self.holder.damage_to_warriors -= self.up
@@ -4529,3 +4588,359 @@ class Effect:
     damage_to_poisoned = DamageToPoisoned
     damage_to_stunned = DamageToStunned
     damage_to_warriors = DamageToWarriors
+
+
+## Actions
+class BaseAction:
+    text = ''
+
+
+class HitAction(BaseAction):
+    def __init__(self, attacker, target, damage_components, name):
+        self.attacker = attacker
+        self.target = target
+        self.damage_components = damage_components
+        self.name = name
+
+
+class DodgeAction(BaseAction):
+    def __init__(self, attacker, target, name):
+        self.attacker = attacker
+        self.target = target
+        self.name = name
+
+
+class IsControlledAction(BaseAction):
+    def __init__(self, source, target, turns_left, name):
+        self.source = source
+        self.target = target
+        self.name = name
+        self.turns_left = turns_left
+
+
+class IsStunnedAction(IsControlledAction):
+    pass
+
+
+class IsPetrifiedAction(IsControlledAction):
+    pass
+
+
+class IsFrozenAction(IsControlledAction):
+    pass
+
+
+class IsSilencedAction(IsControlledAction):
+    pass
+
+
+class HealAction(BaseAction):
+    def __init__(self, source, target, heal, name):
+        self.source = source
+        self.target = target
+        self.heal = heal
+        self.name = name
+
+
+class HotAction(BaseAction):
+    def __init__(self, source, target, heal, turns_left, name):
+        self.source = source
+        self.target = target
+        self.heal = heal
+        self.name = name
+        self.turns_left = turns_left
+
+
+class DotAction(BaseAction):
+    def __init__(self, source, target, damage_components, turns_left, name):
+        self.source = source
+        self.target = target
+        self.damage_components = damage_components
+        self.name = name
+        self.turns_left = turns_left
+
+
+class PoisonAction(DotAction):
+    pass
+
+
+class BleedAction(DotAction):
+    pass
+
+
+class TimedMarkOnAction(BaseAction):
+    def __init__(self, source, target, turns, name):
+        self.source = source
+        self.target = target
+        self.name = name
+        self.turns = turns
+
+
+class TimedMarkCountdownAction(BaseAction):
+    def __init__(self, source, target, turns_left, name):
+        self.source = source
+        self.target = target
+        self.name = name
+        self.turns_left = turns_left
+
+
+class TimedMarkTriggerAction(BaseAction):
+    def __init__(self, source, target, damage_components, name):
+        self.source = source
+        self.target = target
+        self.damage_components = damage_components
+        self.name = name
+
+
+class CritMarkOnAction(BaseAction):
+    def __init__(self, source, target, name):
+        self.source = source
+        self.target = target
+        self.name = name
+
+
+class CritMarkTriggerAction(BaseAction):
+    def __init__(self, source, target, damage_components, name):
+        self.source = source
+        self.target = target
+        self.damage_components = damage_components
+        self.name = name
+
+
+class ControlAction(BaseAction):
+    def __init__(self, source, target, turns_left, name):
+        self.source = source
+        self.target = target
+        self.name = name
+        self.turns_left = turns_left
+
+
+class StunAction(ControlAction):
+    pass
+
+
+class PetrifyAction(ControlAction):
+    pass
+
+
+class FreezeAction(ControlAction):
+    pass
+
+
+class SilenceAction(ControlAction):
+    pass
+
+
+class StatUpAction(BaseAction):
+    def __init__(self, source, target, up, turns_left, name):
+        self.source = source
+        self.target = target
+        self.up = up
+        self.name = name
+        self.turns_left = turns_left
+        self.infinite = True if self.turns_left > 100 else False
+
+
+class StatDownAction(BaseAction):
+    def __init__(self, source, target, down, turns_left, name):
+        self.source = source
+        self.target = target
+        self.down = down
+        self.name = name
+        self.turns_left = turns_left
+        self.infinite = True if self.turns_left > 100 else False
+
+
+class AttackUpAction(StatUpAction):
+    pass
+
+
+class AttackDownAction(StatDownAction):
+    pass
+
+
+class HpUpAction(StatUpAction):
+    pass
+
+
+class HpDownAction(StatDownAction):
+    pass
+
+
+class CritRateUpAction(StatUpAction):
+    pass
+
+
+class CritRateDownAction(StatDownAction):
+    pass
+
+
+class CritDamageUpAction(StatUpAction):
+    pass
+
+
+class CritDamageDownAction(StatDownAction):
+    pass
+
+
+class HitRateUpAction(StatUpAction):
+    pass
+
+
+class HitRateDownAction(StatDownAction):
+    pass
+
+
+class DodgeUpAction(StatUpAction):
+    pass
+
+
+class DodgeDownAction(StatDownAction):
+    pass
+
+
+class SkillDamageUpAction(StatUpAction):
+    pass
+
+
+class SkillDamageDownAction(StatDownAction):
+    pass
+
+
+class ControlImmuneUpAction(StatUpAction):
+    pass
+
+
+class ControlImmuneDownAction(StatDownAction):
+    pass
+
+
+class SilenceImmuneUpAction(StatUpAction):
+    pass
+
+
+class DamageReductionUpAction(StatUpAction):
+    pass
+
+
+class TrueDamageUpAction(StatUpAction):
+    pass
+
+
+class ArmorBreakUpAction(StatUpAction):
+    pass
+
+
+class ArmorBreakDownAction(StatDownAction):
+    pass
+
+
+class ArmorUpAction(StatUpAction):
+    pass
+
+
+class ArmorDownAction(StatDownAction):
+    pass
+
+
+class SpeedUpAction(StatUpAction):
+    pass
+
+
+class SpeedDownAction(StatDownAction):
+    pass
+
+
+class DamageToBleedingAction(StatUpAction):
+    pass
+
+
+class DamageToPoisonedAction(StatUpAction):
+    pass
+
+
+class DamageToStunnedAction(StatUpAction):
+    pass
+
+
+class DamageToWarriorsAction(StatUpAction):
+    pass
+
+
+class EnergyUpAction:
+    def __init__(self, source, target, up, passive, name):
+        self.source = source
+        self.target = target
+        self.up = up
+        self.name = name
+        self.passive = passive
+
+
+class EnergyDownAction:
+    def __init__(self, source, target, down, passive, name):
+        self.source = source
+        self.target = target
+        self.down = down
+        self.name = name
+        self.passive = passive
+
+
+class DieAction:
+    def __init__(self, hero):
+        self.hero = hero
+
+
+@dataclass
+class Action:
+    hit = HitAction
+    dodge = DodgeAction
+    is_stunned = IsStunnedAction
+    is_petrified = IsPetrifiedAction
+    is_frozen = IsFrozenAction
+    is_silenced = IsSilencedAction
+    heal = HealAction
+    hot = HotAction
+    dot = DotAction
+    poison = PoisonAction
+    bleed = BleedAction
+    timed_mark_on = TimedMarkOnAction
+    timed_mark_countdown = TimedMarkCountdownAction
+    timed_mark_trigger = TimedMarkTriggerAction
+    crit_mark_on = CritMarkOnAction
+    crit_mark_trigger = CritMarkTriggerAction
+    silence = SilenceAction
+    stun = StunAction
+    petrify = PetrifyAction
+    freeze = FreezeAction
+    attack_up = AttackUpAction
+    attack_down = AttackDownAction
+    hp_up = HpUpAction
+    hp_down = HpDownAction
+    crit_rate_up = CritRateUpAction
+    crit_rate_down = CritRateDownAction
+    crit_damage_up = CritDamageUpAction
+    crit_damage_down = CritDamageDownAction
+    hit_rate_up = HitRateUpAction
+    hit_rate_down = HitRateDownAction
+    dodge_up = DodgeUpAction
+    dodge_down = DodgeDownAction
+    skill_damage_up = SkillDamageUpAction
+    skill_damage_down = SkillDamageDownAction
+    control_immune_up = ControlImmuneUpAction
+    control_immune_down = ControlImmuneDownAction
+    silence_immune_up = SilenceImmuneUpAction
+    damage_reduction_up = DamageReductionUpAction
+    true_damage_up = TrueDamageUpAction
+    armor_break_up = ArmorBreakUpAction
+    armor_break_down = ArmorBreakDownAction
+    armor_up = ArmorUpAction
+    armor_down = ArmorDownAction
+    speed_up = SpeedUpAction
+    speed_down = SpeedDownAction
+    energy_up = EnergyUpAction
+    energy_down = EnergyDownAction
+    damage_to_bleeding = DamageToBleedingAction
+    damage_to_poisoned = DamageToPoisonedAction
+    damage_to_stunned = DamageToStunnedAction
+    damage_to_warriors = DamageToWarriorsAction
+    die = DieAction
