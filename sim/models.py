@@ -1,7 +1,7 @@
 from enum import Enum
 from dataclasses import dataclass
 
-from utils import targets_at_random
+from sim.utils import targets_at_random
 
 
 ## Heroes names, types and factions

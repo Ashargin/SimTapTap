@@ -1,9 +1,9 @@
 import numpy as np
 import random as rd
 
-from heroes import Team, Hero
-from models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
-from sim import Sim, Game
+from sim.heroes import Team, Hero
+from sim.models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
+from sim.sim import Sim, Game
 
 heroes = [Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.dziewona, Hero.forest_healer, Hero.freya,
           Hero.gerald, Hero.luna, Hero.medusa, Hero.minotaur, Hero.monkey_king, Hero.reaper, Hero.ripper, Hero.rlyeh,

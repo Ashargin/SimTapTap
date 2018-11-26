@@ -1,10 +1,10 @@
 import random as rd
 from dataclasses import dataclass
 
-from models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Effect
-from settings import guild_tech_maxed, guild_tech_empty, default_familiar_stats, default_familiar
-from sim import EmptyGame
-from utils import targets_at_random
+from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Effect
+from sim.settings import guild_tech_maxed, guild_tech_empty, default_familiar_stats, default_familiar
+from sim.sim import EmptyGame
+from sim.utils import targets_at_random
 
 
 ## Team

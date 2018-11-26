@@ -1,4 +1,4 @@
-from models import Familiar
+from sim.models import Familiar
 
 guild_tech_maxed = [[60, 60, 60, 60, 60],
                     [50, 50, 50, 50, 50],
