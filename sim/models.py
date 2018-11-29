@@ -1022,8 +1022,8 @@ class AttackRuneO2(BaseRune):
 
 
 class AttackRuneO3(BaseRune):
-    atk = 0
-    atk_bonus = 0
+    atk = 800
+    atk_bonus = 0.165
 
 
 class AttackRuneO4(BaseRune):
@@ -3346,6 +3346,8 @@ class BaseFamiliar:
     dodge = 0
     speed = 0
 
+    is_dead = False
+
     def __init__(self, skill_1):
         self.energy = 0
 
@@ -3407,8 +3409,14 @@ class BaseFamiliar:
             action.text = '\n{} takes {} damage from {} ({})' \
                 .format(target.str_id, self.damage, self.str_id, self.skill_name)
             self.game.actions.append(action)
+
+            self.stats['damage_by_skill'][self.skill_name] += self.damage
+            self.stats['damage_by_target'][target.str_id] += self.damage
+            target.stats['damage_taken_by_skill'][self.skill_name] += self.damage
+            target.stats['damage_taken_by_source'][self.str_id] += self.damage
+
         for target in targets:
-            target.has_taken_damage(attacker=None)
+            target.has_taken_damage(self)
 
 
 class EmptyFamiliar(BaseFamiliar):
@@ -3528,6 +3536,12 @@ class Dot(BaseEffect):
             action.text = '\n{} takes {} damage (dot from {} ({}{}), {} turns left)' \
                 .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
             self.source.game.actions.append(action)
+
+            self.source.stats['damage_by_skill'][self.name] += dmg
+            self.source.stats['damage_by_target'][self.holder.str_id] += dmg
+            self.holder.stats['damage_taken_by_skill'][self.name] += dmg
+            self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
+
             self.holder.has_taken_damage(self.source)
 
 
@@ -3543,7 +3557,12 @@ class Heal(BaseEffect):
 
     def tick(self):
         if not self.holder.is_dead:
-            self.holder.hp = min(self.holder.hp + self.power, self.holder.hp_max)
+            healing = min(self.power, self.holder.hp_max - self.holder.hp)
+            self.holder.hp += healing
+            self.source.stats['healing_by_skill'][self.name] += healing
+            self.source.stats['healing_by_target'][self.holder.str_id] += healing
+            self.holder.stats['healing_taken_by_skill'][self.name] += healing
+            self.holder.stats['healing_taken_by_source'][self.source.str_id] += healing
             self.turns -= 1
             if self.hot:
                 action = Action.hot(self.source, self.holder, self.power, self.turns, self.name)
@@ -3555,6 +3574,7 @@ class Heal(BaseEffect):
                 action.text = '\n{} is healed {} by {} ({})' \
                     .format(self.holder.str_id, round(self.power),
                             self.source.str_id, self.name)
+            self.source.game.actions.append(action)
             self.holder.has_taken_damage(self.source)
 
 
@@ -3580,6 +3600,12 @@ class Poison(BaseEffect):
             action.text = '\n{} takes {} damage (poison from {} ({}{}), {} turns left)' \
                 .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
             self.source.game.actions.append(action)
+
+            self.source.stats['damage_by_skill'][self.name] += dmg
+            self.source.stats['damage_by_target'][self.holder.str_id] += dmg
+            self.holder.stats['damage_taken_by_skill'][self.name] += dmg
+            self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
+
             self.holder.has_taken_damage(self.source)
 
 
@@ -3605,6 +3631,12 @@ class Bleed(BaseEffect):
             action.text = '\n{} takes {} damage (bleed from {} ({}{}), {} turns left)' \
                 .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
             self.source.game.actions.append(action)
+
+            self.source.stats['damage_by_skill'][self.name] += dmg
+            self.source.stats['damage_by_target'][self.holder.str_id] += dmg
+            self.holder.stats['damage_taken_by_skill'][self.name] += dmg
+            self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
+
             self.holder.has_taken_damage(self.source)
 
 
@@ -3646,6 +3678,12 @@ class TimedMark(BaseEffect):
         action.text = '\n{} takes {} damage (timed mark from {} ({}{}))' \
             .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
         self.source.game.actions.append(action)
+
+        self.source.stats['damage_by_skill'][self.name] += dmg
+        self.source.stats['damage_by_target'][self.holder.str_id] += dmg
+        self.holder.stats['damage_taken_by_skill'][self.name] += dmg
+        self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
+
         self.holder.has_taken_damage(self.source)
 
 
@@ -3676,6 +3714,12 @@ class CritMark(BaseEffect):
         action.text = '\n{} takes {} damage (crit mark from {} ({}{}))' \
             .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
         self.source.game.actions.append(action)
+
+        self.source.stats['damage_by_skill'][self.name] += dmg
+        self.source.stats['damage_by_target'][self.holder.str_id] += dmg
+        self.holder.stats['damage_taken_by_skill'][self.name] += dmg
+        self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
+
         self.holder.has_taken_damage(self.source)
 
         self.kill()

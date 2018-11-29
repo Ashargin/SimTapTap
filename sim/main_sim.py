@@ -25,11 +25,16 @@ game = Game(attack_team, defense_team)
 game.process()
 print(game.log.text)
 
+sim = Sim(attack_team, defense_team, n_sim=1000)
+sim.process()
+sim.print_winrate()
+
 # todo:
 # connect the engine to the server
 # add all heroes
 # set stats depending on the hero level
 
+# can on-hits be dodged? (king lionheart)
 # see which familiar attacks first
 # make sure crit_damage > 0, armor_break > 0 (or not? check)
 # check every behaviour marked with "check" comments
