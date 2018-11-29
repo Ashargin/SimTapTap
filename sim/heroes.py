@@ -375,7 +375,11 @@ class BaseHero:
                                  'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
                 self.game.actions.append(action)
-            self.stats['turns_passed'] += 1
+            hard_ccs = [e for e in self.effects if isinstance(e, Effect.stun) or isinstance(e, Effect.petrify)
+                                                                            or isinstance(e, Effect.freeze)]
+            source = hard_ccs[0].source
+            source.stats['effective_hard_cc_turns'] += 1
+            self.stats['effective_hard_cc_turns_taken'] += 1
 
         else:
             if self.energy >= 100 and self.is_silenced():
@@ -385,6 +389,11 @@ class BaseHero:
                                      'and cannot use its skill' \
                         .format(self.str_id, e.source.str_id, e.name, e.turns)
                     self.game.actions.append(action)
+                silences = [e for e in self.effects if isinstance(e, Effect.silence)]
+                source = silences[0].source
+                source.stats['effective_silence_turns'] += 1
+                self.stats['effective_silence_turns_taken'] += 1
+
             if self.energy >= 100 and not self.is_silenced():
                 self.skill()
             else:
@@ -432,7 +441,7 @@ class BaseHero:
                 damage_components = self.compute_damage(target, power, skill=skill)
                 dmg = damage_components['Total damage']
                 crit = True if damage_components['Crit damage'] > 0 else False
-                crit_str = ', crit' if crit else ''
+                crit_str = ', crit' if crit else ''+
 
                 target.hp -= dmg
                 action = Action.hit(self, target, damage_components, name)
@@ -1403,7 +1412,8 @@ class Dziewona(BaseHero):
                        name=name, passive=True)
 
     def attack(self):
-        dodged = super().attack()
+        target = self.op_team.next_target()
+        dodged = super().attack(target=target)
 
         if dodged:
             name = 'Cobweb Trap'
