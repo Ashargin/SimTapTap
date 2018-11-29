@@ -10,12 +10,13 @@ from swagger_server.models.stat_request import StatRequest  # noqa: E501
 from swagger_server.models.hero_stats import HeroStats  # noqa: E501
 from swagger_server.models.hero_stats_stats import HeroStatsStats  # noqa: E501
 from swagger_server import util
-from sim.heroes import Hero
-from sim.models import armor_from_request, helmet_from_request, weapon_from_request, pendant_from_request, rune_from_request, artifact_from_request
+from sim.heroes import Hero, Team
+from sim.sim import Sim,Game
+from sim.models import armor_from_request, helmet_from_request, weapon_from_request, pendant_from_request, rune_from_request, artifact_from_request, familiar_from_request
 from sim.heroes import hero_from_request
 
 
-def battle_simulate_post(count=None):  # noqa: E501
+def battle_simulate_post(simulate_request=None):  # noqa: E501
     """Simulates a given number of battles
 
      # noqa: E501
@@ -26,8 +27,37 @@ def battle_simulate_post(count=None):  # noqa: E501
     :rtype: None
     """
     if connexion.request.is_json:
-        count = SimulateRequest.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        simulate_request = SimulateRequest.from_dict(connexion.request.get_json())  # noqa: E501
+        #attacker
+        attack_player = simulate_request.attacker.player
+        attack_heroes = [
+                get_hero_from_request(simulate_request.attacker.hero_front1, attack_player),
+                get_hero_from_request(simulate_request.attacker.hero_front2, attack_player),
+                get_hero_from_request(simulate_request.attacker.hero_front3, attack_player),
+                get_hero_from_request(simulate_request.attacker.hero_rear1, attack_player),
+                get_hero_from_request(simulate_request.attacker.hero_rear2, attack_player),
+                get_hero_from_request(simulate_request.attacker.hero_rear3, attack_player)
+                ]
+        attack_familiar_request = simulate_request.attacker.player.active_pet
+        attack_familiar = familiar_from_request[attack_familiar_request.id](attack_familiar_request.level,attack_familiar_request.skill1level, attack_familiar_request.skill2level, attack_familiar_request.skill3level, attack_familiar_request.skill4level)
+        attack_team = Team(attack_heroes, attack_familiar)
+        #defender
+        defense_player = simulate_request.defender.player
+        defense_heroes = [
+                get_hero_from_request(simulate_request.defender.hero_front1, defense_player),
+                get_hero_from_request(simulate_request.defender.hero_front2, defense_player),
+                get_hero_from_request(simulate_request.defender.hero_front3, defense_player),
+                get_hero_from_request(simulate_request.defender.hero_rear1, defense_player),
+                get_hero_from_request(simulate_request.defender.hero_rear2, defense_player),
+                get_hero_from_request(simulate_request.defender.hero_rear3, defense_player)
+                ]
+        defense_familiar_request = simulate_request.defender.player.active_pet
+        defense_familiar = familiar_from_request[defense_familiar_request.id](defense_familiar_request.level,defense_familiar_request.skill1level, defense_familiar_request.skill2level, defense_familiar_request.skill3level, defense_familiar_request.skill4level)
+        defense_team = Team(defense_heroes, defense_familiar)
+        game = Game(attack_team, defense_team)
+        game.process()
+        return game.log.text
+    return 'empty request'
 
 
 def get_hero_from_request(request_hero, player):
