@@ -1,5 +1,6 @@
 import numpy as np
 import random as rd
+import cProfile
 
 from sim.heroes import Team, Hero
 from sim.models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
@@ -25,17 +26,21 @@ game = Game(attack_team, defense_team)
 game.process()
 print(game.log.text)
 
-sim = Sim(attack_team, defense_team, n_sim=1000)
-sim.process()
-sim.print_winrate()
+profile = cProfile.Profile()
+profile.enable()
+for i in range(20):
+    sim = Sim(attack_team, defense_team, n_sim=100)
+    sim.process()
+profile.disable()
+profile.print_stats(sort='tottime')
 
 # todo:
 # connect the engine to the server
 # add all heroes
 # set stats depending on the hero level
 
-# can on-hits be dodged? (king lionheart)
+# add empty runes/artifacts
+# check : can dots crit?
 # see which familiar attacks first
 # make sure crit_damage > 0, armor_break > 0 (or not? check)
 # check every behaviour marked with "check" comments
-# store stats during battles, display graphs

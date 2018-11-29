@@ -212,19 +212,7 @@ class Game:
 
         # familiars
         pet_turns = []
-        first_pet = None
-        second_pet = None
-        if self.pets[0].level == self.pets[1].level:
-            choice = rd.randint(0, 1)
-            first_pet = self.pets[choice]
-            second_pet = self.pets[1 - choice]
-        elif self.pets[0].level > self.pets[1].level:
-            first_pet = self.pets[0]
-            second_pet = self.pets[1]
-        else:
-            first_pet = self.pets[1]
-            second_pet = self.pets[0]
-        for pet in (first_pet, second_pet):
+        for pet in (self.attack_team.pet, self.defense_team.pet): # which pet order?
             if not self.is_finished():
                 self.actions = []
                 pet_playing = False

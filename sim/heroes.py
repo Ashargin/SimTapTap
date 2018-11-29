@@ -299,10 +299,7 @@ class BaseHero:
               * (1 + type_damage_base) * (1 + type_damage) \
               * (1 + poisoned_extra_damage) * (1 + bleeding_extra_damage) \
               * (1 + stunned_extra_damage)
-        # check faction damage behaviour
-        # check type damage behaviour
-        # check skill damage behaviour
-        # check extra damage to poisoned/bleeding/stunned behaviour
+              # check type_damage behaviour (multiplicative with base type_damage or additive?)
 
         damage_components = {'Power': power,
                              'Skill damage': skill_damage,
@@ -432,9 +429,9 @@ class BaseHero:
         target.has_taken_damage(self)
         if on_attack:
             self.on_attack(target)
-        if active and crit:
+        if active and crit: # check : only triggered by active? dots/counters?
             self.on_crit(target)
-        if active:  # only triggered by active? dots/counters?
+        if active:  # check : only triggered by active? dots/counters?
             target.on_hit(self)
 
     def hit(self, target, power, skill, active, on_attack, multi, update=True, name=''):
