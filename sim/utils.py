@@ -25,3 +25,30 @@ def format_stats(stats, pet=False):
     stats['healing_taken'] = stats['healing_taken_by_skill']['Total']
 
     return stats
+
+
+def add_dicts(dict_1, dict_2): # dict_1 will be modified, dict_2 won't
+    for key in dict_2:
+        if key in dict_1:
+            if isinstance(dict_2[key], int):
+                dict_1[key] += dict_2[key]
+            else:
+                dict_1[key] = add_dicts(dict_1[key], dict_2[key])
+        else:
+            dict_1[key] = dict_2[key]     
+
+    return dict_1
+
+
+def rescale_dict(mydict, scale): # modifies mydict
+    for key in mydict:
+        if isinstance(mydict[key], int):
+            mydict[key] = round(mydict[key] * scale, 2)
+            if key in ('damage', 'healing', 'damage_taken', 'healing_taken'):
+                mydict[key] = round(mydict[key])
+        else:
+            new_val = rescale_dict(mydict[key], scale)
+            new_val = {k: round(new_val[k]) for k in new_val}
+            mydict[key] = new_val
+
+    return mydict

@@ -3467,12 +3467,13 @@ class Familiar:
     vinci = Vinci
     raphael = Raphael
 
+
 familiar_from_request = {
     'EMPTY': Familiar.empty,
     'EDISON': Familiar.edison, 
     'VINCI': Familiar.vinci,
     'RAPHAEL': Familiar.raphael
-    }
+}
 
 ## Effects
 effect_id = 0

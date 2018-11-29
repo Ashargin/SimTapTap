@@ -1,5 +1,6 @@
 import random as rd
 from dataclasses import dataclass
+import copy
 
 from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Effect, Action
 from sim.settings import guild_tech_maxed, guild_tech_empty, default_familiar_stats, default_familiar
@@ -14,7 +15,7 @@ class Team:
             raise Warning('Teams must contain 6 heroes')
 
         self.heroes = heroes
-        self.pet = pet
+        self.pet = copy.copy(pet)
         for i, h in enumerate(self.heroes):
             h.pos = i
 
@@ -375,8 +376,9 @@ class BaseHero:
                                  'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
                 self.game.actions.append(action)
-            hard_ccs = [e for e in self.effects if isinstance(e, Effect.stun) or isinstance(e, Effect.petrify)
-                                                                            or isinstance(e, Effect.freeze)]
+            hard_ccs = [e for e in self.effects if isinstance(e, Effect.stun) 
+                                                or isinstance(e, Effect.petrify)
+                                                or isinstance(e, Effect.freeze)]
             source = hard_ccs[0].source
             source.stats['effective_hard_cc_turns'] += 1
             self.stats['effective_hard_cc_turns_taken'] += 1
@@ -441,7 +443,7 @@ class BaseHero:
                 damage_components = self.compute_damage(target, power, skill=skill)
                 dmg = damage_components['Total damage']
                 crit = True if damage_components['Crit damage'] > 0 else False
-                crit_str = ', crit' if crit else ''+
+                crit_str = ', crit' if crit else ''
 
                 target.hp -= dmg
                 action = Action.hit(self, target, damage_components, name)
@@ -1221,7 +1223,7 @@ class BloodTooth(BaseHero):
                    name=name, passive=True)
 
     def attack(self):
-        name = 'attack (Weakness Strike)'
+        name = 'attack'
         power = self.atk * 1.1
         if self.star >= 9:  ### add value
             power = self.atk * 1.3
@@ -1686,7 +1688,7 @@ class Luna(BaseHero):
                            name=name, passive=True)
 
     def attack(self):
-        name = 'attack (Bountiful Moonlight)'
+        name = 'attack'
         targets = targets_at_random(self.op_team.heroes, 3)
         targets_hit = self.targets_hit(targets, name=name)
         power = [self.atk * 0.7] * len(targets_hit)
@@ -2423,7 +2425,7 @@ class ShuddeMell(BaseHero):
                        name=name, passive=True)
 
     def attack(self):
-        name = 'attack (Dominoll)'
+        name = 'attack'
         targets = targets_at_random(self.op_team.heroes, 3)
         targets_hit = self.targets_hit(targets, name=name)
         power = [self.atk * 0.7] * len(targets_hit)
@@ -2498,7 +2500,7 @@ class Ultima(BaseHero):
                       name=name, passive=True)
 
     def attack(self):
-        name = 'attack (Binary Stars)'
+        name = 'attack'
         targets = targets_at_random(self.op_team.heroes, 3)
         targets_hit = self.targets_hit(targets, name=name)
         power = [self.atk * 0.7] * len(targets_hit)

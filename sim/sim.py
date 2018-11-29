@@ -3,19 +3,32 @@ import random as rd
 import copy
 from collections import defaultdict
 
-from sim.utils import format_stats
+from sim.utils import format_stats, add_dicts, rescale_dict
 
 
 class Sim:
     def __init__(self, attack_team, defense_team, n_sim=1000):
         self.attack_team = attack_team
         self.defense_team = defense_team
+        for h in self.attack_team.heroes:
+            h.op_team = self.defense_team
+            h.str_id = '{}_{}_{}'.format(h.name.value, 1, h.pos + 1)
+        for h in self.defense_team.heroes:
+            h.op_team = self.attack_team
+            h.str_id = '{}_{}_{}'.format(h.name.value, 2, h.pos + 1)
+        self.attack_team.pet.op_team = self.defense_team
+        self.attack_team.pet.str_id = self.attack_team.pet.name + '_1'
+        self.defense_team.pet.op_team = self.attack_team
+        self.defense_team.pet.str_id = self.defense_team.pet.name + '_2'
+        self.heroes = self.attack_team.heroes + self.defense_team.heroes
+        self.pets = [self.attack_team.pet, self.defense_team.pet]
         self.wins_1 = 0
         self.wins_2 = 0
         self.ties = 0
         self.n_sim = n_sim
 
     def process(self):
+        units_stats = {unit.str_id: {} for unit in self.heroes + self.pets}
         for i in range(self.n_sim):
             game = Game(self.attack_team, self.defense_team)
             game.process()
@@ -26,6 +39,21 @@ class Sim:
                 self.wins_2 += 1
             else:
                 self.ties += 1
+
+            for unit in game.heroes + game.pets:
+                add_dicts(units_stats[unit.str_id], unit.stats)
+        for unit in self.heroes + self.pets:
+            rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
+            unit.stats = units_stats[unit.str_id]
+        self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
+                                            for key in self.heroes[0].stats.keys()}
+
+    def print_stats(self, stat='damage'):
+        print('# {} #\n'.format(stat))
+        len_max = max(len(e.str_id) for e in self.heroes + self.pets)
+        for e in self.heroes + self.pets:
+            print('{}{} : {}'.format(e.str_id, ' ' * (len_max - len(e.str_id)), 
+                                                    self.stats[stat][e.str_id]))
 
     def print_winrate(self):
         print('Attacker winrate : {}%'.format(100 * self.wins_1 / self.n_sim))
@@ -357,7 +385,7 @@ class Game:
             h.stats = format_stats(h.stats)
         for pet in self.pets:
             pet.stats = format_stats(pet.stats, pet=True)
-        self.stats = {key: {e.str_id: e.stats[key] for e in self.heroes + self.pets}
+        self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
                                             for key in self.heroes[0].stats.keys()}
 
         if self.defense_team.is_dead() and self.attack_team.is_dead() or \
