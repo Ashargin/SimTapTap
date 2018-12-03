@@ -425,16 +425,19 @@ class BaseHero:
 
         self.stats['skills'] += 1
 
-    def update_state(self, target, on_attack, active, crit):
+    def update_state(self, target, on_attack, active, crit, energy_on_hit=False):
         target.has_taken_damage(self)
-        if on_attack:
-            self.on_attack(target)
+        if energy_on_hit:
+            if not isinstance(target, Chessia):
+                target.energy = max(min(target.energy + 10, 100), target.energy)
         if active and crit: # check : only triggered by active? dots/counters?
             self.on_crit(target)
+        if on_attack:
+            self.on_attack(target)
         if active:  # check : only triggered by active? dots/counters?
             target.on_hit(self)
 
-    def hit(self, target, power, skill, active, on_attack, multi, update=True, name=''):
+    def hit(self, target, power, skill, active, on_attack, multi, multi_attack=False, update=True, name=''):
         if not multi:
             if not target.is_dead:
                 damage_components = self.compute_damage(target, power, skill=skill)
@@ -454,7 +457,7 @@ class BaseHero:
                 target.stats['damage_taken_by_source'][self.str_id] += dmg
 
                 if update:
-                    self.update_state(target, on_attack, active, crit)
+                    self.update_state(target, on_attack, active, crit, energy_on_hit=True)
 
                 return [crit]
             return [False]
@@ -466,16 +469,18 @@ class BaseHero:
                 crit = self.hit(t, p, skill, active, on_attack,
                                 multi=False, update=False, name=name)[0]
                 crits.append(crit)
-            for i, t in enumerate(target):
-                if not t.is_dead:
-                    crit = crits[i]
-                    self.update_state(t, on_attack, active, crit)
+            targets_not_dead = [tar for tar in target if not tar.is_dead]
+            for i, t in enumerate(targets_not_dead):
+                energy_on_hit = i == 0
+                crit = crits[i]
+                this_on_attack = on_attack and ((not multi_attack) or i == 0)
+                self.update_state(t, this_on_attack, active, crit, energy_on_hit=energy_on_hit)
 
             return crits
 
     def hit_attack(self, target, power, multi=False, name='attack'):
         crits = self.hit(target, power, skill=False, active=True,
-                         on_attack=True, multi=multi, name=name)
+                        on_attack=True, multi=multi, multi_attack=multi, name=name)
 
         return crits
 
@@ -511,7 +516,7 @@ class BaseHero:
             return True
 
     def heal(self, target, power, turns, name=''):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             heal = Effect.heal(self, target, power, turns, name=name)
             target.effects.append(heal)
             heal.tick()
@@ -629,7 +634,7 @@ class BaseHero:
             return True
 
     def attack_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             attack_up = Effect.attack_up(self, target, up, turns, name=name, passive=passive)
             target.effects.append(attack_up)
             attack_up.tick()
@@ -660,7 +665,7 @@ class BaseHero:
             return True
 
     def hp_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             hp_up = Effect.hp_up(self, target, up, turns, name=name, passive=passive)
             target.effects.append(hp_up)
             hp_up.tick()
@@ -680,7 +685,7 @@ class BaseHero:
                 target.stats['hp_downs_taken'] += 1
 
     def crit_rate_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             crit_rate_up = Effect.crit_rate_up(self, target, up, turns,
                                                name=name, passive=passive)
             target.effects.append(crit_rate_up)
@@ -712,7 +717,7 @@ class BaseHero:
             return True
 
     def crit_damage_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             crit_damage_up = Effect.crit_damage_up(self, target, up, turns,
                                                    name=name, passive=passive)
             target.effects.append(crit_damage_up)
@@ -744,7 +749,7 @@ class BaseHero:
             return True
 
     def hit_rate_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             hit_rate_up = Effect.hit_rate_up(self, target, up, turns, name=name, passive=passive)
             target.effects.append(hit_rate_up)
             hit_rate_up.tick()
@@ -765,7 +770,7 @@ class BaseHero:
                 target.stats['hit_rate_downs_taken'] += 1
 
     def dodge_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             dodge_up = Effect.dodge_up(self, target, up, turns, name=name, passive=passive)
             target.effects.append(dodge_up)
             dodge_up.tick()
@@ -785,7 +790,7 @@ class BaseHero:
                 target.stats['dodge_downs_taken'] += 1
 
     def skill_damage_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             skill_damage_up = Effect.skill_damage_up(self, target, up, turns,
                                                      name=name, passive=passive)
             target.effects.append(skill_damage_up)
@@ -807,7 +812,7 @@ class BaseHero:
                 target.stats['skill_damage_downs_taken'] += 1
 
     def control_immune_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             control_immune_up = Effect.control_immune_up(self, target, up, turns,
                                                          name=name, passive=passive)
             target.effects.append(control_immune_up)
@@ -829,14 +834,14 @@ class BaseHero:
                 target.stats['control_immune_downs_taken'] += 1
 
     def silence_immune_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             silence_immune_up = Effect.silence_immune_up(self, target, up, turns,
                                                          name=name, passive=passive)
             target.effects.append(silence_immune_up)
             silence_immune_up.tick()
 
     def damage_reduction_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             damage_reduction_up = Effect.damage_reduction_up(self, target, up, turns,
                                                              name=name, passive=passive)
             target.effects.append(damage_reduction_up)
@@ -847,7 +852,7 @@ class BaseHero:
                 target.stats['damage_reduction_ups_taken'] += 1
 
     def true_damage_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             true_damage_up = Effect.true_damage_up(self, target, up, turns,
                                                    name=name, passive=passive)
             target.effects.append(true_damage_up)
@@ -858,7 +863,7 @@ class BaseHero:
                 target.stats['true_damage_ups_taken'] += 1
 
     def armor_break_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             armor_break_up = Effect.armor_break_up(self, target, up, turns,
                                                    name=name, passive=passive)
             target.effects.append(armor_break_up)
@@ -890,7 +895,7 @@ class BaseHero:
             return True
 
     def armor_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             armor_up = Effect.armor_up(self, target, up, turns, name=name, passive=passive)
             target.effects.append(armor_up)
             armor_up.tick()
@@ -910,7 +915,7 @@ class BaseHero:
                 target.stats['armor_downs_taken'] += 1
 
     def speed_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             speed_up = Effect.speed_up(self, target, up, turns, name=name, passive=passive)
             target.effects.append(speed_up)
             speed_up.tick()
@@ -930,50 +935,52 @@ class BaseHero:
                 target.stats['speed_downs_taken'] += 1
 
     def energy_up(self, target, up, name='', passive=False):
-        target.energy = max(min(target.energy + up, 100), self.energy)
-        action = Action.energy_up(self, target, up, passive, name)
-        action.text = "\n{}'s energy is increased by {} by {} ({})" \
-            .format(target.str_id, up, self.str_id, name)
-        self.game.actions.append(action)
+        if not target.is_dead and not self.game.is_finished():
+            target.energy = max(min(target.energy + up, 100), self.energy)
+            action = Action.energy_up(self, target, up, passive, name)
+            action.text = "\n{}'s energy is increased by {} by {} ({})" \
+                .format(target.str_id, up, self.str_id, name)
+            self.game.actions.append(action)
 
-        if not passive:
-            self.stats['energy_ups'] += 1
-            target.stats['energy_ups_taken'] += 1
+            if not passive:
+                self.stats['energy_ups'] += 1
+                target.stats['energy_ups_taken'] += 1
 
     def energy_down(self, target, down, name='', passive=False):
-        target.energy = max(target.energy - down, 0)
-        action = Action.energy_down(self, target, down, passive, name)
-        action.text = "\n{}'s energy is reduced by {} by {} ({})" \
-            .format(target.str_id, down, self.str_id, name)
-        self.game.actions.append(action)
+        if not target.is_dead:
+            target.energy = max(target.energy - down, 0)
+            action = Action.energy_down(self, target, down, passive, name)
+            action.text = "\n{}'s energy is reduced by {} by {} ({})" \
+                .format(target.str_id, down, self.str_id, name)
+            self.game.actions.append(action)
 
-        if not passive:
-            self.stats['energy_downs'] += 1
-            target.stats['energy_downs_taken'] += 1
+            if not passive:
+                self.stats['energy_downs'] += 1
+                target.stats['energy_downs_taken'] += 1
 
     def damage_to_bleeding_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             damage_to_bleeding = Effect.damage_to_bleeding(self, target, up, turns,
                                                            name=name, passive=passive)
             target.effects.append(damage_to_bleeding)
             damage_to_bleeding.tick()
 
     def damage_to_poisoned_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             damage_to_poisoned = Effect.damage_to_poisoned(self, target, up, turns,
                                                            name=name, passive=passive)
             target.effects.append(damage_to_poisoned)
             damage_to_poisoned.tick()
 
     def damage_to_stunned_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             damage_to_stunned = Effect.damage_to_stunned(self, target, up, turns,
                                                          name=name, passive=passive)
             target.effects.append(damage_to_stunned)
             damage_to_stunned.tick()
 
     def damage_to_warriors_up(self, target, up, turns, name='', passive=False):
-        if not target.is_dead:
+        if not target.is_dead and not self.game.is_finished():
             damage_to_warriors = Effect.damage_to_warriors(self, target, up, turns,
                                                            name=name, passive=passive)
             target.effects.append(damage_to_warriors)
@@ -1040,9 +1047,6 @@ class BaseHero:
         target.stats['crits_taken'] += 1
 
     def on_hit(self, attacker):
-        if not isinstance(self, Chessia):
-            self.energy = max(min(self.energy + 10, 100), self.energy)
-
         attacker.stats['hits'] += 1
         self.stats['hits_taken'] += 1
 
@@ -1692,10 +1696,7 @@ class Luna(BaseHero):
         if self.star >= 9:
             power = [self.atk * 0.85] * len(targets_hit)
 
-        self.hit(targets_hit, power, skill=False, active=True,
-                 on_attack=False, multi=True, name=name)
-        if targets_hit:
-            self.on_attack(targets_hit[0])
+        self.hit_attack(targets_hit, power, multi=True, name=name)
 
     def skill(self):
         name = 'Shooting Star'
@@ -1980,6 +1981,82 @@ class MonkeyKing(BaseHero):
                 power = self.hp_max
             self.heal(self, power=power, turns=1, name=name)
         super().has_taken_damage(attacker)
+
+
+class Mulan(BaseHero):
+    name = HeroName.MULAN
+    faction = Faction.ALLIANCE
+    type = HeroType.WANDERER
+
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 189322.1  # should depend on the level
+        self.atk = 13966.2  # should depend on the level
+        self.armor = 12  # should depend on the level
+        self.speed = 983  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
+
+        name = 'Tailwind'
+        hp_up = 0.15
+        dodge_up = 0.2
+        speed_up = 50
+        if self.star >= 7:
+            hp_up = 0.15
+            dodge_up = 0.2
+            speed_up = 60
+        self.hp_up(self, up=hp_up, turns=None,
+                            name=name, passive=True)
+        self.dodge_up(self, up=dodge_up, turns=None,
+                   name=name, passive=True)
+        self.speed_up(self, up=speed_up, turns=None,
+                       name=name, passive=True)
+
+    def skill(self):
+        name = 'Gale Cut'
+        targets = self.op_team.get_frontline()
+        targets_hit = self.targets_hit(targets, name=name)
+
+        hit_power = [self.atk * 1.33] * len(targets_hit)
+        up = 0.4
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        self.attack_up(self, up=up, turns=2, name=name) # check : attack boost before bleeds?
+        bleed_power = self.atk * 0.39
+        for target in targets_hit:
+            if target.type == HeroType.MAGE:
+                self.bleed(target, power=bleed_power, turns=2, name=name)
+        super().skill()
+
+    def attack(self):
+        name = 'attack'
+        targets = self.op_team.get_frontline()
+        targets_hit = self.targets_hit(targets, name=name)
+        power = [self.atk * 0.65] * len(targets_hit)
+        if self.star >= 9:
+            power = [self.atk * 0.72] * len(targets_hit)
+
+        self.hit_attack(targets_hit, power, multi=True, name=name)
+
+    def on_attack(self, target):
+        name = 'Illusion'
+        attack_up = 0.13
+        dodge_up = 0.05
+        if self.star >= 8:
+            attack_up = 0.16
+            dodge_up = 0.06
+        self.attack_up(self, up=attack_up, turns=2, name=name)
+        self.dodge_up(self, up=dodge_up, turns=2, name=name)
+        super().on_attack(target)
 
 
 class NamelessKing(BaseHero):
@@ -2423,19 +2500,19 @@ class ShuddeMell(BaseHero):
 
     def attack(self):
         name = 'attack'
-        targets = targets_at_random(self.op_team.heroes, 3)
-        targets_hit = self.targets_hit(targets, name=name)
-        power = [self.atk * 0.7] * len(targets_hit)
+        n_targets = 3
+        attack_power = self.atk * 0.7
         if self.star >= 8:
-            power = [self.atk * 0.85] * len(targets_hit)  ### add value
+            n_targets = 4
+            attack_power = self.atk * 0.8
+        targets = targets_at_random(self.op_team.heroes, n_targets)
+        targets_hit = self.targets_hit(targets, name=name)
+        power = [attack_power] * len(targets_hit)
 
-        self.hit(targets_hit, power, skill=False, active=True,
-                 on_attack=False, multi=True, name=name)
-        for target in targets_hit:  # check skill behaviour (multi silence?)
+        self.hit_attack(targets_hit, power, multi=True, name=name)
+        for target in targets_hit:
             name = 'Dominoll'
             self.try_silence(target, turns=2, chance=0.4, name=name)
-        if targets_hit:
-            self.on_attack(targets_hit[0])
 
     def skill(self):
         name = 'Tentacle Attack'
@@ -2504,10 +2581,7 @@ class Ultima(BaseHero):
         if self.star >= 8:
             power = [self.atk * 0.8] * len(targets_hit)
 
-        self.hit(targets_hit, power, skill=False, active=True,
-                 on_attack=False, multi=True, name=name)
-        if targets_hit:
-            self.on_attack(targets_hit[0])
+        self.hit_attack(targets_hit, power, multi=True, name=name)
 
     def skill(self):
         name = 'Stellar Detonation'
@@ -2663,6 +2737,82 @@ class Verthandi(BaseHero):
         super().on_hit(attacker)
 
 
+class Vivienne(BaseHero):
+    name = HeroName.VIVIENNE
+    faction = Faction.ALLIANCE
+    type = HeroType.CLERIC
+
+    def __init__(self, star=9, tier=6, level=200,
+                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 166421.3  # should depend on the level
+        self.atk = 12696.7  # should depend on the level
+        self.armor = 12  # should depend on the level
+        self.speed = 948  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
+
+        self.has_triggered = False
+
+        name = 'Innocent Heart'
+        hp_up = 0.3
+        attack_up = 0.2
+        if self.star >= 8:
+            hp_up = 0.35
+            attack_up = 0.25
+        self.hp_up(self, up=hp_up, turns=None,
+                            name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
+
+    def attack(self):
+        power = self.atk * 0.4
+        if self.star >= 7:
+            power = self.atk * 0.5
+        super().attack(power=power)
+
+    def skill(self):
+        name = 'Cleric Shine'
+        targets = targets_at_random(self.op_team.get_backline(), 2)
+        targets_hit = self.targets_hit(targets, name=name)
+        hit_power = [self.atk * 0.88] * len(targets_hit)
+        heal_power = self.atk * 0.8
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        if targets_hit:
+            for target in self.own_team.heroes:
+                self.heal(target, power=heal_power, turns=3, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Largesse'
+        power = self.atk * 0.35
+        if self.star >= 7:
+            power = self.atk * 0.5
+        target = targets_at_random(self.own_team.heroes, 1)[0]
+        self.heal(target, power=power, turns=3, name=name)
+        super().on_attack(target)
+
+    def has_taken_damage(self, attacker):
+        if self.hp <= self.hp_max * 0.3 and not self.has_triggered:
+            self.has_triggered = True
+            name = 'Brave Song'
+            power = self.atk * 0.95
+            if self.star >= 9:
+                power = self.atk * 1.35
+            for target in self.own_team.heroes:
+                self.heal(target, power=power, turns=1, name=name)
+        super().has_taken_damage(attacker)
+
+
 @dataclass
 class Hero:
     empty = EmptyHero
@@ -2679,6 +2829,7 @@ class Hero:
     medusa = Medusa
     minotaur = Minotaur
     monkey_king = MonkeyKing
+    mulan = Mulan
     nameless_king = NamelessKing
     reaper = Reaper
     ripper = Ripper
@@ -2689,6 +2840,7 @@ class Hero:
     ultima = Ultima
     vegvisir = Vegvisir
     verthandi = Verthandi
+    vivienne = Vivienne
 
 
 hero_from_request = {
@@ -2706,6 +2858,7 @@ hero_from_request = {
     'MEDUSA': Hero.medusa,
     'MINOTAUR': Hero.minotaur,
     'MONKEY_KING': Hero.monkey_king, # add stats, add 9* skill values
+    'MULAN': Hero.mulan,
     'NAMELESS_KING': Hero.nameless_king,
     'REAPER': Hero.reaper,
     'RIPPER': Hero.ripper,
@@ -2715,5 +2868,6 @@ hero_from_request = {
     'SHUDDE_M_ELL': Hero.shudde_m_ell, # add stats, add 9* skill values
     'ULTIMA': Hero.ultima,
     'VEGVISIR': Hero.vegvisir, # add stats, add 9* skill values
-    'VERTHANDI': Hero.verthandi
+    'VERTHANDI': Hero.verthandi,
+    'VIVIENNE': Hero.vivienne
 }

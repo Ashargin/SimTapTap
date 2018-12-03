@@ -13,15 +13,19 @@ def targets_at_random(heroes, n):
 
 
 def format_stats(stats, pet=False):
-    for stat in ('damage_by_skill', 'damage_by_target', 'damage_taken_by_skill',
-                'damage_taken_by_source','healing_by_skill', 'healing_by_target', 
-                'healing_taken_by_skill', 'healing_taken_by_source'):
+    for stat in ('damage_by_skill', 'damage_by_target', 'damage_taken_by_skill', 'damage_taken_by_source', 
+                'effective_healing_by_skill', 'effective_healing_by_target', 
+                'effective_healing_taken_by_skill', 'effective_healing_taken_by_source', 
+                'healing_by_skill', 'healing_by_target', 'healing_taken_by_skill', 
+                'healing_taken_by_source'):
         data = stats[stat]
         data['Total'] = sum(data[key] for key in data.keys())
         stats[stat] = {key: round(data[key]) for key in data}
     stats['damage'] = stats['damage_by_skill']['Total']
     stats['healing'] = stats['healing_by_skill']['Total']
+    stats['effective_healing'] = stats['effective_healing_by_skill']['Total']
     stats['damage_taken'] = stats['damage_taken_by_skill']['Total']
+    stats['effective_healing_taken'] = stats['effective_healing_taken_by_skill']['Total']
     stats['healing_taken'] = stats['healing_taken_by_skill']['Total']
 
     return stats
@@ -44,7 +48,8 @@ def rescale_dict(mydict, scale): # modifies mydict
     for key in mydict:
         if isinstance(mydict[key], int):
             mydict[key] = round(mydict[key] * scale, 2)
-            if key in ('damage', 'healing', 'damage_taken', 'healing_taken'):
+            if key in ('damage', 'effective_healing', 'healing', 'damage_taken', 
+                                    'effective_healing_taken', 'healing_taken'):
                 mydict[key] = round(mydict[key])
         else:
             new_val = rescale_dict(mydict[key], scale)

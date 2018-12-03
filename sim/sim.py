@@ -83,15 +83,21 @@ class Game:
         for unit in self.heroes + self.pets:
             unit.game = self
             unit.stats = {'damage': 0,
-                        'healing': 0,
+                        'effective_healing': 0,
+                        'healing': 0, # healing = effective_healing + overheal
                         'damage_taken': 0,
+                        'effective_healing_taken': 0,
                         'healing_taken': 0,
                         'damage_by_skill': defaultdict(int),
                         'damage_by_target': defaultdict(int),
+                        'effective_healing_by_skill': defaultdict(int),
+                        'effective_healing_by_target': defaultdict(int),
                         'healing_by_skill': defaultdict(int),
                         'healing_by_target': defaultdict(int),
                         'damage_taken_by_skill': defaultdict(int),
                         'damage_taken_by_source': defaultdict(int),
+                        'effective_healing_taken_by_skill': defaultdict(int),
+                        'effective_healing_taken_by_source': defaultdict(int),
                         'healing_taken_by_skill': defaultdict(int),
                         'healing_taken_by_source': defaultdict(int),
                         'kills': 0,
@@ -178,9 +184,10 @@ class Game:
                         'damage_reduction_ups_taken': 0,
                         'true_damage_ups': 0,
                         'true_damage_ups_taken': 0}
-            for stat in ('damage_by_skill', 'damage_by_target', 'healing_by_skill', 
-                        'healing_by_target', 'damage_taken_by_skill', 
-                        'damage_taken_by_source', 'healing_taken_by_skill', 
+            for stat in ('damage_by_skill', 'damage_by_target', 'effective_healing_by_skill', 
+                        'effective_healing_by_target', 'healing_by_skill', 'healing_by_target', 
+                        'damage_taken_by_skill', 'damage_taken_by_source', 'effective_healing_taken_by_skill', 
+                        'effective_healing_taken_by_source', 'healing_taken_by_skill', 
                         'healing_taken_by_source'):
                 unit.stats[stat]['Total'] = 0
         self.prefix = self.teams() + '\n'
@@ -191,11 +198,13 @@ class Game:
         # effects
         prefix = '\n# Active effects #'.format(self.round)
         self.actions = []
+        effect_ids = [e.id for h in self.heroes for e in h.effects]
         for h in self.heroes:
             if not h.is_dead:
                 h.can_attack = True
                 for e in h.effects:
-                    e.tick()
+                    if e.id in effect_ids:
+                        e.tick()
         effects_turn = EffectsTurn(self.actions, prefix=prefix)
 
         # heroes
@@ -403,6 +412,9 @@ class EmptyGame:
     def __init__(self):
         self.actions = []
         self.verbose_full = False
+
+    def is_finished(self):
+        return False
 
 
 class Log:

@@ -3564,12 +3564,16 @@ class Heal(BaseEffect):
 
     def tick(self):
         if not self.holder.is_dead:
-            healing = min(self.power, self.holder.hp_max - self.holder.hp)
-            self.holder.hp += healing
-            self.source.stats['healing_by_skill'][self.name] += healing
-            self.source.stats['healing_by_target'][self.holder.str_id] += healing
-            self.holder.stats['healing_taken_by_skill'][self.name] += healing
-            self.holder.stats['healing_taken_by_source'][self.source.str_id] += healing
+            effective_healing = min(self.power, self.holder.hp_max - self.holder.hp)
+            self.holder.hp += effective_healing
+            self.source.stats['effective_healing_by_skill'][self.name] += effective_healing
+            self.source.stats['effective_healing_by_target'][self.holder.str_id] += effective_healing
+            self.holder.stats['effective_healing_taken_by_skill'][self.name] += effective_healing
+            self.holder.stats['effective_healing_taken_by_source'][self.source.str_id] += effective_healing
+            self.source.stats['healing_by_skill'][self.name] += self.power
+            self.source.stats['healing_by_target'][self.holder.str_id] += self.power
+            self.holder.stats['healing_taken_by_skill'][self.name] += self.power
+            self.holder.stats['healing_taken_by_source'][self.source.str_id] += self.power
             self.turns -= 1
             if self.hot:
                 action = Action.hot(self.source, self.holder, self.power, self.turns, self.name)
@@ -3582,7 +3586,6 @@ class Heal(BaseEffect):
                     .format(self.holder.str_id, round(self.power),
                             self.source.str_id, self.name)
             self.source.game.actions.append(action)
-            self.holder.has_taken_damage(self.source)
 
 
 class Poison(BaseEffect):
