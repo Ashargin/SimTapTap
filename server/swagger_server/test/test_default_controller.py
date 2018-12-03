@@ -7,6 +7,7 @@ from six import BytesIO
 
 from swagger_server.models.hero_stats import HeroStats  # noqa: E501
 from swagger_server.models.simulate_request import SimulateRequest  # noqa: E501
+from swagger_server.models.simulate_response import SimulateResponse  # noqa: E501
 from swagger_server.models.stat_request import StatRequest  # noqa: E501
 from swagger_server.test import BaseTestCase
 

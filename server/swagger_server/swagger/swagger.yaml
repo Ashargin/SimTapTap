@@ -57,7 +57,9 @@ paths:
           $ref: "#/definitions/SimulateRequest"
       responses:
         201:
-          description: "Hero stats"
+          description: "A response to the requested simulation"
+          schema:
+            $ref: "#/definitions/SimulateResponse"
         400:
           description: "invalid input, object invalid"
       x-swagger-router-controller: "swagger_server.controllers.default_controller"
@@ -159,6 +161,7 @@ definitions:
     properties:
       repeat:
         type: "integer"
+        example: 1
         description: "How many battles should be simulated."
         minimum: 1
         maximum: 1000
@@ -169,7 +172,7 @@ definitions:
     title: "SimulateRequest"
     description: "A complete request for simulating battles"
     example:
-      repeat: 81
+      repeat: 1
       attacker:
         heroRear3:
           tier: 6
@@ -954,6 +957,747 @@ definitions:
             runeType: "HP"
         id: "SAW_MACHINE"
         stars: 9
+  SimulateResponse:
+    properties:
+      battles:
+        type: "array"
+        items:
+          $ref: "#/definitions/Battle"
+      attackingTeam:
+        $ref: "#/definitions/Team"
+      defendingTeam:
+        $ref: "#/definitions/Team"
+    description: "Response for the simulate request containing a list of the simulated\
+      \ battles"
+    example:
+      attackingTeam:
+        heroRear3:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroRear2:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroRear1:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroFront3:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroFront2:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        player:
+          petBonus:
+            hpBonus: 26672
+            attackBonus: 1705
+          activePet:
+            skill2level: 11
+            tier: 3
+            level: 155
+            skill3level: 1
+            id: "RAPHAEL"
+            skill1level: 53
+            skill4level: 0
+          guildTech:
+            cleric:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            mage:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            wanderer:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            warrior:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            assassin:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+        heroFront1:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+      defendingTeam:
+        heroRear3:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroRear2:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroRear1:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroFront3:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        heroFront2:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+        player:
+          petBonus:
+            hpBonus: 26672
+            attackBonus: 1705
+          activePet:
+            skill2level: 11
+            tier: 3
+            level: 155
+            skill3level: 1
+            id: "RAPHAEL"
+            skill1level: 53
+            skill4level: 0
+          guildTech:
+            cleric:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            mage:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            wanderer:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            warrior:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+            assassin:
+              tier5: 20
+              tier4: 30
+              tier3: 40
+              tier2: 50
+              tier1: 60
+        heroFront1:
+          tier: 6
+          level: 200
+          equipment:
+            artifact:
+              id: "KNIGHTS_VOW"
+              stars: 6
+            weapon: "ORANGE2"
+            chest: "ORANGE2"
+            helmet: "ORANGE2"
+            pendant: "ORANGE2"
+            rune:
+              level: "RED2"
+              runeType: "HP"
+          id: "SAW_MACHINE"
+          stars: 9
+      battles:
+      - rounds:
+        - heroTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          petTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+        - heroTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          petTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+      - rounds:
+        - heroTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          petTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+        - heroTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            hero:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          petTurns:
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+          - effects:
+              duration: 6
+              magnitude: 1.46581298050294517310021547018550336360931396484375
+              type: "DAMAGE"
+              target:
+                index: 1
+                team: "ATTACKING"
+                row: "FRONT"
+            pet:
+              team: "ATTACKING"
+  Battle:
+    properties:
+      rounds:
+        type: "array"
+        items:
+          $ref: "#/definitions/Round"
+    description: "Full description of one complete battle consisting of at most fifteen\
+      \ rounds"
+    example:
+      rounds:
+      - heroTurns:
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          hero:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          hero:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        petTurns:
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          pet:
+            team: "ATTACKING"
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          pet:
+            team: "ATTACKING"
+      - heroTurns:
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          hero:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          hero:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        petTurns:
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          pet:
+            team: "ATTACKING"
+        - effects:
+            duration: 6
+            magnitude: 1.46581298050294517310021547018550336360931396484375
+            type: "DAMAGE"
+            target:
+              index: 1
+              team: "ATTACKING"
+              row: "FRONT"
+          pet:
+            team: "ATTACKING"
+  Round:
+    properties:
+      heroTurns:
+        type: "array"
+        items:
+          $ref: "#/definitions/HeroTurn"
+      petTurns:
+        type: "array"
+        items:
+          $ref: "#/definitions/PetTurn"
+    description: "One round where each hero gets to attack (if not impeded by any\
+      \ effect)"
+    example:
+      heroTurns:
+      - effects:
+          duration: 6
+          magnitude: 1.46581298050294517310021547018550336360931396484375
+          type: "DAMAGE"
+          target:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        hero:
+          index: 1
+          team: "ATTACKING"
+          row: "FRONT"
+      - effects:
+          duration: 6
+          magnitude: 1.46581298050294517310021547018550336360931396484375
+          type: "DAMAGE"
+          target:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        hero:
+          index: 1
+          team: "ATTACKING"
+          row: "FRONT"
+      petTurns:
+      - effects:
+          duration: 6
+          magnitude: 1.46581298050294517310021547018550336360931396484375
+          type: "DAMAGE"
+          target:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        pet:
+          team: "ATTACKING"
+      - effects:
+          duration: 6
+          magnitude: 1.46581298050294517310021547018550336360931396484375
+          type: "DAMAGE"
+          target:
+            index: 1
+            team: "ATTACKING"
+            row: "FRONT"
+        pet:
+          team: "ATTACKING"
+  HeroTurn:
+    properties:
+      hero:
+        $ref: "#/definitions/BattleHeroRef"
+      effects:
+        $ref: "#/definitions/BattleEffect"
+    description: "A turn of one hero"
+    example:
+      effects:
+        duration: 6
+        magnitude: 1.46581298050294517310021547018550336360931396484375
+        type: "DAMAGE"
+        target:
+          index: 1
+          team: "ATTACKING"
+          row: "FRONT"
+      hero:
+        index: 1
+        team: "ATTACKING"
+        row: "FRONT"
+  PetTurn:
+    properties:
+      pet:
+        $ref: "#/definitions/BattlePetRef"
+      effects:
+        $ref: "#/definitions/BattleEffect"
+    description: "A turn of a pet"
+    example:
+      effects:
+        duration: 6
+        magnitude: 1.46581298050294517310021547018550336360931396484375
+        type: "DAMAGE"
+        target:
+          index: 1
+          team: "ATTACKING"
+          row: "FRONT"
+      pet:
+        team: "ATTACKING"
+  BattlePetRef:
+    properties:
+      team:
+        type: "string"
+        description: "Which side of the battle the referenced hero is on"
+        enum:
+        - "ATTACKING"
+        - "DEFENDING"
+    description: "A reference to a pet in the battle"
+    example:
+      team: "ATTACKING"
+  BattleHeroRef:
+    properties:
+      team:
+        type: "string"
+        description: "Which side of the battle the referenced hero is on"
+        enum:
+        - "ATTACKING"
+        - "DEFENDING"
+      row:
+        type: "string"
+        description: "Is the hero in the front or the rear"
+        enum:
+        - "FRONT"
+        - "REAR"
+      index:
+        type: "integer"
+        description: "In which place the hero is"
+        minimum: 1
+        maximum: 3
+    description: "A reference to a hero in the battle"
+    example:
+      index: 1
+      team: "ATTACKING"
+      row: "FRONT"
+  BattleEffect:
+    properties:
+      type:
+        type: "string"
+        description: "The type of the effect"
+        enum:
+        - "DAMAGE"
+        - "POISON"
+        - "DOT"
+      target:
+        $ref: "#/definitions/BattleHeroRef"
+      duration:
+        type: "integer"
+        description: "How many rounds the effect lasts"
+      magnitude:
+        type: "number"
+        description: "If applicaple how strong the effect is (for example the amount\
+          \ of damage dealt or the amount of hp healed)"
+    description: "Effects occuring in battles"
+    example:
+      duration: 6
+      magnitude: 1.46581298050294517310021547018550336360931396484375
+      type: "DAMAGE"
+      target:
+        index: 1
+        team: "ATTACKING"
+        row: "FRONT"
   Hero_equipment:
     required:
     - "artifact"
