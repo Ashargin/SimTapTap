@@ -202,7 +202,10 @@ class Game:
         for h in self.heroes:
             if not h.is_dead:
                 h.can_attack = True
-                for e in h.effects:
+                for e in [e for e in h.effects if e.percentage]:
+                    if e.id in effect_ids:
+                        e.tick()
+                for e in [e for e in h.effects if not e.percentage]:
                     if e.id in effect_ids:
                         e.tick()
         effects_turn = EffectsTurn(self.actions, prefix=prefix)

@@ -25,7 +25,7 @@ class HeroType(Enum):
 
 
 class HeroName(Enum):
-    EMPTY = 'Empty Hero'
+    EMPTY = 'Empty_Hero'
 
     SIR_CONRAD = 'Sir_Conrad'
     LONE_HERO = 'Lone_Hero'
@@ -52,7 +52,7 @@ class HeroName(Enum):
     LEXAR = 'Lexar'
 
     MEGAW = 'Megaw'
-    WEREWORF = 'Werewolf'
+    WEREWOLF = 'Werewolf'
     CENTAUR = 'Centaur'
     TIGER_KING = 'Tiger_King'
     DEMON_FIGHTER = 'Demon_Fighter'
@@ -3420,8 +3420,13 @@ class BaseFamiliar:
 
 
 class EmptyFamiliar(BaseFamiliar):
+    name = 'Empty_Familiar'
+
     def __init__(self):
-        pass
+        super().__init__(0)
+
+    def turn(self):
+        self.energy = 0
 
 
 class Edison(BaseFamiliar):
@@ -3483,6 +3488,9 @@ class BaseEffect:
     def __init__(self):
         global effect_id
         self.id = effect_id
+        self.percentage = False
+        if self.name == 'War Frenzy':
+            self.percentage = True
         effect_id += 1
 
     def kill(self):
@@ -3574,6 +3582,7 @@ class Heal(BaseEffect):
             self.source.stats['healing_by_target'][self.holder.str_id] += self.power
             self.holder.stats['healing_taken_by_skill'][self.name] += self.power
             self.holder.stats['healing_taken_by_source'][self.source.str_id] += self.power
+
             self.turns -= 1
             if self.hot:
                 action = Action.hot(self.source, self.holder, self.power, self.turns, self.name)
@@ -3586,6 +3595,8 @@ class Heal(BaseEffect):
                     .format(self.holder.str_id, round(self.power),
                             self.source.str_id, self.name)
             self.source.game.actions.append(action)
+
+            self.holder.has_been_healed(self.source)
 
 
 class Poison(BaseEffect):
@@ -3817,12 +3828,12 @@ class AttackUp(StatUp):
             action = Action.attack_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
                 action.text = "\n{}'s attack is increased by {}% by {} ({}), {} turns left" \
-                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
                             self.name, self.turns) \
                             if self.verbose else ''
             else:
                 action.text = "\n{}'s attack is increased by {}% by {} ({})" \
-                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
                             self.name) \
                             if self.verbose else ''
             self.source.game.actions.append(action)
@@ -4601,6 +4612,33 @@ class DamageToWarriors(StatUp):
         super().kill()
 
 
+class HealingUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.healing_bonus += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            action = Action.healing_up(self.source, self.holder, self.up, self.turns, self.name)
+            if not self.infinite:
+                action.text = "\n{}'s healing is increased by {}% by {} ({}), {} turns left" \
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
+                            self.name, self.turns) \
+                            if self.verbose else ''
+            else:
+                action.text = "\n{}'s healing is increased by {}% by {} ({})" \
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
+
+    def kill(self):
+        self.holder.healing_bonus -= self.up
+        super().kill()
+
+
 @dataclass
 class Effect:
     dot = Dot
@@ -4642,6 +4680,7 @@ class Effect:
     damage_to_poisoned = DamageToPoisoned
     damage_to_stunned = DamageToStunned
     damage_to_warriors = DamageToWarriors
+    healing_up = HealingUp
 
 
 ## Actions
@@ -4785,6 +4824,13 @@ class SilenceAction(ControlAction):
     pass
 
 
+class CleanseAction(BaseAction):
+    def __init__(self, source, target, name):
+        self.source = source
+        self.target = target
+        self.name = name
+
+
 class StatUpAction(BaseAction):
     def __init__(self, source, target, up, turns_left, name):
         self.source = source
@@ -4921,6 +4967,10 @@ class DamageToWarriorsAction(StatUpAction):
     pass
 
 
+class HealingUpAction(StatUpAction):
+    pass
+
+
 class EnergyUpAction:
     def __init__(self, source, target, up, passive, name):
         self.source = source
@@ -4966,6 +5016,7 @@ class Action:
     stun = StunAction
     petrify = PetrifyAction
     freeze = FreezeAction
+    cleanse = CleanseAction
     attack_up = AttackUpAction
     attack_down = AttackDownAction
     hp_up = HpUpAction
@@ -4997,4 +5048,5 @@ class Action:
     damage_to_poisoned = DamageToPoisonedAction
     damage_to_stunned = DamageToStunnedAction
     damage_to_warriors = DamageToWarriorsAction
+    healing_up = HealingUpAction
     die = DieAction

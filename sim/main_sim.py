@@ -1,15 +1,17 @@
 import numpy as np
 import random as rd
-import cProfile
 
-from sim.heroes import Team, Hero
+from sim.heroes import Team, DummyTeam, Hero
 from sim.models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
 from sim.sim import Sim, Game
 
-heroes = [Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.dziewona, Hero.forest_healer, Hero.freya,
-          Hero.gerald, Hero.luna, Hero.medusa, Hero.minotaur, Hero.monkey_king, Hero.reaper, Hero.ripper, Hero.rlyeh,
-          Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.ultima, Hero.vegvisir, Hero.verthandi, 
-          Hero.nameless_king, Hero.mars, Hero.mulan, Hero.vivienne]
+heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
+        Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
+        Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, Hero.monkey_king, 
+        Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.reaper, Hero.ripper, Hero.rlyeh, 
+        Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
+        Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
+        Hero.werewolf, Hero.wolf_rider, Hero.wolnir]
 
 
 def get_random_team():
@@ -23,26 +25,17 @@ attack_team = get_random_team()
 defense_team = get_random_team()
 
 game = Game(attack_team, defense_team)
-game.process()
 print(game.teams())
+game.process()
 print(game.log.text)
 
 sim = Sim(attack_team, defense_team)
 sim.process()
 
-# profile = cProfile.Profile()
-# profile.enable()
-# for i in range(20):
-#     attack_team = get_random_team()
-#     defense_team = get_random_team()
-#     sim = Sim(attack_team, defense_team, n_sim=1000)
-#     sim.process()
-# profile.disable()
-# profile.print_stats(sort='tottime')
-
 # todo:
 # connect the engine to the server
 # add all heroes
+# re-check all heroes
 # set stats depending on the hero level
 
 # add empty runes/artifacts
@@ -50,3 +43,8 @@ sim.process()
 # see which familiar attacks first
 # make sure crit_damage > 0, armor_break > 0 (or not? check)
 # check every behaviour marked with "check" comments
+
+# for each hero : check skills values and behaviour
+#                 write things to be checked
+#                 check every action is written
+#                 rewrite stats
