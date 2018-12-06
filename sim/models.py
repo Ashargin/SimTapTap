@@ -1852,6 +1852,7 @@ class BaseArtifact:
     damage_to_clerics = 0
     damage_to_mages = 0
     skill_damage_if_alliance = 0
+    skill_damage_if_elf = 0
     skill_damage_if_undead = 0
     skill_damage_if_hell = 0
     crit_rate_if_horde = 0
@@ -2721,6 +2722,42 @@ class QueensCrownO6(BaseArtifact):
     crit_rate_if_elf = 0.09
 
 
+class AncientVowsO1(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_elf = 0
+
+
+class AncientVowsO2(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_elf = 0
+
+
+class AncientVowsO3(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_elf = 0
+
+
+class AncientVowsO4(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_elf = 0
+
+
+class AncientVowsO5(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_elf = 0
+
+
+class AncientVowsO6(BaseArtifact):
+    attack_bonus = 0.12
+    hit_rate = 0.08
+    skill_damage_if_elf = 0.25
+
+
 class SoulTorrentO1(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
@@ -3180,6 +3217,26 @@ queens_crown_artifact_from_request = {
 
 
 @dataclass
+class AncientVows:
+    O1 = AncientVowsO1()
+    O2 = AncientVowsO2()
+    O3 = AncientVowsO3()
+    O4 = AncientVowsO4()
+    O5 = AncientVowsO5()
+    O6 = AncientVowsO6()
+
+
+ancient_vows_artifact_from_request = {
+    1: AncientVows.O1,
+    2: AncientVows.O2,
+    3: AncientVows.O3,
+    4: AncientVows.O4,
+    5: AncientVows.O5,
+    6: AncientVows.O6
+}
+
+
+@dataclass
 class SoulTorrent:
     O1 = SoulTorrentO1()
     O2 = SoulTorrentO2()
@@ -3255,6 +3312,7 @@ class Artifact:
     knights_vow = KnightsVow
     primeval_soul = PrimevalSoul
     queens_crown = QueensCrown
+    ancient_vows = AncientVows
     soul_torrent = SoulTorrent
     gift_of_creation = GiftOfCreation
     eternal_curse = EternalCurse
@@ -3275,6 +3333,7 @@ artifact_from_request = {
     'KNIGHTS_VOW': knights_vow_artifact_from_request,
     'PRIMEVAL_SOUL': primeval_soul_artifact_from_request,
     'QUEENS_CROWN': queens_crown_artifact_from_request,
+    'ANCIENT_VOWS': ancient_vows_artifact_from_request,
     'SOUL_TORRENT': soul_torrent_artifact_from_request,
     'GIFT_OF_CREATION': gift_of_creation_artifact_from_request,
     'ETERNAL_CURSE': eternal_curse_artifact_from_request

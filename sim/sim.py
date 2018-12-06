@@ -6,7 +6,29 @@ from collections import defaultdict
 from sim.utils import format_stats, add_dicts, rescale_dict
 
 
-class Sim:
+class BaseSim:
+    def compute_winner(self, winner):
+        if winner == 1:
+            self.wins_1 += 1
+        elif winner == -1:
+            self.wins_2 += 1
+        else:
+            self.ties += 1
+
+    def print_stats(self, stat='damage'):
+        print('# {} #\n'.format(stat))
+        len_max = max(len(u.str_id) for u in self.heroes + self.pets)
+        for u in self.heroes + self.pets:
+            print('{}{} : {}'.format(u.str_id, ' ' * (len_max - len(u.str_id)), 
+                                                    self.stats[stat][u.str_id]))
+
+    def print_winrate(self):
+        print('Attacker winrate : {}%'.format(100 * self.wins_1 / self.n_sim))
+        print('Defender winrate : {}%'.format(100 * (self.wins_2 + self.ties) / self.n_sim))
+        print('Including wins by tie : {}%'.format(100 * self.ties / self.n_sim))
+
+
+class GameSim(BaseSim):
     def __init__(self, attack_team, defense_team, n_sim=1000):
         self.attack_team = attack_team
         self.defense_team = defense_team
@@ -33,12 +55,7 @@ class Sim:
             game = Game(self.attack_team, self.defense_team)
             game.process()
             winner = game.winner
-            if winner == 1:
-                self.wins_1 += 1
-            elif winner == -1:
-                self.wins_2 += 1
-            else:
-                self.ties += 1
+            self.compute_winner(winner)
 
             for unit in game.heroes + game.pets:
                 add_dicts(units_stats[unit.str_id], unit.stats)
@@ -48,25 +65,132 @@ class Sim:
         self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
                                             for key in self.heroes[0].stats.keys()}
 
-    def print_stats(self, stat='damage'):
-        print('# {} #\n'.format(stat))
-        len_max = max(len(e.str_id) for e in self.heroes + self.pets)
-        for e in self.heroes + self.pets:
-            print('{}{} : {}'.format(e.str_id, ' ' * (len_max - len(e.str_id)), 
-                                                    self.stats[stat][e.str_id]))
 
-    def print_winrate(self):
-        print('Attacker winrate : {}%'.format(100 * self.wins_1 / self.n_sim))
-        print('Defender winrate : {}%'.format(100 * (self.wins_2 + self.ties) / self.n_sim))
-        print('Including wins by tie : {}%'.format(100 * self.ties / self.n_sim))
+class GauntletAttackSim(BaseSim):
+    def __init__(self, attack_team, gauntlet, n_sim=1000):
+        self.attack_team = attack_team
+        self.gauntlet = gauntlet
+        for h in self.attack_team.heroes:
+            h.str_id = '{}_{}_{}'.format(h.name.value, 1, h.pos + 1)
+        self.attack_team.pet.str_id = self.attack_team.pet.name + '_1'
+        self.heroes = self.attack_team.heroes
+        self.pets = [self.attack_team.pet]
+        self.wins_1 = 0
+        self.wins_2 = 0
+        self.ties = 0
+        self.n_sim = n_sim
+
+    def process(self):
+        units_stats = {unit.str_id: {} for unit in self.heroes + self.pets}
+        for i in range(self.n_sim):
+            defense_team = self.gauntlet[i]
+            game = Game(self.attack_team, defense_team, copy_defense=False)
+            game.process()
+            winner = game.winner
+            self.compute_winner(winner)
+
+            for unit in game.attack_team.heroes + [game.attack_team.pet]:
+                add_dicts(units_stats[unit.str_id], unit.stats)
+        for unit in self.heroes + self.pets:
+            rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
+            unit.stats = units_stats[unit.str_id]
+        self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
+                                            for key in self.heroes[0].stats.keys()}
+
+
+class GauntletDefenseSim(BaseSim):
+    def __init__(self, gauntlet, defense_team, n_sim=1000):
+        self.gauntlet = gauntlet
+        self.defense_team = defense_team
+        for h in self.defense_team.heroes:
+            h.str_id = '{}_{}_{}'.format(h.name.value, 1, h.pos + 1)
+        self.defense_team.pet.str_id = self.defense_team.pet.name + '_2'
+        self.heroes = self.defense_team.heroes
+        self.pets = [self.defense_team.pet]
+        self.wins_1 = 0
+        self.wins_2 = 0
+        self.ties = 0
+        self.n_sim = n_sim
+
+    def process(self):
+        units_stats = {unit.str_id: {} for unit in self.heroes + self.pets}
+        for i in range(self.n_sim):
+            attack_team = self.gauntlet[i]
+            game = Game(attack_team, self.defense_team, copy_attack=False)
+            game.process()
+            winner = game.winner
+            self.compute_winner(winner)
+
+            for unit in game.defense_team.heroes + [game.defense_team.pet]:
+                add_dicts(units_stats[unit.str_id], unit.stats)
+        for unit in self.heroes + self.pets:
+            rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
+            unit.stats = units_stats[unit.str_id]
+        self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
+                                            for key in self.heroes[0].stats.keys()}
+
+
+class GauntletSim(BaseSim):
+    def __init__(self, attack_gauntlet, defense_gauntlet, test_team=None, 
+                                                test_pos=None, n_sim=1000):
+        self.attack_gauntlet = attack_gauntlet
+        self.defense_gauntlet = defense_gauntlet
+        self.heroes = []
+        self.test_team = test_team
+        self.test_pos = test_pos
+        if self.test_team == 1:
+            self.heroes = [copy.deepcopy(attack_gauntlet[0].heroes[self.test_pos - 1])]
+        elif self.test_team == 2:
+            self.heroes = [copy.deepcopy(defense_gauntlet[0].heroes[self.test_pos - 1])]
+        for h in self.heroes:
+            h.str_id = '{}_{}_{}'.format(h.name.value, self.test_team, self.test_pos)
+        self.pets = []
+        self.wins_1 = 0
+        self.wins_2 = 0
+        self.ties = 0
+        self.n_sim = n_sim
+
+    def process(self):
+        units_stats = {unit.str_id: {} for unit in self.heroes}
+        team_damage = 0
+        for i in range(self.n_sim):
+            attack_team = self.attack_gauntlet[i]
+            defense_team = self.defense_gauntlet[i]
+            game = Game(attack_team, defense_team, copy_attack=False, copy_defense=False)
+            game.process()
+            winner = game.winner
+            self.compute_winner(winner)
+
+            if self.test_team == 1:
+                unit = game.attack_team.heroes[self.test_pos - 1]
+                add_dicts(units_stats[unit.str_id], unit.stats)
+                team_damage += sum([game.stats['damage'][h.str_id] 
+                                    for h in game.attack_team.heroes])
+            elif self.test_team == 2:
+                unit = game.defense_team.heroes[self.test_pos - 1]
+                add_dicts(units_stats[unit.str_id], unit.stats)
+                team_damage += sum([game.stats['damage'][h.str_id] 
+                                    for h in game.defense_team.heroes])
+        for unit in self.heroes:
+            rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
+            unit.stats = units_stats[unit.str_id]
+            team_damage *= 1 / self.n_sim
+            self.team_damage = round(team_damage)
+        self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
+                                            for key in self.heroes[0].stats.keys()}
 
 
 class Game:
-    def __init__(self, attack_team, defense_team, verbose_full=False):
+    def __init__(self, attack_team, defense_team, verbose_full=False, 
+                                    copy_attack=True, copy_defense=True):
         self.actions = []
         self.rounds = []
-        self.attack_team = copy.deepcopy(attack_team)
-        self.defense_team = copy.deepcopy(defense_team)
+        self.attack_team = attack_team
+        self.defense_team = defense_team
+        if copy_attack:
+            self.attack_team = copy.deepcopy(self.attack_team)
+        if copy_defense:
+            self.defense_team = copy.deepcopy(self.defense_team)
         self.verbose_full = verbose_full
         for h in self.attack_team.heroes:
             h.op_team = self.defense_team

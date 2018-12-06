@@ -85,6 +85,8 @@ class BaseHero:
         self.damage_to_mages_base += artifact.damage_to_mages
         if self.faction == Faction.ALLIANCE:
             self.skill_damage += artifact.skill_damage_if_alliance
+        if self.faction == Faction.ELF:
+            self.skill_damage += artifact.skill_damage_if_elf
         if self.faction == Faction.UNDEAD:
             self.skill_damage += artifact.skill_damage_if_undead
         if self.faction == Faction.HELL:
@@ -171,7 +173,7 @@ class BaseHero:
 
         type_damage_base, type_damage = self.type_damage(target)
 
-        op_armor = target.armor - self.armor_break
+        op_armor = target.armor - self.armor_break # check : can be negative?
         damage_reduction_from_armor = op_armor * 0.00992543 + 0.20597124  # check armor behaviour
 
         crit_damage = 0
@@ -309,11 +311,11 @@ class BaseHero:
 
         for h in self.own_team.heroes:
             if isinstance(h, Wolnir):
-                name = 'Bone Pact'
-                power = h.atk * 0.3
+                this_name = 'Bone Pact'
+                this_power = h.atk * 0.3
                 if h.star >= 8:
-                    power = h.atk * 0.4
-                h.heal(h, power=power, turns=1, name=name) # including self? including skills? even attack or on_attack?
+                    this_power = h.atk * 0.375
+                h.heal(h, power=this_power, turns=1, name=this_name)
 
         dodged = self.compute_dodge(target, name=name)
         if not dodged:
@@ -1003,19 +1005,12 @@ class BaseHero:
         for e in [e for e in target.effects if isinstance(e, Effect.crit_mark)]:
             e.trigger()
 
-        if isinstance(target, WolfRider):
-            name = 'Revenge'
-            power = target.atk * 1.8
-            if target.star >= 8: ### add value
-                power = target.atk * 2.1
-            target.hit_passive(self, power=power, name=name)
-
         for h in self.own_team.heroes:
             if isinstance(h, TigerKing):
                 name = 'Sqalid Fever'
                 heal_power = h.atk * 0.45
-                if h.star >= 8: ### add value
-                    heal_power = h.atk * 0.55
+                if h.star >= 8:
+                    heal_power = h.atk * 0.9
                 h.heal(h, power=heal_power, turns=1, name=name)
 
         self.stats['crits'] += 1
@@ -1044,7 +1039,7 @@ class BaseHero:
             if isinstance(h, BloodTooth) and not h.is_dead:
                 name = 'Executioner'
                 up = 0.2
-                if h.star >= 8:  ### add value
+                if h.star >= 8:
                     up = 0.3
                 h.attack_up(h, up=up, turns=None, name=name)
 
@@ -1064,9 +1059,9 @@ class BaseHero:
                 name = 'One On One'
                 attack_up = 0.13
                 skill_damage_up = 0.125
-                if h.star >= 7: ### add value
+                if h.star >= 7:
                     attack_up = 0.15
-                    skill_damage_up = 0.15
+                    skill_damage_up = 0.175
                 h.attack_up(h, up=attack_up, turns=None, name=name)
                 h.skill_damage_up(h, up=skill_damage_up, turns=None, name=name)
 
@@ -1075,9 +1070,9 @@ class BaseHero:
                 name = 'Slide Tackle'
                 crit_rate_up = 0.14
                 crit_damage_up = 0.08
-                if h.star >= 8: ### add value
+                if h.star >= 8:
                     crit_rate_up = 0.18
-                    crit_damage_up = 0.12
+                    crit_damage_up = 0.11
                 h.crit_rate_up(h, up=crit_rate_up, turns=None, name=name)
                 h.crit_damage_up(h, up=crit_damage_up, turns=None, name=name)
 
@@ -1085,7 +1080,7 @@ class BaseHero:
             if isinstance(h, Orphee) and not h.is_dead:
                 name = 'Pity'
                 power = h.atk * 1.4
-                if h.star >= 9: ### add value
+                if h.star >= 9:
                     power = h.atk * 1.8
                 h.heal(h, power=power, turns=1, name=name)
 
@@ -1163,9 +1158,9 @@ class AbyssLord(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 557796.0
+        self.hp = 398425.7
         self.atk = 15909.0
-        self.armor = 22
+        self.armor = 12
         self.speed = 1160
         if self.star == 9:
             self.hp = 200000.0  # should depend on the level
@@ -1181,9 +1176,9 @@ class AbyssLord(BaseHero):
         name = 'Abyssal Protection'
         armor_up = 10
         hp_up = 0.3
-        if self.star >= 8: ### add value
+        if self.star >= 8:
             armor_up = 12
-            hp_up = 0.35
+            hp_up = 0.4
         self.armor_up(self, up=armor_up, turns=None,
                       name=name, passive=True)
         self.hp_up(self, up=hp_up, turns=None,
@@ -1192,21 +1187,25 @@ class AbyssLord(BaseHero):
     def skill(self):
         name = 'Abyssal Blade'
         target = targets_at_random(self.op_team.heroes, 1)[0]
-        dodged = self.compute_dodge(target, name=name)
-        if not dodged:
-            dmg_power = self.atk * 2.8
-            heal_power = self.atk * 2.1
+        dmg_power = self.atk * 2.8
+        heal_power = self.atk * 2.1
+        if self.star >= 10:
+            dmg_power = self.atk * 3.2
+            heal_power = self.atk * 3
 
-            self.hit_skill(target, power=dmg_power, name=name)
-            self.heal(self, power=heal_power, turns=1, name=name)
+        self.hit_skill(target, power=dmg_power, name=name)
+        self.heal(self, power=heal_power, turns=1, name=name)
+        if self.star >= 10:
+            attack_up = 0.5
+            self.attack_up(self, up=attack_up, turns=2, name=name)
         super().skill()
 
     def on_hit(self, attacker):
         name = 'Pitch-Black Curse'
         down = 0.15
-        if self.star >= 7: ### add value
-            down = 0.2
-        self.crit_rate_down(attacker, down=down, turns=3, name=name) # rate?
+        if self.star >= 7:
+            down = 0.18
+        self.crit_rate_down(attacker, down=down, turns=3, name=name)
         super().on_hit(attacker)
 
     def has_taken_damage(self, attacker):
@@ -1214,8 +1213,8 @@ class AbyssLord(BaseHero):
             self.has_triggered = True
             name = 'Rebirth'
             up = 30
-            if self.star >= 9: ### add value
-                up = 35
+            if self.star >= 9:
+                up = 36
             self.armor_up(self, up=up, turns=3, name=name)
         super().has_taken_damage(attacker)
 
@@ -1271,6 +1270,13 @@ class Aden(BaseHero):
         hit_power = [self.atk * 1.48] * len(targets_hit)
         bleed_power = self.atk * 0.46
         heal_power = self.atk
+        if self.star >= 10:
+            hit_power = [self.atk * 1.8] * len(targets_hit)
+            for i, h in enumerate(targets_hit):
+                if h.type == HeroType.WANDERER:
+                    hit_power[i] += self.atk * 0.6
+            bleed_power = self.atk * 0.7
+            heal_power = self.atk
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
             self.bleed(target, power=bleed_power, turns=3, name=name)
@@ -1295,8 +1301,8 @@ class BloodTooth(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 341118.0
-        self.atk = 36503.0
+        self.hp = 284265.0
+        self.atk = 27039.3
         self.armor = 9
         self.speed = 1176
         if self.star == 9:
@@ -1312,7 +1318,7 @@ class BloodTooth(BaseHero):
         attack_up = 0.25
         crit_rate_up = 0.3
         hp_up = 0.15
-        if self.star >= 7:  ### add value
+        if self.star >= 7:
             attack_up = 0.35
             crit_rate_up = 0.3
             hp_up = 0.2
@@ -1326,7 +1332,7 @@ class BloodTooth(BaseHero):
     def attack(self):
         name = 'attack'
         power = self.atk * 1.1
-        if self.star >= 9:  ### add value
+        if self.star >= 9:
             power = self.atk * 1.3
         min_enemy_hp = min([h.hp for h in self.op_team.heroes if not h.is_dead])
         candidates = [h for h in self.op_team.heroes if h.hp == min_enemy_hp]
@@ -1337,13 +1343,24 @@ class BloodTooth(BaseHero):
     def skill(self):
         name = 'Power Torture'
         targets = targets_at_random(self.op_team.get_backline(), 2)
-        targets_hit = self.targets_hit(targets, name=name)
+        if self.star >= 10:
+            targets_hit = targets
+        else:
+            targets_hit = self.targets_hit(targets, name=name)
 
         hit_power = [self.atk * 1.76] * len(targets_hit)
+        if self.star >= 10:
+            hit_power = [self.atk * 1.9] * len(targets_hit)
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        if self.star >= 10:
+            heal_power = self.attack
+            self.heal(self, power=heal_power, turns=1, name=name)
         for target in targets_hit:
-            self.attack_down(target, down=0.22, turns=2, name=name)
-            self.attack_up(self, up=0.22, turns=2, name=name)
+            drain = 0.22
+            if self.star >= 10:
+                drain = 0.3
+            self.attack_down(target, down=drain, turns=2, name=name)
+            self.attack_up(self, up=drain, turns=2, name=name)
         super().skill()
 
 
@@ -1364,7 +1381,7 @@ class Centaur(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 388869.0
-        self.atk = 30227.0
+        self.atk = 23251.5
         self.armor = 10
         self.speed = 1148
         if self.star == 9:
@@ -1409,9 +1426,17 @@ class Centaur(BaseHero):
 
         hit_power = [self.atk * 0.8] * len(targets_hit)
         dot_power = self.atk * 0.3
+        turns = 2
+        if self.star >= 10:
+            hit_power = [self.atk] * len(targets_hit)
+            dot_power = self.atk * 0.5
+            turns = 3
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
-            self.dot(target, power=dot_power, turns=2, name=name)
+            self.dot(target, power=dot_power, turns=turns, name=name)
+            if self.star >= 10:
+                speed_down = 30
+                self.speed_down(target, down=speed_down, turns=turns, name=name)
         super().skill()
 
 
@@ -1432,7 +1457,7 @@ class Chessia(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 358449.0
-        self.atk = 32575.0
+        self.atk = 25057.7
         self.armor = 10
         self.speed = 1161
         if self.star == 9:
@@ -1464,12 +1489,21 @@ class Chessia(BaseHero):
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 1.24] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 1.4] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             bleed_power = self.atk * 0.49
+            turns = 3
+            if self.star >= 10:
+                bleed_power = self.atk * 0.5
+                turns = 4
             if target.type == HeroType.WANDERER:
                 bleed_power *= 2
-            self.bleed(target, power=bleed_power, turns=3, name=name)
+            self.bleed(target, power=bleed_power, turns=turns, name=name)
+            if self.star >= 10:
+                skill_damage_up = 0.15
+                self.skill_damage_up(self, up=skill_damage_up, turns=turns, name=name)
 
         name = 'Shadow Blessing'
         up = 2.0
@@ -1504,7 +1538,7 @@ class Dziewona(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 292482.0
-        self.atk = 29283.0
+        self.atk = 23426.4
         self.armor = 9
         self.speed = 1173
         if self.star == 9:
@@ -1545,10 +1579,15 @@ class Dziewona(BaseHero):
         targets_hit = targets_at_random(self.op_team.heroes, 4)
 
         power = [self.atk * 1.25] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 1.6] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             if target.type == HeroType.MAGE:
                 self.try_stun(target, turns=2, chance=0.8, name=name)
+            if self.star >= 10:
+                dot_power = self.atk * 0.8
+                self.dot(target, power=dot_power, turns=2, name=name)
         super().skill()
 
     def has_taken_damage(self, attacker):
@@ -1644,10 +1683,10 @@ class Freya(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 377330.0
+        self.hp = 269521.4
         self.atk = 25233.0
         self.armor = 9
-        self.speed = 1196
+        self.speed = 1136
         if self.star == 9:
             self.hp = 155323.2  # should depend on the level
             self.atk = 14530.4  # should depend on the level
@@ -1674,18 +1713,31 @@ class Freya(BaseHero):
 
     def skill(self):
         name = 'Hollow Descent'
+        self.energy = 0 # only if energy drained
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 0.54] * len(targets_hit)
+        chance = 0.2
+        if self.star >= 10:
+            power = [self.atk * 0.75] * len(targets_hit)
+            chance = 0.3
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
-            landed = self.try_petrify(target, turns=2, chance=0.2, name=name)
+            landed = self.try_petrify(target, turns=2, chance=chance, name=name)
+
             if landed:
-                name = 'Expand'
+                this_name = 'Expand'
                 up = 0.35
                 if self.star >= 9:
                     up = 0.5
-                self.attack_up(self, up=up, turns=4, name=name)
+                self.attack_up(self, up=up, turns=4, name=this_name)
+
+        if self.star >= 10:
+            for target in targets_hit:
+                drain = 10
+                if rd.random() <= 0.3:
+                    self.energy_down(target, down=drain, name=name)
+                    self.energy_up(self, up=drain, name=name)
         super().skill()
 
     def on_attack(self, target):
@@ -1694,6 +1746,7 @@ class Freya(BaseHero):
         if self.star >= 7:
             chance = 0.55
         landed = self.try_petrify(target, turns=1, chance=chance, name=name)
+
         if landed:
             name = 'Expand'
             up = 0.35
@@ -1720,7 +1773,7 @@ class Gerald(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 413927.0
-        self.atk = 28872.0
+        self.atk = 21386.7
         self.armor = 13
         self.speed = 1148
         if self.star == 9:
@@ -1789,7 +1842,7 @@ class Grand(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 615775.0
+        self.hp = 427621.5
         self.atk = 17365.0
         self.armor = 12
         self.speed = 1166
@@ -1805,9 +1858,9 @@ class Grand(BaseHero):
         name = 'Living Armor'
         hp_up = 0.32
         damage_reduction_up = 0.2
-        if self.star >= 8: ### add value
-            hp_up = 0.4
-            damage_reduction_up = 0.25
+        if self.star >= 8:
+            hp_up = 0.44
+            damage_reduction_up = 0.26
         self.hp_up(self, up=hp_up, turns=None,
                             name=name, passive=True)
         self.damage_reduction_up(self, up=damage_reduction_up, turns=None,
@@ -1856,7 +1909,7 @@ class Hester(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 304894.0
-        self.atk = 38953.0
+        self.atk = 26864.1
         self.armor = 8
         self.speed = 1138
         if self.star == 9:
@@ -1871,9 +1924,9 @@ class Hester(BaseHero):
         name = 'Wish Of Cinderella'
         hit_rate_up = 0.35
         attack_up = 0.35
-        if self.star >= 8: ### add value
-            hit_rate_up = 0.4
-            attack_up = 0.4
+        if self.star >= 8:
+            hit_rate_up = 0.45
+            attack_up = 0.45
         self.hit_rate_up(self, up=hit_rate_up, turns=None,
                             name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
@@ -1883,7 +1936,7 @@ class Hester(BaseHero):
 
     def skill(self):
         name = 'Soul Pulse'
-        targets_hit = self.targets_hit(self.op_team.heroes.get_backline(), name=name)
+        targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
         power = [self.atk * 1.63] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
@@ -2017,7 +2070,7 @@ class Luna(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 400232.0
-        self.atk = 25984.0
+        self.atk = 19987.7
         self.armor = 10
         self.speed = 1179
         if self.star == 9:
@@ -2083,9 +2136,9 @@ class Mars(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 364684.0
-        self.atk = 31287.0
+        self.atk = 24066.9
         self.armor = 10
-        self.speed = 1196
+        self.speed = 1156
         if self.star == 9:
             self.hp = 200000  # should depend on the level
             self.atk = 14000  # should depend on the level
@@ -2100,10 +2153,10 @@ class Mars(BaseHero):
         true_damage_up = 0.3
         attack_up = 0.25
         speed_up = 20
-        if self.star >= 7: ### add value
-            true_damage_up = 0.35
+        if self.star >= 7:
+            true_damage_up = 0.6
             attack_up = 0.3
-            speed_up = 30
+            speed_up = 40
         self.true_damage_up(self, up=true_damage_up, turns=None,
                    name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
@@ -2169,8 +2222,8 @@ class Martin(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 490407.0
-        self.atk = 26783.0
+        self.hp = 350290.7
+        self.atk = 22319.2
         self.armor = 11
         self.speed = 1137
         if self.star == 9:
@@ -2186,10 +2239,10 @@ class Martin(BaseHero):
         hp_up = 0.35
         attack_up = 0.15
         skill_damage_up = 0.25
-        if self.star >= 9: ### add value
+        if self.star >= 9:
             hp_up = 0.4
-            attack_up = 0.25
-            skill_damage_up = 0.25
+            attack_up = 0.2
+            skill_damage_up = 0.375
         self.hp_up(self, up=hp_up, turns=None,
                    name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
@@ -2232,7 +2285,7 @@ class Medusa(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 347085.0
-        self.atk = 33304.0
+        self.atk = 22202.7
         self.armor = 10
         self.speed = 1156
         if self.star == 9:
@@ -2300,7 +2353,7 @@ class Megaw(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 256759.0
-        self.atk = 28146.0
+        self.atk = 20104.3
         self.armor = 9
         self.speed = 1113
         if self.star == 9:
@@ -2316,10 +2369,10 @@ class Megaw(BaseHero):
 
         name = 'Inner Strength'
         attack_up = 0.3
-        crit_rate_up = 0.3 # rate?
-        if self.star >= 7: ### add value
-            attack_up = 0.35
-            crit_rate_up = 0.35
+        crit_rate_up = 0.3
+        if self.star >= 7:
+            attack_up = 0.4
+            crit_rate_up = 0.3
         self.attack_up(self, up=attack_up, turns=None,
                       name=name, passive=True)
         self.crit_rate_up(self, up=crit_rate_up, turns=None,
@@ -2373,8 +2426,8 @@ class Minotaur(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 386829.0
-        self.atk = 23674.0
-        self.armor = 37
+        self.atk = 18939.2
+        self.armor = 12
         self.speed = 1161
         if self.star == 9:
             self.hp = 222945.4  # should depend on the level
@@ -2511,10 +2564,10 @@ class Mulan(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 377770.0
+        self.hp = 328495.7
         self.atk = 24242.0
         self.armor = 12
-        self.speed = 1208
+        self.speed = 1148
         if self.star == 9:
             self.hp = 189322.1  # should depend on the level
             self.atk = 13966.2  # should depend on the level
@@ -2592,7 +2645,7 @@ class NamelessKing(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 623787.0
+        self.hp = 479836.2
         self.atk = 24358.0
         self.armor = 12
         self.speed = 1171
@@ -2669,7 +2722,7 @@ class Orphee(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 286514
+        self.hp = 220395.3
         self.atk = 31934
         self.armor = 9
         self.speed = 1131
@@ -2684,10 +2737,10 @@ class Orphee(BaseHero):
 
         name = 'Highest Answer'
         hp_up = 0.3
-        crit_rate_up = 0.35 # rate?
-        if self.star >= 8: ### add value
-            hp_up = 0.35
-            crit_rate_up = 0.4
+        crit_rate_up = 0.35
+        if self.star >= 8:
+            hp_up = 0.3
+            crit_rate_up = 0.45
         self.hp_up(self, up=hp_up, turns=None,
                             name=name, passive=True)
         self.crit_rate_up(self, up=crit_rate_up, turns=None,
@@ -2729,8 +2782,8 @@ class Reaper(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 396363
-        self.atk = 33030
+        self.hp = 304894.6
+        self.atk = 25407.6
         self.armor = 8
         self.speed = 1149
         if self.star == 9:
@@ -2795,7 +2848,7 @@ class Ripper(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 298368.0
-        self.atk = 31468.0
+        self.atk = 23309.6
         self.armor = 9
         self.speed = 1177
         if self.star == 9:
@@ -2871,8 +2924,8 @@ class Rlyeh(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 319090.0
-        self.atk = 29574.0
+        self.hp = 265908.3
+        self.atk = 23659.2
         self.armor = 10
         self.speed = 1116
         if self.star == 9:
@@ -2953,7 +3006,7 @@ class Samurai(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 306060.0
-        self.atk = 29044.0
+        self.atk = 20745.7
         self.armor = 12
         self.speed = 1174
         if self.star == 9:
@@ -2968,9 +3021,9 @@ class Samurai(BaseHero):
         name = "Mind's eye"
         attack_up = 0.3
         dodge_up = 0.25
-        if self.star >= 8: ### add value
-            attack_up = 0.35
-            dodge_up = 0.3
+        if self.star >= 8:
+            attack_up = 0.4
+            dodge_up = 0.25
         self.attack_up(self, up=attack_up, turns=None,
                        name=name, passive=True)
         self.dodge_up(self, up=dodge_up, turns=None,
@@ -3023,7 +3076,7 @@ class SawMachine(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 469014.0
+        self.hp = 360780.0
         self.atk = 20279.0
         self.armor = 13
         self.speed = 1149
@@ -3157,8 +3210,8 @@ class ShuddeMell(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 422566.0
-        self.atk = 29230.0
+        self.hp = 338052.8
+        self.atk = 24358.3
         self.armor = 11
         self.speed = 1148
         if self.star == 9:
@@ -3174,7 +3227,7 @@ class ShuddeMell(BaseHero):
         hp_up = 0.22
         attack_up = 0.15
         if self.star >= 7:  ### add value
-            hp_up = 0.3
+            hp_up = 0.25
             attack_up = 0.2
         self.hp_up(self, up=hp_up, turns=None,
                    name=name, passive=True)
@@ -3235,8 +3288,8 @@ class Tesla(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 351896.0
-        self.atk = 31759.0
+        self.hp = 260663.7
+        self.atk = 25407.2
         self.armor = 11
         self.speed = 1147
         if self.star == 9:
@@ -3251,7 +3304,7 @@ class Tesla(BaseHero):
         name = 'Static Intensify'
         attack_up = 0.2
         hp_up = 0.3
-        if self.star >= 7:  ### add value
+        if self.star >= 7:
             attack_up = 0.25
             hp_up = 0.35
         self.attack_up(self, up=attack_up, turns=None,
@@ -3304,9 +3357,9 @@ class TigerKing(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 633018.0
+        self.hp = 452155.7
         self.atk = 15093.0
-        self.armor = 26
+        self.armor = 12
         self.speed = 1165
         if self.star == 9:
             self.hp = 200000  # should depend on the level
@@ -3320,8 +3373,8 @@ class TigerKing(BaseHero):
         name = 'King Of Beasts'
         hp_up = 0.3
         armor_up = 11
-        if self.star >= 7:  ### add value
-            hp_up = 0.35
+        if self.star >= 7:
+            hp_up = 0.4
             armor_up = 14
         self.hp_up(self, up=hp_up, turns=None,
                    name=name, passive=True)
@@ -3367,10 +3420,10 @@ class Ultima(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 510966.0
+        self.hp = 364975.7
         self.atk = 22144.0
         self.armor = 12
-        self.speed = 1166
+        self.speed = 1116
         if self.star == 9:
             self.hp = 210342.6  # should depend on the level
             self.atk = 12743.7  # should depend on the level
@@ -3517,7 +3570,7 @@ class Verthandi(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 418472.0
-        self.atk = 33292.0
+        self.atk = 22960.0
         self.armor = 12
         self.speed = 1138
         if self.star == 9:
@@ -3583,8 +3636,8 @@ class Vivienne(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 442132.0
-        self.atk = 26952.0
+        self.hp = 327505.2
+        self.atk = 21561.6
         self.armor = 12
         self.speed = 1116
         if self.star == 9:
@@ -3632,8 +3685,9 @@ class Vivienne(BaseHero):
         power = self.atk * 0.35
         if self.star >= 7:
             power = self.atk * 0.5
-        target = targets_at_random(self.own_team.heroes, 1)[0]
-        self.heal(target, power=power, turns=3, name=name)
+        if not self.game.is_finished():
+            target = targets_at_random(self.own_team.heroes, 1)[0]
+            self.heal(target, power=power, turns=3, name=name)
         super().on_attack(target)
 
     def has_taken_damage(self, attacker):
@@ -3665,7 +3719,7 @@ class Werewolf(BaseHero):
         self.tier = tier
         self.level = level
         self.hp = 307167.0
-        self.atk = 27753.0
+        self.atk = 22202.4
         self.armor = 10
         self.speed = 1174
         if self.star == 9:
@@ -3680,8 +3734,8 @@ class Werewolf(BaseHero):
         name = 'Roar'
         attack_up = 0.2
         hit_rate_up = 0.15
-        if self.star >= 8: ### add value
-            attack_up = 0.3
+        if self.star >= 8:
+            attack_up = 0.25
             hit_rate_up = 0.2
         self.attack_up(self, up=attack_up, turns=None,
                             name=name, passive=True)
@@ -3702,7 +3756,7 @@ class Werewolf(BaseHero):
         enemy_candidates = [h for h in self.op_team.heroes if h.hp == min_enemy_hp]
         rd.shuffle(enemy_candidates)
         target = enemy_candidates[0]
-        dodged = self.compute_dodge(enemy_target, name=name)
+        dodged = self.compute_dodge(target, name=name)
         if not dodged:
             dmg_power = self.atk * 2.16
 
@@ -3738,9 +3792,9 @@ class WolfRider(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 371048
+        self.hp = 265034.3
         self.atk = 25407
-        self.armor = 22
+        self.armor = 10
         self.speed = 1167
         if self.star == 9:
             self.hp = 200000.0  # should depend on the level
@@ -3756,9 +3810,9 @@ class WolfRider(BaseHero):
         name = 'Roar'
         armor_up = 10
         hp_up = 0.3
-        if self.star >= 8: ### add value
+        if self.star >= 8:
             armor_up = 12
-            hp_up = 0.5
+            hp_up = 0.4
         self.armor_up(self, up=armor_up, turns=None,
                             name=name, passive=True)
         self.hp_up(self, up=hp_up, turns=None,
@@ -3801,7 +3855,7 @@ class Wolnir(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 672097.9
+        self.hp = 480069.9
         self.atk = 16899.0
         self.armor = 9
         self.speed = 1165
@@ -3817,9 +3871,9 @@ class Wolnir(BaseHero):
         name = 'Desperate Struggle'
         hp_up = 0.3
         hit_rate_up = 0.2
-        if self.star >= 7: ### add value
-            hp_up = 0.35
-            hit_rate_up = 0.25
+        if self.star >= 7:
+            hp_up = 0.4
+            hit_rate_up = 0.2
         self.hp_up(self, up=hp_up, turns=None,
                             name=name, passive=True)
         self.hit_rate_up(self, up=hit_rate_up, turns=None,
@@ -3941,8 +3995,8 @@ class Team:
         for i, h in enumerate(self.heroes):
             h.pos = i
 
-        aura = Aura(heroes)  # aura
-        self.compute_aura(aura)
+        self.aura = Aura(heroes)  # aura
+        self.compute_aura()
 
         self.compute_pet(pet)  # familiar
 
@@ -3952,7 +4006,7 @@ class Team:
                 hp_up = 0.4
                 crit_damage_up = 0.2
                 crit_rate_up = 0.2
-                if h.star >= 8:  ### add value
+                if h.star >= 8:
                     hp_up = 0.6
                     crit_damage_up = 0.3
                     crit_rate_up = 0.3
@@ -3970,14 +4024,14 @@ class Team:
             h.own_team = self
         self.pet.own_team = self
 
-    def compute_aura(self, aura):
+    def compute_aura(self):
         for h in self.heroes:
-            h.atk *= (1 + aura.atk_bonus)
-            h.hp *= (1 + aura.hp_bonus)
-            h.dodge += aura.dodge
-            h.crit_rate += aura.crit_rate
-            h.control_immune += aura.control_immune
-            h.armor_break *= (1 + aura.armor_break_bonus)
+            h.atk *= (1 + self.aura.atk_bonus)
+            h.hp *= (1 + self.aura.hp_bonus)
+            h.dodge += self.aura.dodge
+            h.crit_rate += self.aura.crit_rate
+            h.control_immune += self.aura.control_immune
+            h.armor_break *= (1 + self.aura.armor_break_bonus)
 
     def compute_pet(self, pet):
         for h in self.heroes:
@@ -4032,21 +4086,28 @@ class Team:
         return teams_str
 
 
-def dummy_centaur():
+def make_boss_heroes(heroes, neutral=True):
+    for h in heroes:
+        h.hp *= 100
+        h.atk /= 100
+        if neutral:
+            h.faction = Faction.EMPTY
+            h.type = HeroType.EMPTY
+
+
+def dummy_centaur(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i == 2:
             heroes.append(Hero.centaur())
         else:
             heroes.append(Hero.empty())
-    for h in heroes:
-        h.hp *= 100
-        h.atk /= 10
+    make_boss_heroes(heroes, neutral=neutral)
 
     return Team(heroes, pet=Familiar.empty)
 
 
-def dummy_luna():
+def dummy_luna(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i == 2:
@@ -4055,89 +4116,77 @@ def dummy_luna():
             heroes.append(Hero.reaper())
         else:
             heroes.append(Hero.empty())
-    for h in heroes:
-        h.hp *= 100
-        h.atk /= 10
+    make_boss_heroes(heroes, neutral=neutral)
 
     return Team(heroes, pet=Familiar.empty)
 
 
-def dummy_warriors():
+def dummy_warriors(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i in (2, 4, 6):
             heroes.append(Hero.nameless_king())
         else:
             heroes.append(Hero.empty())
-    for h in heroes:
-        h.hp *= 100
-        h.atk /= 10
+    make_boss_heroes(heroes, neutral=neutral)
 
     return Team(heroes, pet=Familiar.empty)
 
 
-def dummy_assassins():
+def dummy_assassins(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i in (2, 4, 6):
             heroes.append(Hero.aden())
         else:
             heroes.append(Hero.empty())
-    for h in heroes:
-        h.hp *= 100
-        h.atk /= 10
+    make_boss_heroes(heroes, neutral=neutral)
 
     return Team(heroes, pet=Familiar.empty)
 
 
-def dummy_wanderers():
+def dummy_wanderers(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i in (2, 4, 6):
             heroes.append(Hero.centaur())
         else:
             heroes.append(Hero.empty())
-    for h in heroes:
-        h.hp *= 100
-        h.atk /= 10
+    make_boss_heroes(heroes, neutral=neutral)
 
     return Team(heroes, pet=Familiar.empty)
 
 
-def dummy_clerics():
+def dummy_clerics(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i in (2, 4, 6):
             heroes.append(Hero.forest_healer())
         else:
             heroes.append(Hero.empty())
-    for h in heroes:
-        h.hp *= 100
-        h.atk /= 10
+    make_boss_heroes(heroes, neutral=neutral)
 
     return Team(heroes, pet=Familiar.empty)
 
 
-def dummy_mages():
+def dummy_mages(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i in (2, 4, 6):
             heroes.append(Hero.scarlet())
         else:
             heroes.append(Hero.empty())
-    for h in heroes:
-        h.hp *= 100
-        h.atk /= 10
+    make_boss_heroes(heroes, neutral=neutral)
 
     return Team(heroes, pet=Familiar.empty)
 
 
 @dataclass
 class DummyTeam:
-    centaur = dummy_centaur()
-    luna = dummy_luna()
-    guild_warrior = dummy_warriors()
-    guild_assassin = dummy_assassins()
-    guild_wanderer = dummy_wanderers()
-    guild_cleric = dummy_clerics()
-    guild_mage = dummy_mages()
+    centaur = dummy_centaur
+    luna = dummy_luna
+    guild_warrior = dummy_warriors
+    guild_assassin = dummy_assassins
+    guild_wanderer = dummy_wanderers
+    guild_cleric = dummy_clerics
+    guild_mage = dummy_mages
