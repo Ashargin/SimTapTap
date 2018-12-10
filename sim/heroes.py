@@ -24,11 +24,7 @@ class BaseHero:
         self.damage_reduction = 0
         self.control_immune = 0
         self.silence_immune = 0
-        self.damage_to_warriors_base = 0
-        self.damage_to_assassins_base = 0
-        self.damage_to_wanderers_base = 0
-        self.damage_to_clerics_base = 0
-        self.damage_to_mages_base = 0
+        self.stun_immune = 0
         self.damage_to_warriors = 0
         self.damage_to_assassins = 0
         self.damage_to_wanderers = 0
@@ -65,6 +61,7 @@ class BaseHero:
         self.hp += equipment.hp
         self.atk += rune.atk  # rune
         self.hp += rune.hp
+        self.speed += rune.speed
         self.armor_break += rune.armor_break
         self.skill_damage += rune.skill_damage
         self.hit_rate += rune.hit_rate
@@ -78,24 +75,24 @@ class BaseHero:
         self.hit_rate += artifact.hit_rate
         self.true_damage += artifact.true_damage
         self.damage_reduction += artifact.damage_reduction
-        self.damage_to_warriors_base += artifact.damage_to_warriors
-        self.damage_to_assassins_base += artifact.damage_to_assassins
-        self.damage_to_wanderers_base += artifact.damage_to_wanderers
-        self.damage_to_clerics_base += artifact.damage_to_clerics
-        self.damage_to_mages_base += artifact.damage_to_mages
+        self.damage_to_warriors += artifact.damage_to_warriors
+        self.damage_to_assassins += artifact.damage_to_assassins
+        self.damage_to_wanderers += artifact.damage_to_wanderers
+        self.damage_to_clerics += artifact.damage_to_clerics
+        self.damage_to_mages += artifact.damage_to_mages
         if self.faction == Faction.ALLIANCE:
             self.skill_damage += artifact.skill_damage_if_alliance
         if self.faction == Faction.ELF:
             self.skill_damage += artifact.skill_damage_if_elf
+            self.crit_rate += artifact.crit_rate_if_elf
         if self.faction == Faction.UNDEAD:
             self.skill_damage += artifact.skill_damage_if_undead
         if self.faction == Faction.HELL:
             self.skill_damage += artifact.skill_damage_if_hell
         if self.faction == Faction.HORDE:
             self.crit_rate += artifact.crit_rate_if_horde
-        if self.faction == Faction.ELF:
-            self.crit_rate += artifact.crit_rate_if_elf
         if self.faction == Faction.HEAVEN:
+            self.skill_damage += artifact.skill_damage_if_heaven
             self.true_damage += artifact.true_damage_if_heaven
         self.atk *= (1 + equipment.atk_bonus)
         self.hp *= (1 + equipment.hp_bonus)
@@ -155,31 +152,32 @@ class BaseHero:
 
     def type_damage(self, target):
         if target.type == HeroType.WARRIOR:
-            return self.damage_to_warriors_base, self.damage_to_warriors
+            return self.damage_to_warriors
         elif target.type == HeroType.ASSASSIN:
-            return self.damage_to_assassins_base, self.damage_to_assassins
+            return self.damage_to_assassins
         elif target.type == HeroType.WANDERER:
-            return self.damage_to_wanderers_base, self.damage_to_wanderers
+            return self.damage_to_wanderers
         elif target.type == HeroType.CLERIC:
-            return self.damage_to_clerics_base, self.damage_to_clerics
+            return self.damage_to_clerics
         elif target.type == HeroType.MAGE:
-            return self.damage_to_mages_base, self.damage_to_mages
-        return 0, 0
+            return self.damage_to_mages
+        return 0
 
-    def compute_damage(self, target, power, skill=False):
+    def compute_damage(self, target, power, skill=False, active=False):
         faction_damage = 0
         if self.faction_bonus(target):
             faction_damage = 0.3
 
-        type_damage_base, type_damage = self.type_damage(target)
+        type_damage = self.type_damage(target)
 
-        op_armor = target.armor - self.armor_break # check : can be negative?
-        damage_reduction_from_armor = op_armor * 0.00992543 + 0.20597124  # check armor behaviour
+        op_armor = target.armor - self.armor_break
+        damage_reduction_from_armor = op_armor * 0.00992543 + 0.20597124
 
         crit_damage = 0
-        crit = self.compute_crit(target)
-        if crit:
-            crit_damage = self.crit_damage + 0.5
+        if active:
+            crit = self.compute_crit(target)
+            if crit:
+                crit_damage = self.crit_damage + 0.5
 
         skill_damage = 0
         if skill:
@@ -198,10 +196,9 @@ class BaseHero:
         dmg = (power + skill_damage * self.atk) * (1 - damage_reduction_from_armor) \
               * (1 + crit_damage) * (1 + faction_damage) \
               * (1 + self.true_damage) * (1 - target.damage_reduction) \
-              * (1 + type_damage_base) * (1 + type_damage) \
+              * (1 + type_damage) \
               * (1 + poisoned_extra_damage) * (1 + bleeding_extra_damage) \
               * (1 + stunned_extra_damage)
-              # check type_damage behaviour (multiplicative with base type_damage or additive?)
 
         damage_components = {'Power': power,
                              'Skill damage': skill_damage,
@@ -210,8 +207,7 @@ class BaseHero:
                              'True damage': self.true_damage,
                              'Damage reduction': target.damage_reduction,
                              'Faction damage': faction_damage,
-                             'Base type damage': type_damage_base,
-                             'Extra type damage': type_damage,
+                             'Type damage': type_damage,
                              'Poisoned extra damage': poisoned_extra_damage,
                              'Bleeding extra damage': bleeding_extra_damage,
                              'Stunned extra damage': stunned_extra_damage,
@@ -224,7 +220,7 @@ class BaseHero:
         hit_rate = self.hit_rate
         if self.faction_bonus(target):
             hit_rate += 0.15
-        if rd.random() <= target.dodge - hit_rate and not target.is_dead:  # check dodge behaviour
+        if rd.random() <= target.dodge - hit_rate and not target.is_dead:
             dodged = True
 
         if dodged:
@@ -301,6 +297,14 @@ class BaseHero:
                 self.attack()
             self.stats['turns_played'] += 1
 
+            for h in self.own_team.heroes:
+                if isinstance(h, Wolnir) and h.str_id != self.str_id:
+                    this_name = 'Bone Pact'
+                    this_power = 0.3
+                    if h.star >= 8:
+                        this_power = 0.375
+                    h.heal(h, power=this_power, turns=1, name=this_name)
+
         self.can_attack = False
 
     def attack(self, target=None, power=None, name='attack'):
@@ -308,14 +312,6 @@ class BaseHero:
             target = self.op_team.next_target()
         if power is None:
             power = self.atk
-
-        for h in self.own_team.heroes:
-            if isinstance(h, Wolnir):
-                this_name = 'Bone Pact'
-                this_power = h.atk * 0.3
-                if h.star >= 8:
-                    this_power = h.atk * 0.375
-                h.heal(h, power=this_power, turns=1, name=this_name)
 
         dodged = self.compute_dodge(target, name=name)
         if not dodged:
@@ -340,18 +336,18 @@ class BaseHero:
         if energy_on_hit:
             if not isinstance(target, Chessia):
                 target.energy = max(min(target.energy + 10, 100), target.energy)
-        if active and crit: # check : only triggered by active? dots/counters?
+        if crit:
             self.on_crit(target)
         if on_attack:
             self.on_attack(target)
-        if active:  # check : only triggered by active? dots/counters?
+        if active:
             target.on_hit(self)
 
     def hit(self, target, power, skill, active, on_attack, multi, 
                         multi_attack=False, update=True, name=''):
         if not multi:
             if not target.is_dead:
-                damage_components = self.compute_damage(target, power, skill=skill)
+                damage_components = self.compute_damage(target, power, skill=skill, active=active)
                 dmg = damage_components['Total damage']
                 crit = True if damage_components['Crit damage'] > 0 else False
                 crit_str = ', crit' if crit else ''
@@ -455,8 +451,8 @@ class BaseHero:
             self.dot(target, power, turns, name=name)
             return True
 
-    def heal(self, target, power, turns, name=''):
-        if not target.is_dead and not self.game.is_finished():
+    def heal(self, target, power, turns, name='', override=False):
+        if not target.is_dead and (not self.game.is_finished() or override):
             power *= 1 + self.healing_bonus
             heal = Effect.heal(self, target, power, turns, name=name)
             target.effects.append(heal)
@@ -505,14 +501,14 @@ class BaseHero:
             target.effects.append(timed_mark)
             timed_mark.tick()
 
-    def crit_mark(self, target, power, name=''):
+    def crit_mark(self, target, power, second_hit=False, name=''):
         if not target.is_dead:
-            crit_mark = Effect.crit_mark(self, target, power, name=name)
+            crit_mark = Effect.crit_mark(self, target, power, second_hit=second_hit, name=name)
             target.effects.append(crit_mark)
             crit_mark.tick()
 
     def silence(self, target, turns, name=''):
-        if not target.is_dead:
+        if not target.is_dead and rd.random() >= target.silence_immune and rd.random() >= target.control_immune:
             silence = Effect.silence(self, target, turns, name=name)
             target.effects.append(silence)
             silence.tick()
@@ -520,14 +516,15 @@ class BaseHero:
             self.stats['silences'] += 1
             target.stats['silences_taken'] += 1
 
-    def try_silence(self, target, turns, chance, name=''):
-        if rd.random() <= chance and rd.random() >= target.control_immune \
-                and rd.random() >= target.silence_immune:  # check control/silence immune behaviour
-            self.silence(target, turns, name=name)
             return True
 
+    def try_silence(self, target, turns, chance, name=''):
+        if rd.random() <= chance:
+            hit = self.silence(target, turns, name=name)
+            return hit
+
     def stun(self, target, turns, name=''):
-        if not target.is_dead:
+        if not target.is_dead and rd.random() >= target.stun_immune and rd.random() >= target.control_immune:
             stun = Effect.stun(self, target, turns, name=name)
             target.effects.append(stun)
             stun.tick()
@@ -537,13 +534,15 @@ class BaseHero:
             self.stats['hard_ccs'] += 1
             target.stats['hard_ccs_taken'] += 1
 
-    def try_stun(self, target, turns, chance, name=''):
-        if rd.random() <= chance and rd.random() >= target.control_immune:  # check control immune behaviour
-            self.stun(target, turns, name=name)
             return True
 
+    def try_stun(self, target, turns, chance, name=''):
+        if rd.random() <= chance:
+            hit = self.stun(target, turns, name=name)
+            return hit
+
     def petrify(self, target, turns, name=''):
-        if not target.is_dead:
+        if not target.is_dead and rd.random() >= target.control_immune:
             petrify = Effect.petrify(self, target, turns, name=name)
             target.effects.append(petrify)
             petrify.tick()
@@ -553,13 +552,15 @@ class BaseHero:
             self.stats['hard_ccs'] += 1
             target.stats['hard_ccs_taken'] += 1
 
-    def try_petrify(self, target, turns, chance, name=''):
-        if rd.random() <= chance and rd.random() >= target.control_immune:  # check control immune behaviour
-            self.petrify(target, turns, name=name)
             return True
 
+    def try_petrify(self, target, turns, chance, name=''):
+        if rd.random() <= chance:
+            hit = self.petrify(target, turns, name=name)
+            return hit
+
     def freeze(self, target, turns, name=''):
-        if not target.is_dead:
+        if not target.is_dead and rd.random() >= target.control_immune:
             freeze = Effect.freeze(self, target, turns, name=name)
             target.effects.append(freeze)
             freeze.tick()
@@ -569,10 +570,12 @@ class BaseHero:
             self.stats['hard_ccs'] += 1
             target.stats['hard_ccs_taken'] += 1
 
-    def try_freeze(self, target, turns, chance, name=''):
-        if rd.random() <= chance and rd.random() >= target.control_immune:  # check control immune behaviour
-            self.freeze(target, turns, name=name)
             return True
+
+    def try_freeze(self, target, turns, chance, name=''):
+        if rd.random() <= chance:
+            hit = self.freeze(target, turns, name=name)
+            return hit
 
     def cleanse(self, target, name):
         for e in [e for e in target.effects if isinstance(e, Effect.stun)
@@ -792,6 +795,13 @@ class BaseHero:
             target.effects.append(silence_immune_up)
             silence_immune_up.tick()
 
+    def stun_immune_up(self, target, up, turns, name='', passive=False):
+        if not target.is_dead and not self.game.is_finished():
+            stun_immune_up = Effect.stun_immune_up(self, target, up, turns,
+                                                         name=name, passive=passive)
+            target.effects.append(stun_immune_up)
+            stun_immune_up.tick()
+
     def damage_reduction_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead and not self.game.is_finished():
             damage_reduction_up = Effect.damage_reduction_up(self, target, up, turns,
@@ -886,8 +896,8 @@ class BaseHero:
                 self.stats['speed_downs'] += 1
                 target.stats['speed_downs_taken'] += 1
 
-    def energy_up(self, target, up, name='', passive=False):
-        if not target.is_dead and not self.game.is_finished():
+    def energy_up(self, target, up, name='', passive=False, override=False):
+        if not target.is_dead and (not self.game.is_finished() or override):
             target.energy = max(min(target.energy + up, 100), self.energy)
             action = Action.energy_up(self, target, up, passive, name)
             action.text = "\n{}'s energy is increased by {} by {} ({})" \
@@ -1008,9 +1018,9 @@ class BaseHero:
         for h in self.own_team.heroes:
             if isinstance(h, TigerKing):
                 name = 'Sqalid Fever'
-                heal_power = h.atk * 0.45
+                heal_power = 0.45
                 if h.star >= 8:
-                    heal_power = h.atk * 0.9
+                    heal_power = 0.9
                 h.heal(h, power=heal_power, turns=1, name=name)
 
         self.stats['crits'] += 1
@@ -1027,13 +1037,13 @@ class BaseHero:
         for h in self.op_team.heroes:
             if isinstance(h, Aden) and not h.is_dead:
                 name = 'Blood Temple'
-                power = h.atk * 0.8
+                power = 0.8
                 if h.star >= 9:
-                    power = h.atk
+                    power = 1.0
                 if attacker is not None:
                     if attacker.str_id == h.str_id:
                         power *= 2
-                h.heal(h, power=power, turns=1, name=name)
+                h.heal(h, power=power, turns=1, name=name, override=True)
 
         for h in self.op_team.heroes:
             if isinstance(h, BloodTooth) and not h.is_dead:
@@ -1042,6 +1052,12 @@ class BaseHero:
                 if h.star >= 8:
                     up = 0.3
                 h.attack_up(h, up=up, turns=None, name=name)
+
+        for h in self.op_team.heroes:
+            if isinstance(h, Lindberg) and not h.is_dead:
+                name = 'Bloodthirsty Ointment'
+                energy_up = 100
+                h.energy_up(h, up=energy_up, name=name, override=True)
 
         for h in self.op_team.heroes:
             if isinstance(h, Luna) and not h.is_dead:
@@ -1079,10 +1095,10 @@ class BaseHero:
         for h in self.op_team.heroes:
             if isinstance(h, Orphee) and not h.is_dead:
                 name = 'Pity'
-                power = h.atk * 1.4
+                power = 1.4
                 if h.star >= 9:
-                    power = h.atk * 1.8
-                h.heal(h, power=power, turns=1, name=name)
+                    power = 1.8
+                h.heal(h, power=power, turns=1, name=name, override=True)
 
         for h in self.own_team.heroes:
             if isinstance(h, Reaper) and not h.is_dead:
@@ -1094,6 +1110,12 @@ class BaseHero:
                     attack_up = 0.2
                 h.armor_break_up(h, up=armor_break_up, turns=None, name=name)
                 h.attack_up(h, up=attack_up, turns=None, name=name)
+
+        for h in self.game.heroes:
+            if isinstance(h, Xexanoth) and not h.is_dead:
+                name = 'Death Focus'
+                armor_break_up = 1
+                h.armor_break_up(h, up=armor_break_up, turns=None, name=name)
 
         self.stats['deaths'] += 1
 
@@ -1148,7 +1170,7 @@ class AbyssLord(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1188,10 +1210,10 @@ class AbyssLord(BaseHero):
         name = 'Abyssal Blade'
         target = targets_at_random(self.op_team.heroes, 1)[0]
         dmg_power = self.atk * 2.8
-        heal_power = self.atk * 2.1
+        heal_power = 2.1
         if self.star >= 10:
             dmg_power = self.atk * 3.2
-            heal_power = self.atk * 3
+            heal_power = 3
 
         self.hit_skill(target, power=dmg_power, name=name)
         self.heal(self, power=heal_power, turns=1, name=name)
@@ -1225,7 +1247,7 @@ class Aden(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1265,18 +1287,18 @@ class Aden(BaseHero):
 
     def skill(self):
         name = 'Strangle'
-        targets_hit = targets_at_random(self.op_team.heroes, 3)
+        targets = targets_at_random(self.op_team.heroes, 3)
+        targets_hit = self.targets_hit(targets, name=name)
 
         hit_power = [self.atk * 1.48] * len(targets_hit)
-        bleed_power = self.atk * 0.46
-        heal_power = self.atk
+        bleed_power = 0.46
+        heal_power = 1.0
         if self.star >= 10:
             hit_power = [self.atk * 1.8] * len(targets_hit)
             for i, h in enumerate(targets_hit):
                 if h.type == HeroType.WANDERER:
                     hit_power[i] += self.atk * 0.6
-            bleed_power = self.atk * 0.7
-            heal_power = self.atk
+            bleed_power = 0.7
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
             self.bleed(target, power=bleed_power, turns=3, name=name)
@@ -1291,7 +1313,7 @@ class BloodTooth(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1343,24 +1365,27 @@ class BloodTooth(BaseHero):
     def skill(self):
         name = 'Power Torture'
         targets = targets_at_random(self.op_team.get_backline(), 2)
+        targets_hit = None
         if self.star >= 10:
             targets_hit = targets
         else:
             targets_hit = self.targets_hit(targets, name=name)
 
         hit_power = [self.atk * 1.76] * len(targets_hit)
+        turns = 2
         if self.star >= 10:
             hit_power = [self.atk * 1.9] * len(targets_hit)
+            turns = 3
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
-        if self.star >= 10:
-            heal_power = self.attack
-            self.heal(self, power=heal_power, turns=1, name=name)
+        if self.star >= 10 and targets_hit:
+            heal_power = 1.0
+            self.heal(self, power=heal_power, turns=turns, name=name)
         for target in targets_hit:
             drain = 0.22
             if self.star >= 10:
                 drain = 0.3
-            self.attack_down(target, down=drain, turns=2, name=name)
-            self.attack_up(self, up=drain, turns=2, name=name)
+            self.attack_down(target, down=drain, turns=turns, name=name)
+            self.attack_up(self, up=drain, turns=turns, name=name)
         super().skill()
 
 
@@ -1370,7 +1395,7 @@ class Centaur(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1413,9 +1438,9 @@ class Centaur(BaseHero):
 
     def on_crit(self, target):
         name = 'Toxic Blade'
-        power = self.atk * 0.66
+        power = 0.66
         if self.star >= 8:
-            power = self.atk * 0.78
+            power = 0.78
         self.poison(target, power=power, turns=2, name=name)
         super().on_crit(target)
 
@@ -1425,16 +1450,17 @@ class Centaur(BaseHero):
         targets_hit = self.targets_hit(targets, name=name)
 
         hit_power = [self.atk * 0.8] * len(targets_hit)
-        dot_power = self.atk * 0.3
+        dot_power = 0.3
         turns = 2
         if self.star >= 10:
             hit_power = [self.atk] * len(targets_hit)
-            dot_power = self.atk * 0.5
+            dot_power = 0.5
             turns = 3
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
             self.dot(target, power=dot_power, turns=turns, name=name)
-            if self.star >= 10:
+        if self.star >= 10:
+            for target in targets_hit:
                 speed_down = 30
                 self.speed_down(target, down=speed_down, turns=turns, name=name)
         super().skill()
@@ -1446,7 +1472,7 @@ class Chessia(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1493,17 +1519,17 @@ class Chessia(BaseHero):
             power = [self.atk * 1.4] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
-            bleed_power = self.atk * 0.49
+            bleed_power = 0.49
             turns = 3
             if self.star >= 10:
-                bleed_power = self.atk * 0.5
+                bleed_power = 0.5
                 turns = 4
             if target.type == HeroType.WANDERER:
                 bleed_power *= 2
             self.bleed(target, power=bleed_power, turns=turns, name=name)
-            if self.star >= 10:
-                skill_damage_up = 0.15
-                self.skill_damage_up(self, up=skill_damage_up, turns=turns, name=name)
+        if self.star >= 10 and targets_hit:
+            skill_damage_up = 0.15
+            self.skill_damage_up(self, up=skill_damage_up, turns=4, name=name)
 
         name = 'Shadow Blessing'
         up = 2.0
@@ -1527,7 +1553,7 @@ class Dziewona(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1585,9 +1611,9 @@ class Dziewona(BaseHero):
         for target in targets_hit:
             if target.type == HeroType.MAGE:
                 self.try_stun(target, turns=2, chance=0.8, name=name)
-            if self.star >= 10:
-                dot_power = self.atk * 0.8
-                self.dot(target, power=dot_power, turns=2, name=name)
+                if self.star >= 10:
+                    dot_power = 0.8
+                    self.dot(target, power=dot_power, turns=2, name=name)
         super().skill()
 
     def has_taken_damage(self, attacker):
@@ -1607,7 +1633,7 @@ class ForestHealer(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=9, tier=6, level=200,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1637,7 +1663,7 @@ class ForestHealer(BaseHero):
         targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
         hit_power = [self.atk * 0.89] * len(targets_hit)
-        heal_power = self.atk * 1.85
+        heal_power = 1.85
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         if targets_hit:
             for target in self.own_team.heroes:
@@ -1646,19 +1672,19 @@ class ForestHealer(BaseHero):
 
     def on_attack(self, target):
         name = 'Healing Heart'
-        power = self.atk * 0.64
+        power = 0.64
         if self.star >= 7:
-            power = self.atk * 0.81
+            power = 0.81
         for target in self.own_team.get_frontline():
             self.heal(target, power=power, turns=1, name=name)
         super().on_attack(target)
 
     def on_death(self, attacker):
         name = 'Meaning Of Life'
-        power = self.atk * 1.2
+        power = 1.2
         crit_rate_up = 0.11
         if self.star >= 9:
-            power = self.atk * 1.6
+            power = 1.6
             crit_rate_up = 0.135
         for target in self.own_team.heroes:
             self.heal(target, power=power, turns=1, name=name)
@@ -1673,7 +1699,7 @@ class Freya(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1713,7 +1739,6 @@ class Freya(BaseHero):
 
     def skill(self):
         name = 'Hollow Descent'
-        self.energy = 0 # only if energy drained
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 0.54] * len(targets_hit)
@@ -1732,13 +1757,14 @@ class Freya(BaseHero):
                     up = 0.5
                 self.attack_up(self, up=up, turns=4, name=this_name)
 
+        super().skill()
+
         if self.star >= 10:
             for target in targets_hit:
                 drain = 10
                 if rd.random() <= 0.3:
                     self.energy_down(target, down=drain, name=name)
                     self.energy_up(self, up=drain, name=name)
-        super().skill()
 
     def on_attack(self, target):
         name = 'Soul Sever'
@@ -1762,7 +1788,7 @@ class Gerald(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1809,10 +1835,15 @@ class Gerald(BaseHero):
         targets_hit = self.targets_hit(targets, name=name)
 
         power = [self.atk * 0.98] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 1.2] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             if target.type == HeroType.ASSASSIN:
                 self.try_stun(target, turns=2, chance=0.8, name=name)
+                if self.star >= 10:
+                    dot_power = 0.4
+                    self.dot(target, power=dot_power, turns=3, name=name)
         super().skill()
 
     def on_attack(self, target):
@@ -1832,7 +1863,7 @@ class Grand(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1871,24 +1902,34 @@ class Grand(BaseHero):
         targets_hit = self.targets_hit(self.op_team.get_frontline(), name=name)
 
         hit_power = [self.atk * 1.24] * len(targets_hit)
+        if self.star >= 10:
+            hit_power = [self.atk * 1.8] * len(targets_hit)
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
             self.armor_down(target, down=7, turns=2, name=name)
             self.armor_up(self, up=7, turns=2, name=name)
+
+        if self.star >= 10 and targets_hit:
+            min_ally_hp = min([h.hp for h in self.own_team.heroes if not h.is_dead])
+            candidates = [h for h in self.own_team.heroes if h.hp == min_ally_hp]
+            rd.shuffle(candidates)
+            target = candidates[0]
+            heal_power = 1.5
+            self.heal(target, power=heal_power, turns=2, name=name)
         super().skill()
 
     def on_hit(self, attacker):
         name = "Nature's Power"
         power = self.atk * 1.5
-        if self.star >= 9: ### add value
-            power = self.atk * 1.8
+        if self.star >= 9:
+            power = self.atk * 2
         self.try_hit_passive(attacker, power=power, chance=0.4, name=name)
 
         name = 'Eye Of The Jungle'
         down = 0.15
-        if self.star >= 7: ### add value
-            down = 0.2
-        self.crit_rate_down(attacker, down=down, turns=2, name=name) # rate?
+        if self.star >= 7:
+            down = 0.24
+        self.crit_rate_down(attacker, down=down, turns=2, name=name)
         super().on_hit(attacker)
 
 
@@ -1898,7 +1939,7 @@ class Hester(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1939,15 +1980,22 @@ class Hester(BaseHero):
         targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
         power = [self.atk * 1.63] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 2] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             self.try_petrify(target, turns=2, chance=0.36, name=name)
+
+        if self.star >= 10 and targets_hit:
+            up = 0.25
+            for target in self.own_team.heroes:
+                self.skill_damage_up(target, up=up, turns=3, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Weak Tone'
         down = 0.24
-        if self.star >= 7: ### add value
+        if self.star >= 7:
             down = 0.3
         self.dodge_down(target, down=down, turns=3, name=name)
         super().on_attack(target)
@@ -1957,7 +2005,7 @@ class Hester(BaseHero):
             self.has_triggered = True
             name = 'Dream Withered'
             up = 0.8
-            if self.star >= 9: ### add value
+            if self.star >= 9:
                 up = 1.0
             self.attack_up(self, up=up, turns=3, name=name)
         super().has_taken_damage(attacker)
@@ -1969,7 +2017,7 @@ class Lexar(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1999,16 +2047,22 @@ class Lexar(BaseHero):
         targets_hit = self.op_team.get_frontline()
 
         dmg_power = [self.atk * 2.5] * len(targets_hit)
+        if self.star >= 10:
+            dmg_power = [self.atk * 3] * len(targets_hit)
         self_dmg_power = self.hp * 0.2
         self.hit_skill(targets_hit, power=dmg_power, multi=True, name=name)
-        self.hit_ally(self, power=self_dmg_power, name=name)
+        if targets_hit:
+            self.hit_ally(self, power=self_dmg_power, name=name)
+            if self.star >= 10:
+                up = 0.1
+                self.attack_up(self, up=up, turns=3, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'War Roar'
-        power = self.atk * 0.8
-        if self.star >= 7: ### add value
-            power = self.atk
+        power = 0.8
+        if self.star >= 7:
+            power = 1.0
         self.heal(self, power=power, turns=1, name=name)
         super().on_attack(target)
 
@@ -2019,8 +2073,8 @@ class Lexar(BaseHero):
         perc = 1 - self.hp / self.hp_max
         attack_up = 1.5
         healing_up = 1.2
-        if self.star >= 8: ### add value
-            attack_up = 1.8
+        if self.star >= 8:
+            attack_up = 2.0
             healing_up = 1.5
         self.attack_up(self, up=attack_up*perc, turns=None, name=name)
         self.healing_up(self, up=healing_up*perc, turns=None, name=name)
@@ -2030,9 +2084,9 @@ class Lexar(BaseHero):
             name = 'God Of War'
             crit_rate_up = 0.4
             crit_damage_up = 0.6
-            if self.star >= 9: ### add value
-                crit_rate_up = 0.45
-                crit_damage_up = 0.7
+            if self.star >= 9:
+                crit_rate_up = 0.5
+                crit_damage_up = 0.75
             self.crit_rate_up(self, up=crit_rate_up, turns=3, name=name)
             self.crit_damage_up(self, up=crit_damage_up, turns=3, name=name)
             self.cleanse(self, name=name)
@@ -2045,11 +2099,115 @@ class Lexar(BaseHero):
         perc = 1 - self.hp / self.hp_max
         attack_up = 1.5
         healing_up = 1.2
-        if self.star >= 8: ### add value
-            attack_up = 1.8
+        if self.star >= 8:
+            attack_up = 2.0
             healing_up = 1.5
         self.attack_up(self, up=attack_up*perc, turns=None, name=name)
         self.healing_up(self, up=healing_up*perc, turns=None, name=name)
+        super().has_been_healed(source)
+
+
+class Lindberg(BaseHero):
+    name = HeroName.LINDBERG
+    faction = Faction.HEAVEN
+    type = HeroType.ASSASSIN
+
+    def __init__(self, star=10, tier=6, level=250,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 479836.0
+        self.atk = 26223.2
+        self.armor = 11
+        self.speed = 1177
+        if self.star == 9:
+            self.hp = 200000.0  # should depend on the level
+            self.atk = 14000.0  # should depend on the level
+            self.armor = 12  # should depend on the level
+            self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
+                         guild_tech=guild_tech, familiar_stats=familiar_stats)
+
+        name = 'Cross Shelter'
+        speed_up = 35
+        attack_up = 0.2
+        stun_immune_up = 1.0
+        if self.star >= 7:
+            speed_up = 40
+            attack_up = 0.25
+            stun_immune_up = 1.0
+        self.speed_up(self, up=speed_up, turns=None,
+                          name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                            name=name, passive=True)
+        self.stun_immune_up(self, up=stun_immune_up, turns=None,
+                            name=name, passive=True)
+
+    def attack(self):
+        name = 'attack'
+        power = self.atk * 1.2
+        if self.star >= 8:
+            power = self.atk * 1.4
+        min_enemy_hp = min([h.hp for h in self.op_team.heroes if not h.is_dead])
+        candidates = [h for h in self.op_team.heroes if h.hp == min_enemy_hp]
+        rd.shuffle(candidates)
+        target = candidates[0]
+        super().attack(target=target, power=power, name=name)
+
+    def skill(self):
+        name = 'Throat Blade'
+        targets = targets_at_random(self.op_team.get_backline(), 2)
+        targets_hit = self.targets_hit(targets, name=name)
+
+        hit_power = [self.atk * 1.8] * len(targets_hit)
+        for i, h in enumerate(targets_hit):
+            if h.type == HeroType.WANDERER:
+                hit_power[i] += self.atk * 0.5
+        if self.star >= 10:
+            hit_power = [self.atk * 2.3] * len(targets_hit)
+            for i, h in enumerate(targets_hit):
+                if h.type == HeroType.WANDERER:
+                    hit_power[i] += self.atk * 0.7
+                if h.hp <= h.hp_max * 0.5:
+                    hit_power[i] += self.atk * 1.8
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
+        for target in targets_hit:
+            self.stun(target, turns=2, name=name)
+        super().skill()
+
+    def has_taken_damage(self, attacker):
+        name = 'Blood Purification'
+        for e in [e for e in self.effects if e.name == 'Blood Purification']:
+            e.kill()
+        perc = 1 - self.hp / self.hp_max
+        crit_rate_up = 0.8
+        crit_damage_up = 1.5
+        if self.star >= 9:
+            crit_rate_up = 1.0
+            crit_damage_up = 2.0
+        self.crit_rate_up(self, up=crit_rate_up*perc, turns=None, name=name)
+        self.crit_damage_up(self, up=crit_damage_up*perc, turns=None, name=name)
+        super().has_taken_damage(attacker)
+
+    def has_been_healed(self, source):
+        name = 'Blood Purification'
+        for e in [e for e in self.effects if e.name == 'Blood Purification']:
+            e.kill()
+        perc = 1 - self.hp / self.hp_max
+        crit_rate_up = 0.8
+        crit_damage_up = 1.5
+        if self.star >= 9:
+            crit_rate_up = 1.0
+            crit_damage_up = 2.0
+        self.crit_rate_up(self, up=crit_rate_up*perc, turns=None, name=name)
+        self.crit_damage_up(self, up=crit_damage_up*perc, turns=None, name=name)
         super().has_been_healed(source)
 
 
@@ -2059,7 +2217,7 @@ class Luna(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2113,9 +2271,14 @@ class Luna(BaseHero):
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 0.85] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 1.45] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             self.try_silence(target, turns=2, chance=0.5, name=name)
+        if self.star >= 10 and targets_hit:
+            up = 0.8
+            self.damage_reduction_up(self, up=up, turns=2, name=name)
         super().skill()
 
 
@@ -2125,7 +2288,7 @@ class Mars(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2166,25 +2329,30 @@ class Mars(BaseHero):
 
     def skill(self):
         name = 'Eye Of Thunderstorm'
-        targets = targets_at_random(self.op_team.heroes, 3)
-        targets_hit = self.targets_hit(targets, name=name)
+        n_targets = 3
+        if self.star >= 10:
+            n_targets = 4
+        targets_hit = targets_at_random(self.op_team.heroes, n_targets)
 
         power = [self.atk * 1.48] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 1.7] * len(targets_hit)
         if self.hp <= 0.2 * self.hp_max:
-            power = [p + self.atk * 2.0 for p in power] # check skill behaviour (unclear)
+            power = [p + self.atk * 2.0 for p in power]
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        if self.star >= 10:
+            for target in targets_hit:
+                self.try_stun(target, turns=2, chance=0.6, name=name)
 
         name = 'Militant'
         up = 0.2
-        if self.star >= 8: ### add value
-            up = 0.25
         self.true_damage_up(self, up=up, turns=None, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Militant'
         up = 0.25
-        if self.star >= 8: ### add value
+        if self.star >= 8:
             up = 0.30
         self.skill_damage_up(self, up=up, turns=None, name=name)
         super().on_attack(target)
@@ -2193,16 +2361,16 @@ class Mars(BaseHero):
         if self.hp <= 0 and not self.has_revived:
             self.has_revived = True
             name = 'Miracle Of Resurrection'
-            heal_power = self.hp_max * 0.12 - self.hp # check skill behaviour (unclear)
+            heal_power = (self.hp_max * 0.12 - self.hp) / self.atk
             energy_up = 80
             damage_reduction_up = 0.8
-            if self.star >= 9: ### add value
-                heal_power = self.hp_max * 0.2 - self.hp # check skill behaviour (unclear)
+            if self.star >= 9:
+                heal_power = (self.hp_max * 0.15 - self.hp) / self.atk
                 energy_up = 100
                 damage_reduction_up = 0.8
             self.heal(self, power=heal_power, turns=1, name=name)
             self.energy_up(self, up=energy_up, name=name)
-            self.damage_reduction_up(self, up=damage_reduction_up, turns=1, name=name) # check skill behaviour (unclear)
+            self.damage_reduction_up(self, up=damage_reduction_up, turns=1, name=name)
         super().has_taken_damage(attacker)
 
 
@@ -2212,7 +2380,7 @@ class Martin(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2255,16 +2423,19 @@ class Martin(BaseHero):
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 0.94] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 1.7] * len(targets_hit)
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
-        for target in targets_hit:
-            dot_power = self.atk * 0.36
-            self.dot(target, power=dot_power, turns=3, name=name)
 
-        name = 'Shadow Blessing'
-        up = 2.0
-        if self.star >= 9:
-            up = 2.5
-        self.skill_damage_up(self, up=up, turns=None, name=name)
+        if self.star < 10:
+            dot_power = 0.36
+            for target in targets_hit:
+                self.dot(target, power=dot_power, turns=3, name=name)
+        elif targets_hit:
+            crit_rate_up = 0.15
+            crit_damage_up = 0.5
+            self.crit_rate_up(self, up=crit_rate_up, turns=3, name=name)
+            self.crit_damage_up(self, up=crit_damage_up, turns=3, name=name)
         super().skill()
 
 
@@ -2274,7 +2445,7 @@ class Medusa(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2309,6 +2480,11 @@ class Medusa(BaseHero):
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 1.02] * len(targets_hit)
+        if self.star >= 10:
+            power = [self.atk * 1.4] * len(targets_hit)
+            for i, h in enumerate(targets_hit):
+                if h.is_petrified():
+                    power[i] += self.atk * 0.8
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             self.crit_rate_down(target, down=0.24, turns=3, name=name)
@@ -2327,10 +2503,10 @@ class Medusa(BaseHero):
 
     def on_hit(self, attacker):
         name = 'Counter'
-        power = self.atk * 0.48
+        power = 0.48
         turns = 2
         if self.star >= 9:
-            power = self.atk * 0.72
+            power = 0.72
             turns = 1
         self.bleed(attacker, power=power, turns=turns, name=name)
         super().on_hit(attacker)
@@ -2342,7 +2518,7 @@ class Megaw(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2378,34 +2554,38 @@ class Megaw(BaseHero):
         self.crit_rate_up(self, up=crit_rate_up, turns=None,
                        name=name, passive=True)
 
-        name = 'Forest Scholar'
-        skill_damage_up = 0.24
-        if self.star >= 8: ### add values
-            skill_damage_up = 0.3
-        self.skill_damage_up(self, up=skill_damage_up, turns=None,
-                      name=name, passive=True)
-
     def skill(self):
         name = 'Sacred Heal'
-        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+        targets_hit = self.op_team.heroes
 
         hit_power = [self.atk * 0.54] * len(targets_hit)
-        heal_power = self.atk * 0.62
+        heal_power = 0.62
+        if self.star >= 10:
+            hit_power = [self.atk * 0.8] * len(targets_hit)
+            heal_power = 0.8
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         if targets_hit:
             for target in self.own_team.heroes:
                 self.heal(target, power=heal_power, turns=3, name=name)
         super().skill()
 
+    def on_attack(self, target):
+        name = 'Forest Scholar'
+        skill_damage_up = 0.24
+        if self.star >= 8:
+            skill_damage_up = 0.3
+        self.skill_damage_up(self, up=skill_damage_up, turns=None, name=name)
+        super().on_attack(target)
+
     def has_taken_damage(self, attacker):
         if self.hp <= self.hp_max * 0.5 and not self.has_triggered:
             self.has_triggered = True
             name = 'Forbidden Tome'
-            power = self.atk * 0.15
-            if self.star >= 9: ### add value
-                power = self.atk * 0.25
+            power = 0.56
+            if self.star >= 9:
+                power = 0.72
             for target in self.op_team.heroes:
-                self.dot(target, power=power, turns=3, name=name)
+                self.crit_mark(target, power=power, name=name)
         super().has_taken_damage(attacker)
 
 
@@ -2415,7 +2595,7 @@ class Minotaur(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2464,14 +2644,22 @@ class Minotaur(BaseHero):
         for i, h in enumerate(targets_hit):
             if h.type == HeroType.WARRIOR:
                 power[i] += self.atk * 1.2
+        if self.star >= 10:
+            power = [self.atk * 1.2] * len(targets_hit)
+            for i, h in enumerate(targets_hit):
+                if h.type == HeroType.WARRIOR:
+                    power[i] += self.atk * 1.8
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
+        if self.star >= 10 and targets_hit:
+            up = 0.12
+            self.damage_reduction_up(self, up=up, turns=3, name=name)
         super().skill()
 
     def on_hit(self, attacker):
         name = 'Rebirth'
-        power = self.atk * 0.32
+        power = 0.32
         if self.star >= 9:
-            power = self.atk * 0.4
+            power = 0.4
         self.heal(self, power=power, turns=1, name=name)
         super().on_hit(attacker)
 
@@ -2482,7 +2670,7 @@ class MonkeyKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2512,19 +2700,25 @@ class MonkeyKing(BaseHero):
         targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
         hit_power = [self.atk * 1.08] * len(targets_hit)
-        mark_power = self.atk * 2.64
+        mark_power = 2.64
+        if self.star >= 10:
+            hit_power = [self.atk * 1.2] * len(targets_hit)
+            mark_power = 2.8
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
             self.timed_mark(target, power=mark_power, turns=2, name=name)
+        if self.star >= 10 and targets_hit:
+            up = 0.1
+            self.damage_reduction_up(self, up=up, turns=2, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Cudgel Mastery'
         chance = 0.3
-        power = self.atk * 0.9
+        power = 0.9
         if self.star >= 7:
             chance = 0.35
-            power = self.atk * 1.2
+            power = 1.2
         self.try_petrify(target, turns=1, chance=chance, name=name)
         self.timed_mark(target, power=power, turns=2, name=name)
         super().on_attack(target)
@@ -2532,18 +2726,20 @@ class MonkeyKing(BaseHero):
     def on_hit(self, attacker):
         name = 'Fight Against Buddha'
         power = self.atk * 1.5
+        chance = 0.7
         if self.star >= 8:
-            power = self.atk * 1.85  ### add value
-        self.try_hit_passive(attacker, power=power, chance=0.7, name=name)
+            power = self.atk * 1.85
+            chance = 0.85
+        self.try_hit_passive(attacker, power=power, chance=chance, name=name)
         super().on_hit(attacker)
 
     def has_taken_damage(self, attacker):
         if self.hp <= 0 and not self.has_revived:
             self.has_revived = True
             name = 'Buddha Rebirth'
-            power = self.hp_max * 0.9
+            power = self.hp_max * 0.9 / self.atk
             if self.star >= 9:
-                power = self.hp_max
+                power = self.hp_max / self.atk
             self.heal(self, power=power, turns=1, name=name)
         super().has_taken_damage(attacker)
 
@@ -2554,7 +2750,7 @@ class Mulan(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.evasion.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2594,17 +2790,28 @@ class Mulan(BaseHero):
 
     def skill(self):
         name = 'Gale Cut'
-        targets = self.op_team.get_frontline()
+        targets = None
+        if self.star >= 10:
+            targets = targets_at_random(self.op_team.heroes, 4)
+        else:
+            targets = self.op_team.get_frontline()
         targets_hit = self.targets_hit(targets, name=name)
 
         hit_power = [self.atk * 1.33] * len(targets_hit)
         up = 0.4
+        turns = 2
+        if self.star >= 10:
+            hit_power = [self.atk * 1.8] * len(targets_hit)
+            up = 0.6
+            turns = 3
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
-        self.attack_up(self, up=up, turns=2, name=name) # check : attack boost before bleeds?
-        bleed_power = self.atk * 0.39
-        for target in targets_hit:
-            if target.type == HeroType.MAGE:
-                self.bleed(target, power=bleed_power, turns=2, name=name)
+        if targets_hit:
+            self.attack_up(self, up=up, turns=turns, name=name)
+        if self.star < 10:
+            bleed_power = 0.39
+            for target in targets_hit:
+                if target.type == HeroType.MAGE:
+                    self.bleed(target, power=bleed_power, turns=2, name=name)
         super().skill()
 
     def attack(self):
@@ -2635,7 +2842,7 @@ class NamelessKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2674,22 +2881,31 @@ class NamelessKing(BaseHero):
 
     def skill(self):
         name = 'Lightning Storm'
-        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+        targets_hit = None
+        if self.star >= 10:
+            targets_hit = self.op_team.heroes
+        else:
+            targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         hit_power = [self.atk * 0.84] * len(targets_hit)
-        mark_power = self.atk * 1.2
+        mark_power = 1.2
+        if self.star >= 10:
+            hit_power = [self.atk * 1.1] * len(targets_hit)
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
-            self.crit_mark(target, power=mark_power, name=name)
+            second_hit = False
+            if self.star >= 10:
+                second_hit = True
+            self.crit_mark(target, power=mark_power, second_hit=second_hit, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Sign Of Sun'
         up = 0.08
-        power = self.atk * 0.53
+        power = 0.53
         if self.star >= 8:
             up = 0.12
-            power = self.atk * 0.6
+            power = 0.6
         self.crit_rate_up(self, up=up, turns=3, name=name)
         self.crit_mark(target, power=power, name=name)
         super().on_attack(target)
@@ -2697,10 +2913,10 @@ class NamelessKing(BaseHero):
     def on_hit(self, attacker):
         name = 'Dragon Sphere'
         up = 0.1
-        power = self.atk * 0.53
+        power = 0.53
         if self.star >= 9:
             up = 0.15
-            power = self.atk * 0.56
+            power = 0.56
         self.crit_damage_up(self, up=up, turns=3, name=name)
         self.crit_mark(attacker, power=power, name=name)
         super().on_hit(attacker)
@@ -2712,7 +2928,7 @@ class Orphee(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2751,17 +2967,23 @@ class Orphee(BaseHero):
         targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
         power = [self.atk * 1.78] * len(targets_hit)
+        stun_chance = 0.72
+        if self.star >= 10:
+            power = [self.atk * 2] * len(targets_hit)
+            stun_chance = 0.4
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             if target.type == HeroType.WARRIOR:
-                self.try_stun(target, turns=2, chance=0.72, name=name)
+                self.try_stun(target, turns=2, chance=stun_chance, name=name)
+            elif target.type == HeroType.ASSASSIN and self.star >= 10:
+                self.try_silence(target, turns=2, chance=0.4, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = "Nature's Attendants"
         down = 5.1
-        if self.star >= 7: ### add value
-            down = 6.4
+        if self.star >= 7:
+            down = 7.5
         self.armor_break_down(target, down=down, turns=3, name=name)
         super().on_attack(target)
 
@@ -2772,7 +2994,7 @@ class Reaper(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2815,10 +3037,17 @@ class Reaper(BaseHero):
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 0.84] * len(targets_hit)
+        chance = 0.75
+        if self.star >= 10:
+            power = [self.atk * 1.8] * len(targets_hit)
+            chance = 1.0
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             if target.type == HeroType.WARRIOR:
-                self.try_silence(target, turns=2, chance=0.75, name=name)
+                self.try_silence(target, turns=2, chance=chance, name=name)
+        if self.star >= 10 and targets_hit:
+            up = 0.2
+            self.attack_up(self, up=up, turns=2, name=name)
         super().skill()
 
     def on_death(self, attacker):
@@ -2837,7 +3066,7 @@ class Ripper(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2876,22 +3105,31 @@ class Ripper(BaseHero):
     def skill(self):
         name = 'Venom Wind'
         targets = targets_at_random(self.op_team.get_backline(), 2)
-        targets_hit = self.targets_hit(targets, name=name)
+        targets_hit = None
+        if self.star >= 10:
+            targets_hit = targets
+        else:
+            targets_hit = self.targets_hit(targets, name=name)
 
         hit_power = [self.atk * 1.1] * len(targets_hit)
-        dot_power = self.atk * 0.45
+        dot_power = 0.45
+        if self.star >= 10:
+            hit_power = [self.atk * 1.5] * len(targets_hit)
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
             self.dot(target, power=dot_power, turns=5, name=name)
         for target in targets_hit:
             self.try_stun(target, turns=2, chance=0.45, name=name)
+        if self.star >= 10 and targets_hit:
+            up = 0.4
+            self.damage_reduction_up(self, up=up, turns=2, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Poison Dagger'
-        power = self.atk * 0.38
+        power = 0.38
         if self.star >= 8:
-            power = self.atk * 0.48
+            power = 0.48
         self.poison(target, power=power, turns=6, name=name)
         super().on_attack(target)
 
@@ -2899,9 +3137,9 @@ class Ripper(BaseHero):
         if self.hp <= self.hp_max * 0.5 and not self.has_triggered:
             self.has_triggered = True
             name = 'Poison Nova'
-            power = self.atk * 0.4
+            power = 0.4
             if self.star >= 9:
-                power = self.atk * 0.5
+                power = 0.5
             targets = targets_at_random(self.op_team.get_backline(), 2)
             for target in targets:
                 self.poison(target, power=power, turns=5, name=name)
@@ -2914,7 +3152,7 @@ class Rlyeh(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2961,17 +3199,22 @@ class Rlyeh(BaseHero):
         dodged = self.compute_dodge(enemy_target, name=name)
         if not dodged:
             dmg_power = self.atk * 1.71
-            heal_power = self.atk * 4
+            heal_power = 4
+            if self.star >= 10:
+                dmg_power = self.atk * 1.7
 
             self.hit_skill(enemy_target, power=dmg_power, name=name)
             self.heal(ally_target, power=heal_power, turns=1, name=name)
+            if self.star >= 10:
+                up = 0.2
+                self.damage_reduction_up(self, up=up, turns=3, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Blood Ceremony'
-        power = self.atk * 1.1
+        power = 1.1
         if self.star >= 7:
-            power = self.atk * 1.5
+            power = 1.5
         if any([not h.is_dead for h in self.own_team.heroes]):
             min_hp = min([h.hp for h in self.own_team.heroes if not h.is_dead])
             candidates = [h for h in self.own_team.heroes if h.hp == min_hp]
@@ -2982,9 +3225,9 @@ class Rlyeh(BaseHero):
 
     def on_hit(self, attacker):
         name = 'Deep Sea Sacrifice'
-        power = self.atk * 0.5
+        power = 0.5
         if self.star >= 8:
-            power = self.atk * 0.65
+            power = 0.65
         self.heal(self, power=power, turns=1, name=name)
         super().on_hit(attacker)
 
@@ -2995,7 +3238,7 @@ class Samurai(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3019,20 +3262,20 @@ class Samurai(BaseHero):
                          familiar_stats=familiar_stats)
 
         name = "Mind's eye"
-        attack_up = 0.3
         dodge_up = 0.25
+        attack_up = 0.3
         if self.star >= 8:
-            attack_up = 0.4
             dodge_up = 0.25
-        self.attack_up(self, up=attack_up, turns=None,
-                       name=name, passive=True)
+            attack_up = 0.4
         self.dodge_up(self, up=dodge_up, turns=None,
                    name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
 
     def attack(self):
         name = 'attack'
         power = self.atk
-        if self.star >= 9:  ### add value
+        if self.star >= 9:
             power = self.atk * 1.2
         min_enemy_hp = min([h.hp for h in self.op_team.heroes if not h.is_dead])
         candidates = [h for h in self.op_team.heroes if h.hp == min_enemy_hp]
@@ -3042,21 +3285,31 @@ class Samurai(BaseHero):
 
     def skill(self):
         name = 'Kifuu'
-        targets_hit = targets_at_random(self.op_team.get_backline(), 2)
+        targets = targets_at_random(self.op_team.get_backline(), 2)
+        targets_hit = None
+        if self.star >= 10:
+            targets_hit = self.targets_hit(targets, name=name)
+        else:
+            targets_hit = targets
 
         hit_power = [self.atk * 1.52] * len(targets_hit)
+        dot_power = 0.86
+        turns = 2
+        if self.star >= 10:
+            hit_power = [self.atk * 1.8] * len(targets_hit)
+            dot_power = 1.0
+            turns = 3
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
-            dot_power = self.atk * 0.86
-            self.dot(target, power=dot_power, turns=2, name=name)
+            self.dot(target, power=dot_power, turns=turns, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Flash'
-        power = self.atk * 0.6
-        if self.star >= 7: ### add value
-            power = self.atk * 0.8
-        self.try_bleed(target, power=power, turns=2, chance=0.5, name=name) # dot?
+        power = 0.3
+        if self.star >= 7:
+            power = 0.38
+        self.bleed(target, power=power, turns=2, name=name)
         super().on_attack(target)
 
 
@@ -3066,7 +3319,7 @@ class SawMachine(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3105,10 +3358,17 @@ class SawMachine(BaseHero):
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 1.15] * len(targets_hit)
+        chance = 0.75
+        if self.star >= 10:
+            power = [self.atk * 1.3] * len(targets_hit)
+            for i, h in enumerate(targets_hit):
+                if h.type == HeroType.CLERIC:
+                    power[i] += self.atk * 0.8
+            chance = 1.0
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
             if target.type == HeroType.CLERIC:
-                self.try_silence(target, turns=3, chance=0.75, name=name)
+                self.try_silence(target, turns=3, chance=chance, name=name)
         super().skill()
 
     def on_attack(self, target):
@@ -3123,7 +3383,7 @@ class SawMachine(BaseHero):
         up = 0.2
         if self.star >= 9:
             down = 0.15
-            up = 0.3
+            up = 0.25
         self.try_crit_rate_down(target, down=down, turns=3, chance=0.8, name=name)
         self.try_attack_up(self, up=up, turns=3, chance=0.8, name=name)
         super().on_attack(target)
@@ -3135,7 +3395,7 @@ class Scarlet(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3162,33 +3422,36 @@ class Scarlet(BaseHero):
         name = 'Poison Nova'
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
         hit_power = [self.atk * 0.42] * len(targets_hit)
-        poison_power = self.atk * 0.6
-        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)  # sequence order? same for all aoe damage
+        dot_power = 0.6
+        if self.star >= 10:
+            hit_power = [self.atk * 0.6] * len(targets_hit)
+            dot_power = 0.9
+        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for target in targets_hit:
-            self.dot(target, power=poison_power, turns=3, name=name)
+            self.dot(target, power=dot_power, turns=3, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Poison Touch'
-        power = self.atk * 0.7
+        power = 0.7
         if self.star >= 7:
-            power = self.atk * 0.8
+            power = 0.8
         self.try_poison(target, power=power, turns=2, chance=0.8, name=name)
         super().on_attack(target)
 
     def on_hit(self, attacker):
         name = 'Corrosive Skin'
-        power = self.atk * 0.54
+        power = 0.54
         if self.star >= 9:
-            power = self.atk * 0.62
+            power = 0.62
         self.try_poison(attacker, power=power, turns=3, chance=0.6, name=name)
         super().on_hit(attacker)
 
     def on_death(self, attacker):
         name = 'Malefic'
-        power = self.atk * 0.63
+        power = 0.63
         if self.star >= 8:
-            power = self.atk * 0.85
+            power = 0.85
         for h in self.op_team.heroes:
             self.poison(h, power=power, turns=3, name=name)
         super().on_death(attacker)
@@ -3200,7 +3463,7 @@ class ShuddeMell(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3226,7 +3489,7 @@ class ShuddeMell(BaseHero):
         name = 'Psychic Blast'
         hp_up = 0.22
         attack_up = 0.15
-        if self.star >= 7:  ### add value
+        if self.star >= 7:
             hp_up = 0.25
             attack_up = 0.2
         self.hp_up(self, up=hp_up, turns=None,
@@ -3236,11 +3499,12 @@ class ShuddeMell(BaseHero):
 
     def attack(self):
         name = 'attack'
-        n_targets = 3
         attack_power = self.atk * 0.7
+        n_targets = 3
+        chance = 0.4
         if self.star >= 8:
             n_targets = 4
-            attack_power = self.atk * 0.8
+            chance = 0.5
         targets = targets_at_random(self.op_team.heroes, n_targets)
         targets_hit = self.targets_hit(targets, name=name)
         power = [attack_power] * len(targets_hit)
@@ -3248,16 +3512,23 @@ class ShuddeMell(BaseHero):
         self.hit_attack(targets_hit, power, multi=True, name=name)
         for target in targets_hit:
             name = 'Dominoll'
-            self.try_silence(target, turns=2, chance=0.4, name=name)
+            self.try_silence(target, turns=2, chance=chance, name=name)
 
     def skill(self):
         name = 'Tentacle Attack'
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
         hit_power = [self.atk * 0.8] * len(targets_hit)
-        heal_power = self.atk * 1.2
+        heal_power = 1.2
+        if self.star >= 10:
+            hit_power = [self.atk] * len(targets_hit)
+            heal_power = 1.0
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         if targets_hit:
-            heal_targets = targets_at_random(self.own_team.heroes, 4)
+            heal_targets = None
+            if self.star >= 10:
+                heal_targets = self.own_team.heroes
+            else:
+                heal_targets = targets_at_random(self.own_team.heroes, 4)
             for target in heal_targets:
                 self.heal(target, power=heal_power, turns=4, name=name)
         super().skill()
@@ -3265,10 +3536,12 @@ class ShuddeMell(BaseHero):
     def on_hit(self, attacker):
         name = 'Creation'
         chance = 0.4
-        if self.star >= 9:  ### add value
-            chance = 0.5
+        up = 30
+        if self.star >= 9:
+            chance = 0.6
+            up = 40
         if rd.random() <= chance:
-            self.energy_up(self, up=30, name=name)
+            self.energy_up(self, up=up, name=name)
         super().on_hit(attacker)
 
 
@@ -3278,7 +3551,7 @@ class Tesla(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3318,25 +3591,29 @@ class Tesla(BaseHero):
         targets_hit = self.targets_hit(targets, name=name)
 
         power = [self.atk * 1.2] * len(targets_hit)
+        chance = 0.3
+        if self.star >= 10:
+            power = [self.atk * 1.4] * len(targets_hit)
+            chance = 0.5
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
-            self.try_stun(target, turns=1, chance=0.3, name=name) # turns?
+            self.try_stun(target, turns=2, chance=chance, name=name)
         super().skill()
 
     def on_attack(self, target):
-        name = 'Battlecry'
+        name = 'Flux'
         chance = 0.27
-        if self.star >= 9: ### add value
-            chance = 0.35
+        if self.star >= 9:
+            chance = 0.4
         self.try_stun(target, turns=2, chance=chance, name=name)
         super().on_attack(target)
 
     def on_death(self, attacker):
         name = 'Static Storm'
         chance = 0.34
-        if self.star >= 8: ### add value
-            chance = 0.42
-        for target in self.op_team.heroes:
+        if self.star >= 8:
+            chance = 0.43
+        for target in self.op_team.get_backline():
             self.try_stun(target, turns=2, chance=chance, name=name)
         super().on_death(attacker)
 
@@ -3347,7 +3624,7 @@ class TigerKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3386,21 +3663,29 @@ class TigerKing(BaseHero):
         targets_hit = self.targets_hit(self.op_team.heroes, name=name)
 
         power = [self.atk * 0.87] * len(targets_hit)
+        dot_power = 0.4
+        if self.star >= 10:
+            power = [self.atk * 1.6] * len(targets_hit)
+            dot_power = 0.8
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
-            dot_power = self.atk * 0.4
             self.dot(target, power=dot_power, turns=3, name=name)
+        if self.star >= 10 and targets_hit:
+            attack_up = 0.1
+            crit_rate_up = 0.1
+            self.attack_up(self, up=attack_up, turns=3, name=name)
+            self.crit_rate_up(self, up=crit_rate_up, turns=3, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Shield Breaker'
         down = 3.9
-        dot_power = self.atk * 0.26
-        if self.star >= 9: ### add value
-            down = 5.7
-            dot_power = self.atk * 0.35
-        self.armor_break_down(target, down=down, turns=6, name=name) # turns = None?
-        self.dot(target, power=dot_power, turns=6, name=name) # turns = None?
+        dot_power = 0.26
+        if self.star >= 9:
+            down = 4.5
+            dot_power = 0.32
+        self.armor_break_down(target, down=down, turns=6, name=name)
+        self.dot(target, power=dot_power, turns=6, name=name)
         super().on_attack(target)
 
 
@@ -3410,7 +3695,7 @@ class Ultima(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3460,25 +3745,30 @@ class Ultima(BaseHero):
         name = 'Stellar Detonation'
         targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
-        hit_power = [self.atk * 1.08] * len(targets_hit)
         speed_up = 30
+        hit_power = [self.atk * 1.08] * len(targets_hit)
+        if self.star >= 10:
+            hit_power = [self.atk * 1.2] * len(targets_hit)
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         if targets_hit:
             for target in self.own_team.get_backline():
                 self.speed_up(target, up=speed_up, turns=2, name=name)
+                if self.star >= 10:
+                    attack_up = 0.2
+                    self.attack_up(target, up=attack_up, turns=2, name=name)
         super().skill()
 
     def has_taken_damage(self, attacker):
         if self.hp <= self.hp_max * 0.5 and not self.has_triggered:
             self.has_triggered = True
             name = 'Celestial Opposition'
-            atk_up = 0.22
+            attack_up = 0.22
             armor_down = 7
             if self.star >= 9:
-                atk_up = 0.29
+                attack_up = 0.29
                 armor_down = 9
             for target in self.own_team.heroes:
-                self.attack_up(target, up=atk_up, turns=3, name=name)
+                self.attack_up(target, up=attack_up, turns=3, name=name)
             for target in self.op_team.heroes:
                 self.armor_down(target, down=armor_down, turns=3, name=name)
         super().has_taken_damage(attacker)
@@ -3490,7 +3780,7 @@ class Vegvisir(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3517,21 +3807,26 @@ class Vegvisir(BaseHero):
 
     def skill(self):
         name = 'Bipolar Reversal'
-        targets_hit = targets_at_random(self.op_team.heroes, 3)
+        n_targets = 3
+        chance = 0.36
+        if self.star >= 10:
+            n_targets = 4
+            chance = 0.48
+        targets_hit = targets_at_random(self.op_team.heroes, n_targets)
         hit_power = [self.atk * 1.58] * len(targets_hit)
         crits = self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         for i, target in enumerate(targets_hit):
             if crits[i]:
-                self.try_freeze(target, turns=2, chance=0.36, name=name)
+                self.try_freeze(target, turns=2, chance=chance, name=name)
         super().skill()
 
     def on_hit(self, attacker):
         name = 'Glacier Echo'
         crit_rate_up = 0.07
-        heal_power = self.atk * 0.3
-        if self.star >= 7:  ### add value
+        heal_power = 0.3
+        if self.star >= 7:
             crit_rate_up = 0.1
-            heal_power = self.atk * 0.4
+            heal_power = 0.4
         self.crit_rate_up(self, up=crit_rate_up, turns=3, name=name)
         self.heal(self, power=heal_power, turns=1, name=name)
         super().on_hit(attacker)
@@ -3542,11 +3837,11 @@ class Vegvisir(BaseHero):
             name = 'Willpower Awakening'
             atk_up = 0.6
             crit_rate_up = 0.3
-            heal_power = self.atk * 2.4
-            if self.star >= 9:  ### add value
-                atk_up = 0.6
-                crit_rate_up = 0.3
-                heal_power = self.atk * 2.4
+            heal_power = 2.4
+            if self.star >= 9:
+                atk_up = 0.8
+                crit_rate_up = 0.4
+                heal_power = 4
             self.attack_up(self, up=atk_up, turns=3, name=name)
             self.crit_rate_up(self, up=crit_rate_up, turns=3, name=name)
             self.heal(self, power=heal_power, turns=3, name=name)
@@ -3559,7 +3854,7 @@ class Verthandi(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3594,20 +3889,31 @@ class Verthandi(BaseHero):
 
     def skill(self):
         name = 'Goddess Benison'
-        targets_hit = self.targets_hit(self.op_team.heroes, name=name)
+        targets_hit = None
+        if self.star >= 10:
+            targets_hit = self.op_team.heroes
+        else:
+            targets_hit = self.targets_hit(self.op_team.heroes, name=name)
         hit_power = [self.atk * 0.69] * len(targets_hit)
-        heal_power = self.atk * 1.3
+        heal_power = 1.3
+        if self.star >= 10:
+            hit_power = [self.atk * 1.2] * len(targets_hit)
+            heal_power = 1.5
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         if targets_hit:
             for target in self.own_team.heroes:
                 self.heal(target, power=heal_power, turns=1, name=name)
+            if self.star >= 10:
+                for target in self.own_team.heroes:
+                    up = 0.2
+                    self.true_damage_up(target, up=up, turns=3, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Hallowed Pray'
-        power = self.atk * 0.7
+        power = 0.7
         if self.star >= 7:
-            power = self.atk * 1.15
+            power = 1.15
         self.heal(self, power=power, turns=1, name=name)
         super().on_attack(target)
 
@@ -3626,7 +3932,7 @@ class Vivienne(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3673,18 +3979,24 @@ class Vivienne(BaseHero):
         targets = targets_at_random(self.op_team.get_backline(), 2)
         targets_hit = self.targets_hit(targets, name=name)
         hit_power = [self.atk * 0.88] * len(targets_hit)
-        heal_power = self.atk * 0.8
+        heal_power = 0.8
+        if self.star >= 10:
+            heal_power = 1.1
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         if targets_hit:
             for target in self.own_team.heroes:
                 self.heal(target, power=heal_power, turns=3, name=name)
+            if self.star >= 10 and rd.random() <= 0.5:
+                this_heal_power = 1.0
+                for target in self.own_team.heroes:
+                    self.heal(target, power=this_heal_power, turns=1, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Largesse'
-        power = self.atk * 0.35
+        power = 0.35
         if self.star >= 7:
-            power = self.atk * 0.5
+            power = 0.5
         if not self.game.is_finished():
             target = targets_at_random(self.own_team.heroes, 1)[0]
             self.heal(target, power=power, turns=3, name=name)
@@ -3694,9 +4006,9 @@ class Vivienne(BaseHero):
         if self.hp <= self.hp_max * 0.3 and not self.has_triggered:
             self.has_triggered = True
             name = 'Brave Song'
-            power = self.atk * 0.95
+            power = 0.95
             if self.star >= 9:
-                power = self.atk * 1.35
+                power = 1.35
             for target in self.own_team.heroes:
                 self.heal(target, power=power, turns=1, name=name)
         super().has_taken_damage(attacker)
@@ -3708,7 +4020,7 @@ class Werewolf(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3731,7 +4043,7 @@ class Werewolf(BaseHero):
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats)
 
-        name = 'Roar'
+        name = 'War Wolf Roar'
         attack_up = 0.2
         hit_rate_up = 0.15
         if self.star >= 8:
@@ -3745,8 +4057,8 @@ class Werewolf(BaseHero):
     def attack(self):
         name = 'attack'
         power = self.atk * 1.1
-        if self.star >= 9:  ### add value
-            power = self.atk * 1.3
+        if self.star >= 9:
+            power = self.atk * 1.5
         target = targets_at_random(self.op_team.get_backline(), 1)[0]
         super().attack(target=target, power=power, name=name)
 
@@ -3759,20 +4071,25 @@ class Werewolf(BaseHero):
         dodged = self.compute_dodge(target, name=name)
         if not dodged:
             dmg_power = self.atk * 2.16
-
+            dot_power = 0.83
+            if self.star >= 10:
+                dmg_power = self.atk * 2.4
+                dot_power = 1.0
             self.hit_skill(target, power=dmg_power, name=name)
             if target.type == HeroType.MAGE:
-                dot_power = self.atk * 0.83
                 self.dot(target, power=dot_power, turns=2, name=name)
         super().skill()
 
     def on_attack(self, target):
         name = 'Fighting Spirit'
-        up = 0.3
-        if self.star >= 7: ### add value
-            up = 0.4
-        self.energy_down(target, down=40, name=name)
-        self.skill_damage_up(self, up=up, turns=None, name=name) # turns = None?
+        skill_damage_up = 0.3
+        drain = 40
+        if self.star >= 7:
+            skill_damage_up = 0.4
+            drain = 50
+        self.energy_down(target, down=drain, name=name)
+        self.energy_up(self, up=drain, name=name)
+        self.skill_damage_up(self, up=skill_damage_up, turns=None, name=name)
         super().on_attack(target)
 
 
@@ -3782,7 +4099,7 @@ class WolfRider(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3807,10 +4124,10 @@ class WolfRider(BaseHero):
 
         self.has_triggered = False
 
-        name = 'Roar'
+        name = 'War Wolf Roar'
         armor_up = 10
         hp_up = 0.3
-        if self.star >= 8:
+        if self.star >= 7:
             armor_up = 12
             hp_up = 0.4
         self.armor_up(self, up=armor_up, turns=None,
@@ -3823,17 +4140,26 @@ class WolfRider(BaseHero):
         targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
         power = [self.atk * 1.08] * len(targets_hit)
+        chance = 0.34
+        if self.star >= 10:
+            power = [self.atk * 1.5] * len(targets_hit)
+            chance = 0.48
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
         for target in targets_hit:
-            self.try_stun(target, turns=2, chance=0.34, name=name)
+            self.try_stun(target, turns=2, chance=chance, name=name)
         super().skill()
+
+    def on_death(self, attacker):
+        for h in self.own_team.heroes:
+            for e in [e for e in h.effects if e.name == 'Attack Command' and e.source.str_id == self.str_id]:
+                e.kill()
 
     def has_taken_damage(self, attacker):
         if self.hp <= self.hp_max * 0.5 and not self.has_triggered:
             self.has_triggered = True
             name = 'Bloody Ascent'
             up = 0.35
-            if self.star >= 9: ### add value
+            if self.star >= 9:
                 up = 0.45
             self.damage_reduction_up(self, up=up, turns=3, name=name)
         super().has_taken_damage(attacker)
@@ -3845,7 +4171,7 @@ class Wolnir(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O2, helmet=Helmet.O2, weapon=Weapon.O2, pendant=Pendant.O2,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
                  rune=Rune.hp.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3884,18 +4210,117 @@ class Wolnir(BaseHero):
         targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
 
         power = [self.atk * 1.14] * len(targets_hit)
-        heal_power = self.atk * 0.95
+        heal_power = 0.95
+        if self.star >= 10:
+            power = [self.atk * 1.6] * len(targets_hit)
+            heal_power = 2.0
         self.hit_skill(targets_hit, power=power, multi=True, name=name)
-        self.heal(self, power=heal_power, turns=1, name=name)
+        if self.star >= 10:
+            for target in targets_hit:
+                self.try_freeze(target, turns=2, chance=0.3, name=name)
+        if targets_hit:
+            self.heal(self, power=heal_power, turns=1, name=name)
         super().skill() 
 
     def on_attack(self, target):
         name = 'Bloodthirst'
-        power = self.atk * 0.36
-        if self.star >= 9: ### add value
-            power = self.atk * 0.45
+        power = 0.36
+        if self.star >= 9:
+            power = 0.48
         self.heal(self, power=power, turns=1, name=name)
         super().on_attack(target)
+
+
+class Xexanoth(BaseHero):
+    name = HeroName.XEXANOTH
+    faction = Faction.HELL
+    type = HeroType.ASSASSIN
+
+    def __init__(self, star=10, tier=6, level=250,
+                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 443123.1
+        self.atk = 26223.0
+        self.armor = 11
+        self.speed = 1177
+        if self.star == 9:
+            self.hp = 200000  # should depend on the level
+            self.atk = 14000  # should depend on the level
+            self.armor = 10  # should depend on the level
+            self.speed = 985  # should depend on the level
+        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats)
+
+        name = 'Rebellion'
+        silence_immune_up = 1.0
+        self.silence_immune_up(self, up=silence_immune_up, turns=None,
+                               name=name, passive=True)
+
+        name = 'Weak Point Stealing'
+        speed_up = 35
+        if self.star >= 8:
+            speed_up = 40
+        self.speed_up(self, up=speed_up, turns=None,
+                            name=name, passive=True)
+
+        name = 'Death Focus'
+        hp_up = 0.25
+        skill_damage_up = 0.4
+        if self.star >= 9:
+            hp_up = 0.3
+            skill_damage_up = 0.5
+        self.hp_up(self, up=hp_up, turns=None,
+                            name=name, passive=True)
+        self.skill_damage_up(self, up=skill_damage_up, turns=None,
+                            name=name, passive=True)
+
+    def attack(self):
+        name = 'attack'
+        attack_power = self.atk * 0.9
+        if self.star >= 7:
+            attack_power = self.atk * 1.1
+        targets = targets_at_random(self.op_team.heroes, 2)
+        targets_hit = self.targets_hit(targets, name=name)
+        power = [attack_power] * len(targets_hit)
+
+        self.hit_attack(targets_hit, power, multi=True, name=name)
+        for target in targets_hit:
+            name = 'Rebellion'
+            self.try_silence(target, turns=2, chance=0.6, name=name)
+
+    def skill(self):
+        name = 'Betrayal Provocation'
+        target = targets_at_random(self.op_team.get_frontline(), 1)[0]
+        dodged = self.compute_dodge(target, name=name)
+        if not dodged:
+            dmg_power = self.atk * 2.5
+            armor_down = 5
+            if self.star >= 10:
+                dmg_power = self.atk * 3
+                extra_power = min(target.hp_max * 0.25, self.atk * 4)
+                dmg_power += extra_power
+                armor_down = 7
+            self.hit_skill(target, power=dmg_power, name=name)
+            self.armor_down(target, down=armor_down, turns=2, name=name)
+        super().skill()
+
+    def on_hit(self, attacker):
+        name = 'Weak Point Stealing'
+        drain = 8
+        if self.star >= 8:
+            drain = 10
+        self.energy_down(attacker, down=drain, name=name)
+        self.energy_up(self, up=drain, name=name)
+        super().on_hit(attacker)
 
 
 @dataclass
@@ -3913,6 +4338,7 @@ class Hero:
     grand = Grand
     hester = Hester
     lexar = Lexar
+    lindberg = Lindberg
     luna = Luna
     mars = Mars
     martin = Martin
@@ -3939,48 +4365,51 @@ class Hero:
     werewolf = Werewolf
     wolf_rider = WolfRider
     wolnir = Wolnir
+    xexanoth = Xexanoth
 
 
-hero_from_request = { # ADD 2 NEW HEROES
+hero_from_request = {
     'EMPTY': Hero.empty,
-    'ABYSS_LORD': Hero.abyss_lord, # 10*
-    'ADEN': Hero.aden, # 10*
-    'BLOOD_TOOTH': Hero.blood_tooth, # 10*
-    'CENTAUR': Hero.centaur, # 10*
-    'CHESSIA': Hero.chessia, # 10*
-    'DZIEWONA': Hero.dziewona, # 10*
+    'ABYSS_LORD': Hero.abyss_lord,
+    'ADEN': Hero.aden,
+    'BLOOD_TOOTH': Hero.blood_tooth,
+    'CENTAUR': Hero.centaur,
+    'CHESSIA': Hero.chessia,
+    'DZIEWONA': Hero.dziewona,
     'FOREST_HEALER': Hero.forest_healer,
-    'FREYA': Hero.freya, # 10*
-    'GERALD': Hero.gerald, # 10*
-    'GRAND': Hero.grand, # 10*
-    'HESTER': Hero.hester, # 10* new
-    'LEXAR': Hero.lexar, # 10*
-    'LUNA': Hero.luna, # 10*
-    'MARS': Hero.mars, # 10*
-    'MARTIN': Hero.martin, # 10*
-    'MEDUSA': Hero.medusa, # 10*
-    'MEGAW': Hero.megaw, # 10*
-    'MINOTAUR': Hero.minotaur, # 10*
-    'MONKEY_KING': Hero.monkey_king, # 10*
-    'MULAN': Hero.mulan, # 10*
-    'NAMELESS_KING': Hero.nameless_king, # 10*
-    'ORPHEE': Hero.orphee, # 10*
-    'REAPER': Hero.reaper, # 10*
-    'RIPPER': Hero.ripper, # 10*
-    'RLYEH': Hero.rlyeh, # 10*
-    'SAMURAI': Hero.samurai, # 10*
-    'SAW_MACHINE': Hero.saw_machine, # 10*
-    'SCARLET': Hero.scarlet, # 10*
-    'SHUDDE_M_ELL': Hero.shudde_m_ell, # 10*
-    'TESLA': Hero.tesla, # 10*
-    'TIGER_KING': Hero.tiger_king, # 10*
-    'ULTIMA': Hero.ultima, # 10*
-    'VEGVISIR': Hero.vegvisir, # 10*
-    'VERTHANDI': Hero.verthandi, # 10*
-    'VIVIENNE': Hero.vivienne, # 10*
-    'WEREWOLF': Hero.werewolf, # 10*
-    'WOLF_RIDER': Hero.wolf_rider, # 10*
-    'WOLNIR': Hero.wolnir # 10* new
+    'FREYA': Hero.freya,
+    'GERALD': Hero.gerald,
+    'GRAND': Hero.grand,
+    'HESTER': Hero.hester,
+    'LEXAR': Hero.lexar,
+    'LINDBERG': Hero.lindberg,
+    'LUNA': Hero.luna,
+    'MARS': Hero.mars,
+    'MARTIN': Hero.martin,
+    'MEDUSA': Hero.medusa,
+    'MEGAW': Hero.megaw,
+    'MINOTAUR': Hero.minotaur,
+    'MONKEY_KING': Hero.monkey_king,
+    'MULAN': Hero.mulan,
+    'NAMELESS_KING': Hero.nameless_king,
+    'ORPHEE': Hero.orphee,
+    'REAPER': Hero.reaper,
+    'RIPPER': Hero.ripper,
+    'RLYEH': Hero.rlyeh,
+    'SAMURAI': Hero.samurai,
+    'SAW_MACHINE': Hero.saw_machine,
+    'SCARLET': Hero.scarlet,
+    'SHUDDE_M_ELL': Hero.shudde_m_ell,
+    'TESLA': Hero.tesla,
+    'TIGER_KING': Hero.tiger_king,
+    'ULTIMA': Hero.ultima,
+    'VEGVISIR': Hero.vegvisir,
+    'VERTHANDI': Hero.verthandi,
+    'VIVIENNE': Hero.vivienne,
+    'WEREWOLF': Hero.werewolf,
+    'WOLF_RIDER': Hero.wolf_rider,
+    'WOLNIR': Hero.wolnir,
+    'XEXANOTH': Hero.xexanoth
 }
 
 
@@ -4018,6 +4447,16 @@ class Team:
                                      name=name, passive=True)
                     h.crit_rate_up(h, up=crit_rate_up, turns=None,
                                    name=name, passive=True)
+
+        for h in self.heroes:
+            if isinstance(h, WolfRider):
+                name = 'Attack Command'
+                up = 0.2
+                if h.star >= 8:
+                    up = 0.3
+                for h2 in self.heroes:
+                    h.damage_to_stunned_up(h2, up=up, turns=None,
+                                        name=name, passive=True)
 
         for h in self.heroes:
             h.hp_max = h.hp

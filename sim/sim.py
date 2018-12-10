@@ -348,7 +348,7 @@ class Game:
 
         # familiars
         pet_turns = []
-        for pet in (self.attack_team.pet, self.defense_team.pet): # which pet order?
+        for pet in (self.attack_team.pet, self.defense_team.pet):
             if not self.is_finished():
                 self.actions = []
                 pet_playing = False

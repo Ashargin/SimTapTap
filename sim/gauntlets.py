@@ -6,11 +6,11 @@ from sim.models import Faction
 
 heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
-        Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, Hero.monkey_king, 
-        Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.reaper, Hero.ripper, Hero.rlyeh, 
-        Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
+        Hero.lindberg, Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, 
+        Hero.monkey_king, Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.reaper, Hero.ripper, 
+        Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
         Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
-        Hero.werewolf, Hero.wolf_rider, Hero.wolnir]
+        Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 alliance = [h for h in heroes if h.faction == Faction.ALLIANCE]
 horde = [h for h in heroes if h.faction == Faction.HORDE]
 elf = [h for h in heroes if h.faction == Faction.ELF]
@@ -171,7 +171,9 @@ def generate_semirandom_sample(n_sample=10000, n_tanks=1, n_healers=1, enemy=Fal
         pickle.dump(sample, file)
 
 
-def generate_all_semirandom_samples(n_sample=10000):
+def generate_all_samples(n_sample=10000):
+    generate_random_sample(n_sample=n_sample)
+    generate_random_sample(n_sample=n_sample, enemy=True)
     for n_tanks in (0, 1, 2):
         for n_healers in (0, 1, 2):
             generate_semirandom_sample(n_sample=n_sample, n_tanks=n_tanks, n_healers=n_healers)
@@ -210,18 +212,9 @@ def random_gauntlet_from_hero(hero, pos, length=10000):
     return gauntlet
 
 
-def semirandom_gauntlet_from_hero(hero, pos, length=10000):
+def semirandom_gauntlet_from_hero(hero, pos, n_tanks=1, n_healers=1, length=10000):
     sample = None
-    with open('data/semirandom_sample.pkl', 'rb') as file:
-        sample = pickle.load(file)
-    gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, pos=pos)
-
-    return gauntlet
-
-
-def semirandom_gauntlet_notank_from_hero(hero, pos, length=10000):
-    sample = None
-    with open('data/semirandom_sample_notank.pkl', 'rb') as file:
+    with open('data/semirandom_sample_{}T{}H.pkl'.format(n_tanks, n_healers), 'rb') as file:
         sample = pickle.load(file)
     gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, pos=pos)
 
@@ -237,18 +230,9 @@ def random_gauntlet(length=10000):
     return gauntlet
 
 
-def semirandom_gauntlet(length=10000):
+def semirandom_gauntlet(n_tanks=1, n_healers=1, length=10000):
     sample = None
-    with open('data/semirandom_sample_enemy.pkl', 'rb') as file:
-        sample = pickle.load(file)
-    gauntlet = gauntlet_from_sample(sample, length=length)
-
-    return gauntlet
-
-
-def semirandom_gauntlet_notank(length=10000):
-    sample = None
-    with open('data/semirandom_sample_notank_enemy.pkl', 'rb') as file:
+    with open('data/semirandom_sample_{}T{}H_enemy.pkl'.format(n_tanks, n_healers), 'rb') as file:
         sample = pickle.load(file)
     gauntlet = gauntlet_from_sample(sample, length=length)
 

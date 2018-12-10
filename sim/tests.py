@@ -1,5 +1,5 @@
 from sim.gauntlets import random_gauntlet_from_hero, semirandom_gauntlet_from_hero, \
-                            semirandom_gauntlet_notank_from_hero, random_gauntlet
+                            random_gauntlet, semirandom_gauntlet
 from sim.sim import GauntletSim
 from sim.heroes import DummyTeam
 
@@ -12,6 +12,12 @@ def friend_boss_test(hero, pos, n_sim=1000):
     damage = sim.team_damage
 
     return sim, damage
+
+
+def main_friend_boss_test(hero, n_sim=100):
+    for pos in [1, 2, 3, 4, 5, 6]:
+        sim, damage = friend_boss_test(hero, pos=pos, n_sim=n_sim)
+        print('Pos : {}, damage : {}'.format(pos, damage))
 
 
 def guild_boss_test(hero, pos, n_sim=1000):

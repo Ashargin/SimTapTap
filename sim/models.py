@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
+import random as rd
 
 from sim.utils import targets_at_random
 
@@ -79,11 +80,13 @@ class HeroName(Enum):
     NAMELESS_KING = 'Nameless_King'
     VERTHANDI = 'Verthandi'
     MARS = 'Mars'
+    LINDBERG = 'Lindberg'
 
     DARK_JUDGE = 'Dark_Judge'
     FREYA = 'Freya'
     MONKEY_KING = 'Monkey_King'
     CHESSIA = 'Chessia'
+    XEXANOTH = 'Xexanoth'
 
 
 ## Equipment
@@ -755,6 +758,7 @@ pendant_from_request = {
 class BaseRune:
     atk = 0
     hp = 0
+    speed = 0
     atk_bonus = 0
     hp_bonus = 0
     armor_break = 0
@@ -1393,100 +1397,260 @@ class CritDamageRuneR2(BaseRune):
     crit_damage = 0.44
 
 
+class VitalityRuneB1(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneB2(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneG1(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneG2(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneY1(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneY2(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneY3(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneP1(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneP2(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneP3(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneO1(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneO2(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneO3(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneO4(BaseRune):
+    hp = 6920
+    atk_bonus = 0.035
+    hp_bonus = 0.2
+
+
+class VitalityRuneR1(BaseRune):
+    hp = 0
+    atk_bonus = 0
+    hp_bonus = 0
+
+
+class VitalityRuneR2(BaseRune):
+    hp = 8960
+    atk_bonus = 0.06
+    hp_bonus = 0.25
+
+
+class SpeedRuneB1(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneB2(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneG1(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneG2(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneY1(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneY2(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneY3(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneP1(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneP2(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneP3(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneO1(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneO2(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneO3(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneO4(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneR1(BaseRune):
+    speed = 0
+    hp_bonus = 0
+
+
+class SpeedRuneR2(BaseRune):
+    speed = 70
+    hp_bonus = 0.145
+
+
 class HpRuneB1(BaseRune):
     hp = 450
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneB2(BaseRune):
     hp = 582
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneG1(BaseRune):
     hp = 880
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneG2(BaseRune):
     hp = 1120
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneY1(BaseRune):
     hp = 1480
-    atk_bonus = 0
     hp_bonus = 0.07
 
 
 class HpRuneY2(BaseRune):
     hp = 1960
-    atk_bonus = 0
     hp_bonus = 0.08
 
 
 class HpRuneY3(BaseRune):
     hp = 2440
-    atk_bonus = 0
     hp_bonus = 0.09
 
 
 class HpRuneP1(BaseRune):
     hp = 0
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneP2(BaseRune):
     hp = 0
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneP3(BaseRune):
     hp = 4120
-    atk_bonus = 0
     hp_bonus = 0.15
 
 
 class HpRuneO1(BaseRune):
     hp = 0
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneO2(BaseRune):
     hp = 0
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneO3(BaseRune):
     hp = 6120
-    atk_bonus = 0
     hp_bonus = 0.22
 
 
 class HpRuneO4(BaseRune):
     hp = 0
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneR1(BaseRune):
     hp = 0
-    atk_bonus = 0
     hp_bonus = 0
 
 
 class HpRuneR2(BaseRune):
     hp = 8960
-    atk_bonus = 0.06
-    hp_bonus = 0.25
+    hp_bonus = 0.29
 
 
 @dataclass
@@ -1770,6 +1934,86 @@ crit_damage_rune_from_request = {
 
 
 @dataclass
+class VitalityRune:
+    B1 = VitalityRuneB1()
+    B2 = VitalityRuneB2()
+    G1 = VitalityRuneG1()
+    G2 = VitalityRuneG2()
+    Y1 = VitalityRuneY1()
+    Y2 = VitalityRuneY2()
+    Y3 = VitalityRuneY3()
+    P1 = VitalityRuneP1()
+    P2 = VitalityRuneP2()
+    P3 = VitalityRuneP3()
+    O1 = VitalityRuneO1()
+    O2 = VitalityRuneO2()
+    O3 = VitalityRuneO3()
+    O4 = VitalityRuneO4()
+    R1 = VitalityRuneR1()
+    R2 = VitalityRuneR2()
+
+
+vitality_rune_from_request = {
+    'BLUE1': VitalityRune.B1,
+    'BLUE2': VitalityRune.B2,
+    'GREEN1': VitalityRune.G1,
+    'GREEN2': VitalityRune.G2,
+    'YELLOW1': VitalityRune.Y1,
+    'YELLOW2': VitalityRune.Y2,
+    'YELLOW3': VitalityRune.Y3,
+    'PURPLE1': VitalityRune.P1,
+    'PURPLE2': VitalityRune.P2,
+    'PURPLE3': VitalityRune.P3,
+    'ORANGE1': VitalityRune.O1,
+    'ORANGE2': VitalityRune.O2,
+    'ORANGE3': VitalityRune.O3,
+    'ORANGE4': VitalityRune.O4,
+    'RED1': VitalityRune.R1,
+    'RED2': VitalityRune.R2
+}
+
+
+@dataclass
+class SpeedRune:
+    B1 = SpeedRuneB1()
+    B2 = SpeedRuneB2()
+    G1 = SpeedRuneG1()
+    G2 = SpeedRuneG2()
+    Y1 = SpeedRuneY1()
+    Y2 = SpeedRuneY2()
+    Y3 = SpeedRuneY3()
+    P1 = SpeedRuneP1()
+    P2 = SpeedRuneP2()
+    P3 = SpeedRuneP3()
+    O1 = SpeedRuneO1()
+    O2 = SpeedRuneO2()
+    O3 = SpeedRuneO3()
+    O4 = SpeedRuneO4()
+    R1 = SpeedRuneR1()
+    R2 = SpeedRuneR2()
+
+
+speed_rune_from_request = {
+    'BLUE1': SpeedRune.B1,
+    'BLUE2': SpeedRune.B2,
+    'GREEN1': SpeedRune.G1,
+    'GREEN2': SpeedRune.G2,
+    'YELLOW1': SpeedRune.Y1,
+    'YELLOW2': SpeedRune.Y2,
+    'YELLOW3': SpeedRune.Y3,
+    'PURPLE1': SpeedRune.P1,
+    'PURPLE2': SpeedRune.P2,
+    'PURPLE3': SpeedRune.P3,
+    'ORANGE1': SpeedRune.O1,
+    'ORANGE2': SpeedRune.O2,
+    'ORANGE3': SpeedRune.O3,
+    'ORANGE4': SpeedRune.O4,
+    'RED1': SpeedRune.R1,
+    'RED2': SpeedRune.R2
+}
+
+
+@dataclass
 class HpRune:
     B1 = HpRuneB1()
     B2 = HpRuneB2()
@@ -1819,6 +2063,8 @@ class Rune:
     armor_break = ArmorBreakRune
     skill_damage = SkillDamageRune
     crit_damage = CritDamageRune
+    vitality = VitalityRune
+    speed = SpeedRune
     hp = HpRune
 
 
@@ -1831,6 +2077,8 @@ rune_from_request = {
     'ARMOR_BREAK': armor_break_rune_from_request,
     'SKILL_DAMAGE': skill_damage_rune_from_request,
     'CRIT_DAMAGE': crit_damage_rune_from_request,
+    'VITALITY': vitality_rune_from_request,
+    'SPEED': speed_rune_from_request,
     'HP': hp_rune_from_request
 }
 
@@ -1854,6 +2102,7 @@ class BaseArtifact:
     skill_damage_if_alliance = 0
     skill_damage_if_elf = 0
     skill_damage_if_undead = 0
+    skill_damage_if_heaven = 0
     skill_damage_if_hell = 0
     crit_rate_if_horde = 0
     crit_rate_if_elf = 0
@@ -2758,6 +3007,42 @@ class AncientVowsO6(BaseArtifact):
     skill_damage_if_elf = 0.25
 
 
+class FineSnowDanceO1(BaseArtifact):
+    damage_to_warriors = 0.24
+    atk = 720
+    crit_rate_if_elf = 0.09
+
+
+class FineSnowDanceO2(BaseArtifact):
+    damage_to_warriors = 0
+    atk = 0
+    crit_rate_if_elf = 0
+
+
+class FineSnowDanceO3(BaseArtifact):
+    damage_to_warriors = 0
+    atk = 0
+    crit_rate_if_elf = 0
+
+
+class FineSnowDanceO4(BaseArtifact):
+    damage_to_warriors = 0
+    atk = 0
+    crit_rate_if_elf = 0
+
+
+class FineSnowDanceO5(BaseArtifact):
+    damage_to_warriors = 0
+    atk = 0
+    crit_rate_if_elf = 0
+
+
+class FineSnowDanceO6(BaseArtifact):
+    damage_to_warriors = 0.42
+    atk = 1280
+    crit_rate_if_elf = 0.09
+
+
 class SoulTorrentO1(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
@@ -2828,6 +3113,42 @@ class GiftOfCreationO6(BaseArtifact):
     hp_bonus = 0.1
     damage_reduction = 0.15
     true_damage_if_heaven = 0.12
+
+
+class AnonymousGunO1(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_heaven = 0
+
+
+class AnonymousGunO2(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_heaven = 0
+
+
+class AnonymousGunO3(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_heaven = 0
+
+
+class AnonymousGunO4(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_heaven = 0
+
+
+class AnonymousGunO5(BaseArtifact):
+    attack_bonus = 0
+    hit_rate = 0
+    skill_damage_if_heaven = 0
+
+
+class AnonymousGunO6(BaseArtifact):
+    attack_bonus = 0.12
+    hit_rate = 0.08
+    skill_damage_if_heaven = 0.25
 
 
 class EternalCurseO1(BaseArtifact):
@@ -3237,6 +3558,26 @@ ancient_vows_artifact_from_request = {
 
 
 @dataclass
+class FirstSnowDance:
+    O1 = FirstSnowDanceO1()
+    O2 = FirstSnowDanceO2()
+    O3 = FirstSnowDanceO3()
+    O4 = FirstSnowDanceO4()
+    O5 = FirstSnowDanceO5()
+    O6 = FirstSnowDanceO6()
+
+
+first_snow_dance_artifact_from_request = {
+    1: FirstSnowDance.O1,
+    2: FirstSnowDance.O2,
+    3: FirstSnowDance.O3,
+    4: FirstSnowDance.O4,
+    5: FirstSnowDance.O5,
+    6: FirstSnowDance.O6
+}
+
+
+@dataclass
 class SoulTorrent:
     O1 = SoulTorrentO1()
     O2 = SoulTorrentO2()
@@ -3277,6 +3618,26 @@ gift_of_creation_artifact_from_request = {
 
 
 @dataclass
+class AnonymousGun:
+    O1 = AnonymousGunO1()
+    O2 = AnonymousGunO2()
+    O3 = AnonymousGunO3()
+    O4 = AnonymousGunO4()
+    O5 = AnonymousGunO5()
+    O6 = AnonymousGunO6()
+
+
+anonymous_gun_artifact_from_request = {
+    1: AnonymousGun.O1,
+    2: AnonymousGun.O2,
+    3: AnonymousGun.O3,
+    4: AnonymousGun.O4,
+    5: AnonymousGun.O5,
+    6: AnonymousGun.O6
+}
+
+
+@dataclass
 class EternalCurse:
     O1 = EternalCurseO1()
     O2 = EternalCurseO2()
@@ -3313,8 +3674,10 @@ class Artifact:
     primeval_soul = PrimevalSoul
     queens_crown = QueensCrown
     ancient_vows = AncientVows
+    first_snow_dance = FirstSnowDance
     soul_torrent = SoulTorrent
     gift_of_creation = GiftOfCreation
+    anonymous_gun = AnonymousGun
     eternal_curse = EternalCurse
 
 
@@ -3334,8 +3697,10 @@ artifact_from_request = {
     'PRIMEVAL_SOUL': primeval_soul_artifact_from_request,
     'QUEENS_CROWN': queens_crown_artifact_from_request,
     'ANCIENT_VOWS': ancient_vows_artifact_from_request,
+    'FIRST_SNOW_DANCE': first_snow_dance_from_request,
     'SOUL_TORRENT': soul_torrent_artifact_from_request,
     'GIFT_OF_CREATION': gift_of_creation_artifact_from_request,
+    'ANONYMOUS_GUN': anonymous_gun_artifact_from_request,
     'ETERNAL_CURSE': eternal_curse_artifact_from_request
 }
 
@@ -3548,7 +3913,7 @@ class BaseEffect:
         global effect_id
         self.id = effect_id
         self.percentage = False
-        if self.name == 'War Frenzy':
+        if self.name in ('War Frenzy', 'Blood Purification'):
             self.percentage = True
         effect_id += 1
 
@@ -3599,16 +3964,15 @@ class Dot(BaseEffect):
 
     def tick(self):
         if not self.holder.is_dead:
-            damage_components = self.source.compute_damage(self.holder, self.power)
+            power = self.power * self.source.atk
+            damage_components = self.source.compute_damage(self.holder, power)
             dmg = damage_components['Total damage']
-            crit = True if damage_components['Crit damage'] > 0 else False
-            crit_str = ', crit' if crit else ''
 
             self.holder.hp -= dmg
             self.turns -= 1
             action = Action.dot(self.source, self.holder, damage_components, self.turns, self.name)
-            action.text = '\n{} takes {} damage (dot from {} ({}{}), {} turns left)' \
-                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+            action.text = '\n{} takes {} damage (dot from {} ({}), {} turns left)' \
+                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, self.turns)
             self.source.game.actions.append(action)
 
             self.source.stats['damage_by_skill'][self.name] += dmg
@@ -3631,27 +3995,28 @@ class Heal(BaseEffect):
 
     def tick(self):
         if not self.holder.is_dead:
-            effective_healing = min(self.power, self.holder.hp_max - self.holder.hp)
+            power = self.power * self.source.atk
+            effective_healing = min(power, self.holder.hp_max - self.holder.hp)
             self.holder.hp += effective_healing
             self.source.stats['effective_healing_by_skill'][self.name] += effective_healing
             self.source.stats['effective_healing_by_target'][self.holder.str_id] += effective_healing
             self.holder.stats['effective_healing_taken_by_skill'][self.name] += effective_healing
             self.holder.stats['effective_healing_taken_by_source'][self.source.str_id] += effective_healing
-            self.source.stats['healing_by_skill'][self.name] += self.power
-            self.source.stats['healing_by_target'][self.holder.str_id] += self.power
-            self.holder.stats['healing_taken_by_skill'][self.name] += self.power
-            self.holder.stats['healing_taken_by_source'][self.source.str_id] += self.power
+            self.source.stats['healing_by_skill'][self.name] += power
+            self.source.stats['healing_by_target'][self.holder.str_id] += power
+            self.holder.stats['healing_taken_by_skill'][self.name] += power
+            self.holder.stats['healing_taken_by_source'][self.source.str_id] += power
 
             self.turns -= 1
             if self.hot:
-                action = Action.hot(self.source, self.holder, self.power, self.turns, self.name)
+                action = Action.hot(self.source, self.holder, power, self.turns, self.name)
                 action.text = '\n{} is healed {} by {} ({}, {} turns left)' \
-                    .format(self.holder.str_id, round(self.power),
+                    .format(self.holder.str_id, round(power),
                             self.source.str_id, self.name, self.turns)
             else:
-                action = Action.heal(self.source, self.holder, self.power, self.name)
+                action = Action.heal(self.source, self.holder, power, self.name)
                 action.text = '\n{} is healed {} by {} ({})' \
-                    .format(self.holder.str_id, round(self.power),
+                    .format(self.holder.str_id, round(power),
                             self.source.str_id, self.name)
             self.source.game.actions.append(action)
 
@@ -3669,16 +4034,15 @@ class Poison(BaseEffect):
 
     def tick(self):
         if not self.holder.is_dead:
-            damage_components = self.source.compute_damage(self.holder, self.power)
+            power = self.power * self.source.atk
+            damage_components = self.source.compute_damage(self.holder, power)
             dmg = damage_components['Total damage']
-            crit = True if damage_components['Crit damage'] > 0 else False
-            crit_str = ', crit' if crit else ''
 
             self.holder.hp -= dmg
             self.turns -= 1
             action = Action.poison(self.source, self.holder, damage_components, self.turns, self.name)
-            action.text = '\n{} takes {} damage (poison from {} ({}{}), {} turns left)' \
-                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+            action.text = '\n{} takes {} damage (poison from {} ({}), {} turns left)' \
+                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, self.turns)
             self.source.game.actions.append(action)
 
             self.source.stats['damage_by_skill'][self.name] += dmg
@@ -3700,16 +4064,15 @@ class Bleed(BaseEffect):
 
     def tick(self):
         if not self.holder.is_dead:
-            damage_components = self.source.compute_damage(self.holder, self.power)
+            power = self.power * self.source.atk
+            damage_components = self.source.compute_damage(self.holder, power)
             dmg = damage_components['Total damage']
-            crit = True if damage_components['Crit damage'] > 0 else False
-            crit_str = ', crit' if crit else ''
 
             self.holder.hp -= dmg
             self.turns -= 1
             action = Action.bleed(self.source, self.holder, damage_components, self.turns, self.name)
-            action.text = '\n{} takes {} damage (bleed from {} ({}{}), {} turns left)' \
-                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str, self.turns)
+            action.text = '\n{} takes {} damage (bleed from {} ({}), {} turns left)' \
+                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, self.turns)
             self.source.game.actions.append(action)
 
             self.source.stats['damage_by_skill'][self.name] += dmg
@@ -3748,15 +4111,14 @@ class TimedMark(BaseEffect):
                 self.source.game.actions.append(action)
 
     def trigger(self):
-        damage_components = self.source.compute_damage(self.holder, self.power)
+        power = self.power * self.source.atk
+        damage_components = self.source.compute_damage(self.holder, power)
         dmg = damage_components['Total damage']
-        crit = True if damage_components['Crit damage'] > 0 else False
-        crit_str = ', crit' if crit else ''
 
         self.holder.hp -= dmg
         action = Action.timed_mark_trigger(self.source, self.holder, damage_components, self.name)
-        action.text = '\n{} takes {} damage (timed mark from {} ({}{}))' \
-            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
+        action.text = '\n{} takes {} damage (timed mark from {} ({}))' \
+            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name)
         self.source.game.actions.append(action)
 
         self.source.stats['damage_by_skill'][self.name] += dmg
@@ -3768,10 +4130,11 @@ class TimedMark(BaseEffect):
 
 
 class CritMark(BaseEffect):
-    def __init__(self, source, holder, power, name=''):
+    def __init__(self, source, holder, power, second_hit, name=''):
         self.source = source
         self.holder = holder
         self.power = power
+        self.second_hit = second_hit
         self.turns = 1000
         self.name = name
         super().__init__()
@@ -3784,15 +4147,14 @@ class CritMark(BaseEffect):
             self.source.game.actions.append(action)
 
     def trigger(self):
-        damage_components = self.source.compute_damage(self.holder, self.power)
+        power = self.power * self.source.atk
+        damage_components = self.source.compute_damage(self.holder, power)
         dmg = damage_components['Total damage']
-        crit = True if damage_components['Crit damage'] > 0 else False
-        crit_str = ', crit' if crit else ''
 
         self.holder.hp -= dmg
         action = Action.crit_mark_trigger(self.source, self.holder, damage_components, self.name)
-        action.text = '\n{} takes {} damage (crit mark from {} ({}{}))' \
-            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name, crit_str)
+        action.text = '\n{} takes {} damage (crit mark from {} ({}))' \
+            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name)
         self.source.game.actions.append(action)
 
         self.source.stats['damage_by_skill'][self.name] += dmg
@@ -3801,6 +4163,9 @@ class CritMark(BaseEffect):
         self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
 
         self.holder.has_taken_damage(self.source)
+
+        if self.second_hit and rd.random() <= 0.5:
+            self.source.crit_mark(self.holder, power=1.5, name=self.name)
 
         self.kill()
 
@@ -4008,12 +4373,12 @@ class CritRateUp(StatUp):
             action = Action.crit_rate_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
                 action.text = "\n{}'s crit rate is increased by {}% by {} ({}), {} turns left" \
-                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
                             self.name, self.turns) \
                             if self.verbose else ''
             else:
                 action.text = "\n{}'s crit rate is increased by {}% by {} ({})" \
-                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
                             self.name) \
                             if self.verbose else ''
             self.source.game.actions.append(action)
@@ -4062,12 +4427,12 @@ class CritDamageUp(StatUp):
             action = Action.crit_damage_up(self.source, self.holder, self.up, self.turns, self.name)
             if not self.infinite:
                 action.text = "\n{}'s crit damage is increased by {}% by {} ({}), {} turns left" \
-                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
                             self.name, self.turns) \
                             if self.verbose else ''
             else:
                 action.text = "\n{}'s crit damage is increased by {}% by {} ({})" \
-                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
                             self.name) \
                             if self.verbose else ''
             self.source.game.actions.append(action)
@@ -4344,6 +4709,33 @@ class SilenceImmuneUp(StatUp):
 
     def kill(self):
         self.holder.silence_immune -= self.up
+        super().kill()
+
+
+class StunImmuneUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.stun_immune += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            action = Action.stun_immune_up(self.source, self.holder, self.up, self.turns, self.name)
+            if not self.infinite:
+                action.text = "\n{}'s stun resistance is increased by {}% by {} ({}), {} turns left" \
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                            self.name, self.turns) \
+                            if self.verbose else ''
+            else:
+                action.text = "\n{}'s stun resistance is increased by {}% by {} ({})" \
+                    .format(self.holder.str_id, 100 * self.up, self.source.str_id,
+                            self.name) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
+
+    def kill(self):
+        self.holder.stun_immune -= self.up
         super().kill()
 
 
@@ -4727,6 +5119,7 @@ class Effect:
     control_immune_up = ControlImmuneUp
     control_immune_down = ControlImmuneDown
     silence_immune_up = SilenceImmuneUp
+    stun_immune_up = StunImmuneUp
     damage_reduction_up = DamageReductionUp
     true_damage_up = TrueDamageUp
     armor_break_up = ArmorBreakUp
@@ -4978,6 +5371,10 @@ class SilenceImmuneUpAction(StatUpAction):
     pass
 
 
+class StunImmuneUpAction(StatUpAction):
+    pass
+
+
 class DamageReductionUpAction(StatUpAction):
     pass
 
@@ -5093,6 +5490,7 @@ class Action:
     control_immune_up = ControlImmuneUpAction
     control_immune_down = ControlImmuneDownAction
     silence_immune_up = SilenceImmuneUpAction
+    stun_immune_up = StunImmuneUpAction
     damage_reduction_up = DamageReductionUpAction
     true_damage_up = TrueDamageUpAction
     armor_break_up = ArmorBreakUpAction
