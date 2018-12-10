@@ -1170,7 +1170,7 @@ class AbyssLord(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1247,7 +1247,7 @@ class Aden(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1313,7 +1313,7 @@ class BloodTooth(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1395,7 +1395,7 @@ class Centaur(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1472,7 +1472,7 @@ class Chessia(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1553,7 +1553,7 @@ class Dziewona(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1633,7 +1633,7 @@ class ForestHealer(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=9, tier=6, level=200,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1699,7 +1699,7 @@ class Freya(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1788,7 +1788,7 @@ class Gerald(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1863,7 +1863,7 @@ class Grand(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -1900,6 +1900,10 @@ class Grand(BaseHero):
     def skill(self):
         name = 'Leech Seed'
         targets_hit = self.targets_hit(self.op_team.get_frontline(), name=name)
+        min_ally_hp = min([h.hp for h in self.own_team.heroes if not h.is_dead])
+        candidates = [h for h in self.own_team.heroes if h.hp == min_ally_hp]
+        rd.shuffle(candidates)
+        ally_target = candidates[0]
 
         hit_power = [self.atk * 1.24] * len(targets_hit)
         if self.star >= 10:
@@ -1910,12 +1914,8 @@ class Grand(BaseHero):
             self.armor_up(self, up=7, turns=2, name=name)
 
         if self.star >= 10 and targets_hit:
-            min_ally_hp = min([h.hp for h in self.own_team.heroes if not h.is_dead])
-            candidates = [h for h in self.own_team.heroes if h.hp == min_ally_hp]
-            rd.shuffle(candidates)
-            target = candidates[0]
             heal_power = 1.5
-            self.heal(target, power=heal_power, turns=2, name=name)
+            self.heal(ally_target, power=heal_power, turns=2, name=name)
         super().skill()
 
     def on_hit(self, attacker):
@@ -1939,7 +1939,7 @@ class Hester(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2017,7 +2017,7 @@ class Lexar(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2113,7 +2113,7 @@ class Lindberg(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2217,7 +2217,7 @@ class Luna(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2288,7 +2288,7 @@ class Mars(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2380,7 +2380,7 @@ class Martin(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2445,7 +2445,7 @@ class Medusa(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2518,7 +2518,7 @@ class Megaw(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2595,7 +2595,7 @@ class Minotaur(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2670,7 +2670,7 @@ class MonkeyKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2750,7 +2750,7 @@ class Mulan(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.evasion.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2842,7 +2842,7 @@ class NamelessKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2928,7 +2928,7 @@ class Orphee(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -2994,7 +2994,7 @@ class Reaper(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3066,7 +3066,7 @@ class Ripper(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3152,7 +3152,7 @@ class Rlyeh(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3238,7 +3238,7 @@ class Samurai(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3319,7 +3319,7 @@ class SawMachine(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3395,7 +3395,7 @@ class Scarlet(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3463,7 +3463,7 @@ class ShuddeMell(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3551,7 +3551,7 @@ class Tesla(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.knights_vow.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3624,7 +3624,7 @@ class TigerKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3695,7 +3695,7 @@ class Ultima(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3780,7 +3780,7 @@ class Vegvisir(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3854,7 +3854,7 @@ class Verthandi(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.gift_of_creation.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -3932,7 +3932,7 @@ class Vivienne(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -4020,7 +4020,7 @@ class Werewolf(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -4099,7 +4099,7 @@ class WolfRider(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -4171,7 +4171,7 @@ class Wolnir(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.hp.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
@@ -4237,8 +4237,8 @@ class Xexanoth(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O4, helmet=Helmet.O4, weapon=Weapon.O4, pendant=Pendant.O4,
-                 rune=Rune.attack.R2, artifact=Artifact.eternal_curse.O6,
+                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=Rune.vitality.R2, artifact=Artifact.wind_walker.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -4525,10 +4525,11 @@ class Team:
         return teams_str
 
 
-def make_boss_heroes(heroes, neutral=True):
+def make_boss_heroes(heroes, neutral=True, speed=0):
     for h in heroes:
         h.hp *= 100
         h.atk /= 100
+        h.speed += speed
         if neutral:
             h.faction = Faction.EMPTY
             h.type = HeroType.EMPTY
@@ -4541,21 +4542,7 @@ def dummy_centaur(neutral=True):
             heroes.append(Hero.centaur())
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral)
-
-    return Team(heroes, pet=Familiar.empty)
-
-
-def dummy_luna(neutral=True):
-    heroes = []
-    for i in range(1, 7):
-        if i == 2:
-            heroes.append(Hero.luna())
-        elif i == 5:
-            heroes.append(Hero.reaper())
-        else:
-            heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral)
+    make_boss_heroes(heroes, neutral=neutral, speed=-165)
 
     return Team(heroes, pet=Familiar.empty)
 
@@ -4567,7 +4554,7 @@ def dummy_warriors(neutral=True):
             heroes.append(Hero.nameless_king())
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral)
+    make_boss_heroes(heroes, neutral=neutral, speed=825)
 
     return Team(heroes, pet=Familiar.empty)
 
@@ -4579,7 +4566,7 @@ def dummy_assassins(neutral=True):
             heroes.append(Hero.aden())
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral)
+    make_boss_heroes(heroes, neutral=neutral, speed=825)
 
     return Team(heroes, pet=Familiar.empty)
 
@@ -4591,7 +4578,7 @@ def dummy_wanderers(neutral=True):
             heroes.append(Hero.centaur())
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral)
+    make_boss_heroes(heroes, neutral=neutral, speed=825)
 
     return Team(heroes, pet=Familiar.empty)
 
@@ -4603,7 +4590,7 @@ def dummy_clerics(neutral=True):
             heroes.append(Hero.forest_healer())
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral)
+    make_boss_heroes(heroes, neutral=neutral, speed=825)
 
     return Team(heroes, pet=Familiar.empty)
 
@@ -4615,15 +4602,14 @@ def dummy_mages(neutral=True):
             heroes.append(Hero.scarlet())
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral)
+    make_boss_heroes(heroes, neutral=neutral, speed=825)
 
     return Team(heroes, pet=Familiar.empty)
 
 
 @dataclass
 class DummyTeam:
-    centaur = dummy_centaur
-    luna = dummy_luna
+    friend = dummy_centaur
     guild_warrior = dummy_warriors
     guild_assassin = dummy_assassins
     guild_wanderer = dummy_wanderers

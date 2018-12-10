@@ -3,7 +3,8 @@ import random as rd
 from sim.heroes import Team, DummyTeam, Hero
 from sim.models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
 from sim.sim import GameSim, GauntletAttackSim, GauntletDefenseSim, GauntletSim, Game
-from sim.tests import friend_boss_test, main_friend_boss_test, guild_boss_test, trial_test
+from sim.tests import friend_boss_test, main_friend_boss_test, guild_boss_test, \
+                    main_guild_boss_test, trial_test, main_trial_test, pvp_test, sim_setup
 
 heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
@@ -14,25 +15,17 @@ heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chess
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
 hero = Hero.abyss_lord
-main_friend_boss_test(hero)
-sim, damage = friend_boss_test(Hero.ripper, pos=3, n_sim=3000)
-
-for pos in [1, 2, 3, 4, 5, 6]:
-    if pos == 1:
-        sim, winrate = trial_test(hero, pos=pos, n_sim=1000, tank=True)
-        print('Pos = {}{} : {}'.format(pos, ' (solo tank)', winrate))
-    sim, winrate = trial_test(hero, pos=pos, n_sim=1000, tank=False)
-    print('Pos = {}{} : {}'.format(pos, '', winrate))
+sim_setup(hero)
 
 # todo:
-# check questions
-# set prefered settings (rune/artifact), set global armor/pet levels
-# tier list : pvp, trial, expedition, guild boss OK, friend boss OK
+# set prefered settings (rune/artifact)
+# tier list : pvp (atk/def), trial, den, expedition, guild boss, friend boss
+# friend boss : check level ==> speed (Alo), guild boss : check damage (Alo)
+# pvp : set custom gauntlet
 
 # connect the engine to the server
 # set stats depending on the hero level
 # add empty runes/artifacts
-# make sure crit_damage > 0, armor_break > 0 (or not? check)
 
 # Aden 6* : Strangle : cannot be dodged?
 # Dziewona : Spider Attack : dot only to mages or everyone?
@@ -45,4 +38,4 @@ for pos in [1, 2, 3, 4, 5, 6]:
 # Tiger King : Tiger Attack : dot or burn?
 # Vivienne : Cleric Shine : 2 backline enemies?
 # Wolnir : Bone Pact : even when dodged?
-# Xexanoth : Weak Point Stealing : on_hit or on_attack?                                             PRIORITY
+# Xexanoth : Weak Point Stealing : on_hit or on_attack?                                             IMPORTANT

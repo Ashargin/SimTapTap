@@ -3558,22 +3558,22 @@ ancient_vows_artifact_from_request = {
 
 
 @dataclass
-class FirstSnowDance:
-    O1 = FirstSnowDanceO1()
-    O2 = FirstSnowDanceO2()
-    O3 = FirstSnowDanceO3()
-    O4 = FirstSnowDanceO4()
-    O5 = FirstSnowDanceO5()
-    O6 = FirstSnowDanceO6()
+class FineSnowDance:
+    O1 = FineSnowDanceO1()
+    O2 = FineSnowDanceO2()
+    O3 = FineSnowDanceO3()
+    O4 = FineSnowDanceO4()
+    O5 = FineSnowDanceO5()
+    O6 = FineSnowDanceO6()
 
 
-first_snow_dance_artifact_from_request = {
-    1: FirstSnowDance.O1,
-    2: FirstSnowDance.O2,
-    3: FirstSnowDance.O3,
-    4: FirstSnowDance.O4,
-    5: FirstSnowDance.O5,
-    6: FirstSnowDance.O6
+fine_snow_dance_artifact_from_request = {
+    1: FineSnowDance.O1,
+    2: FineSnowDance.O2,
+    3: FineSnowDance.O3,
+    4: FineSnowDance.O4,
+    5: FineSnowDance.O5,
+    6: FineSnowDance.O6
 }
 
 
@@ -3674,7 +3674,7 @@ class Artifact:
     primeval_soul = PrimevalSoul
     queens_crown = QueensCrown
     ancient_vows = AncientVows
-    first_snow_dance = FirstSnowDance
+    fine_snow_dance = FineSnowDance
     soul_torrent = SoulTorrent
     gift_of_creation = GiftOfCreation
     anonymous_gun = AnonymousGun
@@ -3697,7 +3697,7 @@ artifact_from_request = {
     'PRIMEVAL_SOUL': primeval_soul_artifact_from_request,
     'QUEENS_CROWN': queens_crown_artifact_from_request,
     'ANCIENT_VOWS': ancient_vows_artifact_from_request,
-    'FIRST_SNOW_DANCE': first_snow_dance_from_request,
+    'FINE_SNOW_DANCE': fine_snow_dance_artifact_from_request,
     'SOUL_TORRENT': soul_torrent_artifact_from_request,
     'GIFT_OF_CREATION': gift_of_creation_artifact_from_request,
     'ANONYMOUS_GUN': anonymous_gun_artifact_from_request,

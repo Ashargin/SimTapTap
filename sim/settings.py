@@ -11,5 +11,5 @@ guild_tech_empty = [[0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0]]
 
-default_familiar_stats = [40000, 2300]
+default_familiar_stats = [45000, 2500]
 default_familiar = Familiar.raphael(160, 90, 10, 10, 1)

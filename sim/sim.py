@@ -8,6 +8,7 @@ from sim.utils import format_stats, add_dicts, rescale_dict
 
 class BaseSim:
     def compute_winner(self, winner):
+        self.winners.append(winner)
         if winner == 1:
             self.wins_1 += 1
         elif winner == -1:
@@ -44,6 +45,7 @@ class GameSim(BaseSim):
         self.defense_team.pet.str_id = self.defense_team.pet.name + '_2'
         self.heroes = self.attack_team.heroes + self.defense_team.heroes
         self.pets = [self.attack_team.pet, self.defense_team.pet]
+        self.winners = []
         self.wins_1 = 0
         self.wins_2 = 0
         self.ties = 0
@@ -75,6 +77,7 @@ class GauntletAttackSim(BaseSim):
         self.attack_team.pet.str_id = self.attack_team.pet.name + '_1'
         self.heroes = self.attack_team.heroes
         self.pets = [self.attack_team.pet]
+        self.winners = []
         self.wins_1 = 0
         self.wins_2 = 0
         self.ties = 0
@@ -107,6 +110,7 @@ class GauntletDefenseSim(BaseSim):
         self.defense_team.pet.str_id = self.defense_team.pet.name + '_2'
         self.heroes = self.defense_team.heroes
         self.pets = [self.defense_team.pet]
+        self.winners = []
         self.wins_1 = 0
         self.wins_2 = 0
         self.ties = 0
@@ -145,6 +149,7 @@ class GauntletSim(BaseSim):
         for h in self.heroes:
             h.str_id = '{}_{}_{}'.format(h.name.value, self.test_team, self.test_pos)
         self.pets = []
+        self.winners = []
         self.wins_1 = 0
         self.wins_2 = 0
         self.ties = 0

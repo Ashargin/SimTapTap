@@ -2,7 +2,7 @@ import random as rd
 import pickle
 
 from sim.heroes import Team, Hero
-from sim.models import Faction
+from sim.models import Faction, Familiar
 
 heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
@@ -19,7 +19,7 @@ heaven = [h for h in heroes if h.faction == Faction.HEAVEN]
 hell = [h for h in heroes if h.faction == Faction.HELL]
 tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_king, 
         Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
-        Hero.wolf_rider, Hero.wolnir]
+        Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 healers = [Hero.megaw, Hero.shudde_m_ell, Hero.verthandi, Hero.vivienne]
 others = [h for h in heroes if h not in tanks and h not in healers]
 
@@ -37,17 +37,10 @@ def generate_random_sample(n_sample=10000, enemy=False):
             comp.append(rd.choice(elf))
         if missing_fac != 3:
             comp.append(rd.choice(undead))
-        if missing_fac == 0:
-            comp.append(rd.choice(horde + elf + undead))
-        if missing_fac == 1:
-            comp.append(rd.choice(alliance + elf + undead))
-        if missing_fac == 2:
-            comp.append(rd.choice(alliance + horde + undead))
-        if missing_fac == 3:
-            comp.append(rd.choice(alliance + horde+ elf))
+        append_duplicate_fac(comp, heroes)
         comp.append(rd.choice(heaven + hell))
         if enemy:
-            comp.append(rd.choice(heroes))
+            append_new_fac(comp, heroes)
         rd.shuffle(comp)
         sample.append(comp)
 
@@ -171,6 +164,10 @@ def generate_semirandom_sample(n_sample=10000, n_tanks=1, n_healers=1, enemy=Fal
         pickle.dump(sample, file)
 
 
+# def generate_pvp_sample(n_sample=10000, enemy=False):
+#     pass
+
+
 def generate_all_samples(n_sample=10000):
     generate_random_sample(n_sample=n_sample)
     generate_random_sample(n_sample=n_sample, enemy=True)
@@ -180,60 +177,69 @@ def generate_all_samples(n_sample=10000):
             generate_semirandom_sample(n_sample=n_sample, n_tanks=n_tanks, n_healers=n_healers, enemy=True)
 
 
-# def generate_pvp_sample(n_sample=10000, enemy=False):
-#     pass
-
-
-def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None):
+def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, rune=None, artifact=None, player=True):
     gauntlet = []
     for sub in sample[:length]:
         heroes = []
         if from_hero:
             for h in sub[:pos - 1]:
                 heroes.append(h())
-            heroes.append(hero())
+            if rune is None and artifact is None:
+                heroes.append(hero())
+            elif rune is None:
+                heroes.append(hero(artifact=artifact))
+            elif artifact is None:
+                heroes.append(hero(rune=rune))
+            else:
+                heroes.append(hero(rune=rune, artifact=artifact))
             for h in sub[pos - 1:]:
                 heroes.append(h())
         else:
             for h in sub:
                 heroes.append(h())
-        team = Team(heroes)
+        team = None
+        if player:
+            team = Team(heroes)
+        else:
+            team = Team(heroes, pet=Familiar.empty)
         gauntlet.append(team)
 
     return gauntlet
 
 
-def random_gauntlet_from_hero(hero, pos, length=10000):
+def random_gauntlet_from_hero(hero, pos, rune=None, artifact=None, length=10000, player=True):
     sample = None
     with open('data/random_sample.pkl', 'rb') as file:
         sample = pickle.load(file)
-    gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, pos=pos)
+    gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, 
+                                    pos=pos, rune=rune, artifact=artifact, player=player)
 
     return gauntlet
 
 
-def semirandom_gauntlet_from_hero(hero, pos, n_tanks=1, n_healers=1, length=10000):
+def semirandom_gauntlet_from_hero(hero, pos, rune=None, artifact=None, n_tanks=1, n_healers=1, length=10000, player=True):
     sample = None
     with open('data/semirandom_sample_{}T{}H.pkl'.format(n_tanks, n_healers), 'rb') as file:
         sample = pickle.load(file)
-    gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, pos=pos)
+    gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, 
+                                    pos=pos, rune=rune, artifact=artifact, player=player)
 
     return gauntlet
 
 
-def random_gauntlet(length=10000):
+def random_gauntlet(length=10000, player=False):
     sample = None
     with open('data/random_sample_enemy.pkl', 'rb') as file:
         sample = pickle.load(file)
-    gauntlet = gauntlet_from_sample(sample, length=length)
+    gauntlet = gauntlet_from_sample(sample, length=length, player=player)
 
     return gauntlet
 
 
-def semirandom_gauntlet(n_tanks=1, n_healers=1, length=10000):
+def semirandom_gauntlet(n_tanks=1, n_healers=1, length=10000, player=False):
     sample = None
     with open('data/semirandom_sample_{}T{}H_enemy.pkl'.format(n_tanks, n_healers), 'rb') as file:
         sample = pickle.load(file)
-    gauntlet = gauntlet_from_sample(sample, length=length)
+    gauntlet = gauntlet_from_sample(sample, length=length, player=player)
 
     return gauntlet
