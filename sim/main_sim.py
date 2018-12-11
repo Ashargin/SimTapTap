@@ -24,7 +24,7 @@ def cli():
 @click.command(name='sim-params')
 @click.option('--time', default=4.0)
 def sim_params_cmd(time):
-    n_sim = 10 * (1 + round(267 * time) // 10)
+    n_sim = max(10 * (round(267 * time) // 10), 10)
     print('Simulating batches of {} games\n'.format(n_sim))
     print('Generating random gauntlets for simulations\n')
     generate_all_samples()
@@ -32,11 +32,11 @@ def sim_params_cmd(time):
     idx = []
     data = []
     for hero in heroes:
-        this_pos, this_rune, this_art, pos_scores, rune_scores, art_scores = sim_setup(hero, n_sim=n_sim)
+        this_pos, this_rune, this_art, score, pos_scores, rune_scores, art_scores = sim_setup(hero, n_sim=n_sim)
         idx.append(hero.name.value)
         data.append([this_pos] + [this_rune.__class__.__name__] +
-                    [this_art.__class__.__name__] + pos_scores + rune_scores + art_scores)
-        df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'eye_of_heaven', 'scorching_sun', 'wind_walker', 'extra_1', 'extra_2', 'extra_3'])
+                    [this_art.__class__.__name__] + [score] + pos_scores + rune_scores + art_scores)
+        df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'eye_of_heaven', 'scorching_sun', 'wind_walker', 'extra_1', 'extra_2', 'extra_3'])
         df.to_excel(r'data/results.xlsx')
 
 cli.add_command(sim_params_cmd)

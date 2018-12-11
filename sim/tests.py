@@ -154,4 +154,4 @@ def sim_setup(hero, n_sim=1000):
     for i in range(7 - len(art_scores)):
         art_scores.append('')
 
-    return best_pos, best_rune, best_art, pos_scores, rune_scores, art_scores
+    return best_pos, best_rune, best_art, best_val, pos_scores, rune_scores, art_scores
