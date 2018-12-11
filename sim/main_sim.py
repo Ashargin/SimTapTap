@@ -1,8 +1,10 @@
 import random as rd
+import pandas as pd
+import click
 
 from sim.heroes import Team, DummyTeam, Hero
 from sim.models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
-from sim.sim import GameSim, GauntletAttackSim, GauntletDefenseSim, GauntletSim, Game
+from sim.processing import GameSim, GauntletAttackSim, GauntletDefenseSim, GauntletSim, Game
 from sim.tests import friend_boss_test, main_friend_boss_test, guild_boss_test, \
                     main_guild_boss_test, trial_test, main_trial_test, pvp_test, sim_setup
 from sim.gauntlets import generate_all_samples
@@ -15,27 +17,31 @@ heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chess
         Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
-generate_all_samples()
+@click.group()
+def cli():
+    pass
 
-idx = []
-pos = []
-runes = []
-arts = []
-import pandas as pd
-for hero in heroes:
-    this_pos, this_rune, this_art = sim_setup(hero)
-    idx.append(hero.name.value)
-    pos.append(this_pos)
-    runes.append(this_rune.__class__.__name__)
-    arts.append(this_art.__class__.__name__)
-    data = pd.DataFrame(index=idx, columns=['pos', 'rune', 'artifact'])
-    data['pos'] = pos
-    data['rune'] = runes
-    data['artifact'] = arts
-    data.to_excel(r'data/results.xlsx')
+@click.command(name='sim-params')
+@click.option('--time', default=4.0)
+def sim_params_cmd(time):
+    n_sim = 10 * (1 + round(267 * time) // 10)
+    print('Simulating batches of {} games\n'.format(n_sim))
+    print('Generating random gauntlets for simulations\n')
+    generate_all_samples()
 
-hero = Hero.nameless_king
-sim_setup(hero)
+    idx = []
+    data = []
+    for hero in heroes:
+        this_pos, this_rune, this_art, pos_scores, rune_scores, art_scores = sim_setup(hero, n_sim=n_sim)
+        idx.append(hero.name.value)
+        data.append([this_pos] + [this_rune.__class__.__name__] +
+                    [this_art.__class__.__name__] + pos_scores + rune_scores + art_scores)
+        df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'eye_of_heaven', 'scorching_sun', 'wind_walker', 'extra_1', 'extra_2', 'extra_3'])
+        df.to_excel(r'data/results.xlsx')
+
+cli.add_command(sim_params_cmd)
+if __name__ == '__main__':
+    cli()
 
 # todo:
 # set prefered settings (rune/artifact)

@@ -4,7 +4,7 @@ import copy
 
 from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Familiar, Effect, Action
 from sim.settings import guild_tech_maxed, guild_tech_empty, default_familiar_stats, default_familiar
-from sim.sim import EmptyGame
+from sim.processing import EmptyGame
 from sim.utils import targets_at_random
 
 
@@ -1171,7 +1171,7 @@ class AbyssLord(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.primeval_soul.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -1248,7 +1248,7 @@ class Aden(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.vitality.R2, artifact=Artifact.dragonblood.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -1314,7 +1314,7 @@ class BloodTooth(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.eye_of_heaven.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -1396,7 +1396,7 @@ class Centaur(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.crit_rate.R2, artifact=Artifact.fine_snow_dance.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -1473,7 +1473,7 @@ class Chessia(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.vitality.R2, artifact=Artifact.eternal_curse.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -1554,7 +1554,7 @@ class Dziewona(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.vitality.R2, artifact=Artifact.scorching_sun.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -1789,7 +1789,7 @@ class Gerald(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -1864,7 +1864,7 @@ class Grand(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.eye_of_heaven.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:
@@ -2018,7 +2018,7 @@ class Lexar(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.eye_of_heaven.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats):
         if level < 200 or tier < 6:

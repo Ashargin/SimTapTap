@@ -1,6 +1,6 @@
 from sim.gauntlets import random_gauntlet_from_hero, semirandom_gauntlet_from_hero, \
                             random_gauntlet, semirandom_gauntlet
-from sim.sim import GauntletSim
+from sim.processing import GauntletSim
 from sim.heroes import DummyTeam
 from sim.models import Faction, Rune, Artifact
 
@@ -92,14 +92,16 @@ def pvp_test(hero, pos, rune=None, artifact=None, n_sim=3000, n_tanks=1, n_heale
     return sim, winrate
 
 
-def sim_setup(hero):
+def sim_setup(hero, n_sim=1000):
     print(hero.name.value, '\n')
 
     best_val = -1
     best_pos = -1
+    pos_scores = []
     for pos in [1, 2, 3, 4, 5, 6]:
         n_tanks = 0 if pos == 1 else 1
-        sim, winrate = pvp_test(hero, pos=pos, n_tanks=n_tanks, n_sim=1000)
+        sim, winrate = pvp_test(hero, pos=pos, n_tanks=n_tanks, n_sim=n_sim)
+        pos_scores.append(winrate)
         if winrate > best_val:
             best_val = winrate
             best_pos = pos
@@ -109,8 +111,10 @@ def sim_setup(hero):
 
     best_val = -1
     best_rune = None
+    rune_scores = []
     for rune in [Rune.accuracy.R2, Rune.armor_break.R2, Rune.attack.R2, Rune.crit_damage.R2, Rune.crit_rate.R2, Rune.evasion.R2, Rune.hp.R2, Rune.skill_damage.R2, Rune.speed.R2, Rune.vitality.R2]:
-        sim, winrate = pvp_test(hero, pos=best_pos, n_tanks=n_tanks, rune=rune, n_sim=1000)
+        sim, winrate = pvp_test(hero, pos=best_pos, n_tanks=n_tanks, rune=rune, n_sim=n_sim)
+        rune_scores.append(winrate)
         if winrate > best_val:
             best_val = winrate
             best_rune = rune
@@ -119,6 +123,7 @@ def sim_setup(hero):
 
     best_val = -1
     best_art = None
+    art_scores = []
     artifacts = [Artifact.dragonblood.O6, Artifact.eye_of_heaven.O6, Artifact.scorching_sun.O6, Artifact.wind_walker.O6]
     if hero.faction == Faction.ALLIANCE:
         artifacts.append(Artifact.knights_vow.O6)
@@ -135,12 +140,18 @@ def sim_setup(hero):
         artifacts.append(Artifact.gift_of_creation.O6)
     elif hero.faction == Faction.HELL:
         artifacts.append(Artifact.eternal_curse.O6)
-    for artifact in artifacts:
-        sim, winrate = pvp_test(hero, pos=best_pos, n_tanks=n_tanks, rune=best_rune, artifact=artifact, n_sim=1000)
+    for i, artifact in enumerate(artifacts):
+        sim, winrate = pvp_test(hero, pos=best_pos, n_tanks=n_tanks, rune=best_rune, artifact=artifact, n_sim=n_sim)
+        if i <= 3:
+            art_scores.append(winrate)
+        else:
+            art_scores.append((winrate, artifact.__class__.__name__))
         if winrate > best_val:
             best_val = winrate
             best_art = artifact
         print('Artifact {}, {} winrate'.format(artifact.__class__.__name__, winrate))
     print('Best artifact : {}\n'.format(best_art.__class__.__name__))
+    for i in range(7 - len(art_scores)):
+        art_scores.append('')
 
-    return best_pos, best_rune, best_art
+    return best_pos, best_rune, best_art, pos_scores, rune_scores, art_scores
