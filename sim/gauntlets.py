@@ -17,9 +17,9 @@ elf = [h for h in heroes if h.faction == Faction.ELF]
 undead = [h for h in heroes if h.faction == Faction.UNDEAD]
 heaven = [h for h in heroes if h.faction == Faction.HEAVEN]
 hell = [h for h in heroes if h.faction == Faction.HELL]
-tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_king, 
+tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_king, Hero.mulan,
         Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
-        Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
+        Hero.wolf_rider, Hero.wolnir]
 healers = [Hero.megaw, Hero.shudde_m_ell, Hero.verthandi, Hero.vivienne]
 others = [h for h in heroes if h not in tanks and h not in healers]
 

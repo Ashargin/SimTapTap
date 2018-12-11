@@ -93,7 +93,8 @@ def pvp_test(hero, pos, rune=None, artifact=None, n_sim=3000, n_tanks=1, n_heale
 
 
 def sim_setup(hero):
-    print(hero.name.value)
+    print(hero.name.value, '\n')
+
     best_val = -1
     best_pos = -1
     for pos in [1, 2, 3, 4, 5, 6]:
@@ -103,9 +104,21 @@ def sim_setup(hero):
             best_val = winrate
             best_pos = pos
         print('Pos {}, {} winrate'.format(pos, winrate))
+    print('Best pos : {}\n'.format(best_pos))
+    n_tanks = 0 if best_pos == 1 else 1
+
+    best_val = -1
+    best_rune = None
     for rune in [Rune.accuracy.R2, Rune.armor_break.R2, Rune.attack.R2, Rune.crit_damage.R2, Rune.crit_rate.R2, Rune.evasion.R2, Rune.hp.R2, Rune.skill_damage.R2, Rune.speed.R2, Rune.vitality.R2]:
-        sim, winrate = pvp_test(hero, pos=best_pos, rune=rune, n_sim=1000)
+        sim, winrate = pvp_test(hero, pos=best_pos, n_tanks=n_tanks, rune=rune, n_sim=1000)
+        if winrate > best_val:
+            best_val = winrate
+            best_rune = rune
         print('Rune {}, {} winrate'.format(rune.__class__.__name__, winrate))
+    print('Best rune : {}\n'.format(best_rune.__class__.__name__))
+
+    best_val = -1
+    best_art = None
     artifacts = [Artifact.dragonblood.O6, Artifact.eye_of_heaven.O6, Artifact.scorching_sun.O6, Artifact.wind_walker.O6]
     if hero.faction == Faction.ALLIANCE:
         artifacts.append(Artifact.knights_vow.O6)
@@ -123,5 +136,11 @@ def sim_setup(hero):
     elif hero.faction == Faction.HELL:
         artifacts.append(Artifact.eternal_curse.O6)
     for artifact in artifacts:
-        sim, winrate = pvp_test(hero, pos=best_pos, artifact=artifact, n_sim=1000)
+        sim, winrate = pvp_test(hero, pos=best_pos, n_tanks=n_tanks, rune=best_rune, artifact=artifact, n_sim=1000)
+        if winrate > best_val:
+            best_val = winrate
+            best_art = artifact
         print('Artifact {}, {} winrate'.format(artifact.__class__.__name__, winrate))
+    print('Best artifact : {}\n'.format(best_art.__class__.__name__))
+
+    return best_pos, best_rune, best_art

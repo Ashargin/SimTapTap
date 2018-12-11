@@ -3,6 +3,7 @@ __pycache__/
 *$py.class
 *.csv
 *.pkl
+*.xlsx
 
 .cache/
 .pytest_cache/
