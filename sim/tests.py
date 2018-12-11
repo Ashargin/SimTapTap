@@ -92,7 +92,7 @@ def pvp_test(hero, pos, rune=None, artifact=None, n_sim=3000, n_tanks=1, n_heale
     return sim, winrate
 
 
-def sim_setup(hero, n_sim=1000):
+def sim_setup(hero, n_sim=1000, verbose=True):
     print(hero.name.value, '\n')
 
     best_val = -1
@@ -105,8 +105,10 @@ def sim_setup(hero, n_sim=1000):
         if winrate > best_val:
             best_val = winrate
             best_pos = pos
-        print('Pos {}, {} winrate'.format(pos, winrate))
-    print('Best pos : {}\n'.format(best_pos))
+        if verbose:
+            print('Pos {}, {} winrate'.format(pos, winrate))
+    if verbose:
+        print('Best pos : {}\n'.format(best_pos))
     n_tanks = 0 if best_pos == 1 else 1
 
     best_val = -1
@@ -118,8 +120,10 @@ def sim_setup(hero, n_sim=1000):
         if winrate > best_val:
             best_val = winrate
             best_rune = rune
-        print('Rune {}, {} winrate'.format(rune.__class__.__name__, winrate))
-    print('Best rune : {}\n'.format(best_rune.__class__.__name__))
+        if verbose:
+            print('Rune {}, {} winrate'.format(rune.__class__.__name__, winrate))
+    if verbose:
+        print('Best rune : {}\n'.format(best_rune.__class__.__name__))
 
     best_val = -1
     best_art = None
@@ -149,9 +153,11 @@ def sim_setup(hero, n_sim=1000):
         if winrate > best_val:
             best_val = winrate
             best_art = artifact
-        print('Artifact {}, {} winrate'.format(artifact.__class__.__name__, winrate))
-    print('Best artifact : {}\n'.format(best_art.__class__.__name__))
+        if verbose:
+            print('Artifact {}, {} winrate'.format(artifact.__class__.__name__, winrate))
+    if verbose:
+        print('Best artifact : {}\n'.format(best_art.__class__.__name__))
     for i in range(7 - len(art_scores)):
         art_scores.append('')
 
-    return best_pos, best_rune, best_art, best_val, pos_scores, rune_scores, art_scores
+    return hero.name.value, best_pos, best_rune, best_art, best_val, pos_scores, rune_scores, art_scores

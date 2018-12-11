@@ -1,6 +1,7 @@
 import random as rd
 import pandas as pd
 import click
+import multiprocessing as mp
 
 from sim.heroes import Team, DummyTeam, Hero
 from sim.models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
@@ -17,27 +18,39 @@ heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chess
         Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
+# ultima/scarlet/MK/NK/reaper/luna
+# check verthandi
+
 @click.group()
 def cli():
     pass
 
 @click.command(name='sim-params')
 @click.option('--time', default=4.0)
-def sim_params_cmd(time):
+@click.option('--cores', default=7)
+@click.option('--async/--no-async', default=True)
+def sim_params_cmd(time, cores, async):
     n_sim = max(10 * (round(267 * time) // 10), 10)
     print('Simulating batches of {} games\n'.format(n_sim))
     print('Generating random gauntlets for simulations\n')
     generate_all_samples()
 
+    results = None
+    if async:
+        pool = mp.Pool(processes=cores)
+        results = [pool.apply_async(sim_setup, args=(h, n_sim, False)) for h in heroes]
+        results = [p.get() for p in results]
+    else:
+        results = [sim_setup(h, n_sim) for h in heroes]
     idx = []
     data = []
-    for hero in heroes:
-        this_pos, this_rune, this_art, score, pos_scores, rune_scores, art_scores = sim_setup(hero, n_sim=n_sim)
-        idx.append(hero.name.value)
+    for res in results:
+        name, this_pos, this_rune, this_art, score, pos_scores, rune_scores, art_scores = res
+        idx.append(name)
         data.append([this_pos] + [this_rune.__class__.__name__] +
                     [this_art.__class__.__name__] + [score] + pos_scores + rune_scores + art_scores)
-        df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'eye_of_heaven', 'scorching_sun', 'wind_walker', 'extra_1', 'extra_2', 'extra_3'])
-        df.to_excel(r'data/results.xlsx')
+    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'eye_of_heaven', 'scorching_sun', 'wind_walker', 'extra_1', 'extra_2', 'extra_3'])
+    df.to_excel(r'data/results.xlsx')
 
 cli.add_command(sim_params_cmd)
 if __name__ == '__main__':
@@ -54,7 +67,6 @@ if __name__ == '__main__':
 # add empty runes/artifacts
 
 # Aden 6* : Strangle : cannot be dodged?
-# Dziewona : Spider Attack : dot only to mages or everyone?
 # Freya : Hollow Descent : energy decreased or drained?
 # Gerald : Wheel Of Torture : dot only to assassins or everyone?
 # Lindberg : Cross Shelter : stun_immune?
