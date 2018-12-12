@@ -81,3 +81,4 @@ if __name__ == '__main__':
 # Vivienne : Cleric Shine : 2 backline enemies?
 # Wolnir : Bone Pact : even when dodged?
 # Xexanoth : Weak Point Stealing : on_hit or on_attack?                                             IMPORTANT
+# Xexanoth : Weak Point Stealing : before or after on_attack?                                       PRIORITY
