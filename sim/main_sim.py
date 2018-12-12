@@ -31,7 +31,7 @@ def cli():
 
 @click.command(name='sim-params')
 @click.option('--time', default=4.0)
-@click.option('--cores', default=5)
+@click.option('--cores', default=7)
 @click.option('--async/--no-async', default=True)
 def sim_params_cmd(time, cores, async):
     n_sim = max(10 * (round(267 * time) // 10), 10)
