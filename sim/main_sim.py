@@ -18,8 +18,12 @@ heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chess
         Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
-# ultima/scarlet/MK/NK/reaper/luna
-# check verthandi
+# benchmark = Team([Hero.ultima(), Hero.scarlet(), Hero.monkey_king(), Hero.nameless_king(), Hero.reaper(), Hero.luna()])
+# team1 = Team([Hero.monkey_king(), Hero.verthandi(), Hero.mars(), Hero.nameless_king(), Hero.chessia(), Hero.freya()])
+# team2 = Team([Hero.ultima(), Hero.scarlet(), Hero.shudde_m_ell(), Hero.chessia(), Hero.luna(), Hero.mars()])
+# team3 = Team([Hero.ultima(), Hero.verthandi(), Hero.saw_machine(), Hero.vegvisir(), Hero.luna(), Hero.mars()])
+# team4 = Team([Hero.ultima(), Hero.verthandi(), Hero.martin(), Hero.vegvisir(), Hero.luna(), Hero.mars()])
+# team5 = Team([Hero.monkey_king(), Hero.scarlet(), Hero.shudde_m_ell(), Hero.aden(), Hero.lexar(), Hero.freya()])
 
 @click.group()
 def cli():

@@ -61,6 +61,9 @@ class GameSim(BaseSim):
 
             for unit in game.heroes + game.pets:
                 add_dicts(units_stats[unit.str_id], unit.stats)
+
+            del game
+
         for unit in self.heroes + self.pets:
             rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
             unit.stats = units_stats[unit.str_id]
@@ -86,7 +89,7 @@ class GauntletAttackSim(BaseSim):
     def process(self):
         units_stats = {unit.str_id: {} for unit in self.heroes + self.pets}
         for i in range(self.n_sim):
-            defense_team = self.gauntlet[i]
+            defense_team = self.gauntlet[0]
             game = Game(self.attack_team, defense_team, copy_defense=False)
             game.process()
             winner = game.winner
@@ -94,6 +97,10 @@ class GauntletAttackSim(BaseSim):
 
             for unit in game.attack_team.heroes + [game.attack_team.pet]:
                 add_dicts(units_stats[unit.str_id], unit.stats)
+
+            del game
+            del self.gauntlet[0]
+
         for unit in self.heroes + self.pets:
             rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
             unit.stats = units_stats[unit.str_id]
@@ -119,7 +126,7 @@ class GauntletDefenseSim(BaseSim):
     def process(self):
         units_stats = {unit.str_id: {} for unit in self.heroes + self.pets}
         for i in range(self.n_sim):
-            attack_team = self.gauntlet[i]
+            attack_team = self.gauntlet[0]
             game = Game(attack_team, self.defense_team, copy_attack=False)
             game.process()
             winner = game.winner
@@ -127,6 +134,10 @@ class GauntletDefenseSim(BaseSim):
 
             for unit in game.defense_team.heroes + [game.defense_team.pet]:
                 add_dicts(units_stats[unit.str_id], unit.stats)
+
+            del game
+            del self.gauntlet[0]
+
         for unit in self.heroes + self.pets:
             rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
             unit.stats = units_stats[unit.str_id]
@@ -159,8 +170,9 @@ class GauntletSim(BaseSim):
         units_stats = {unit.str_id: {} for unit in self.heroes}
         team_damage = 0
         for i in range(self.n_sim):
-            attack_team = self.attack_gauntlet[i]
-            defense_team = self.defense_gauntlet[i]
+            from pympler.asizeof import asizeof
+            attack_team = self.attack_gauntlet[0]
+            defense_team = self.defense_gauntlet[0]
             game = Game(attack_team, defense_team, copy_attack=False, copy_defense=False)
             game.process()
             winner = game.winner
@@ -176,6 +188,11 @@ class GauntletSim(BaseSim):
                 add_dicts(units_stats[unit.str_id], unit.stats)
                 team_damage += sum([game.stats['damage'][h.str_id] 
                                     for h in game.defense_team.heroes])
+
+            del game
+            del self.attack_gauntlet[0]
+            del self.defense_gauntlet[0]
+
         for unit in self.heroes:
             rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
             unit.stats = units_stats[unit.str_id]
