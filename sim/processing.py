@@ -170,7 +170,6 @@ class GauntletSim(BaseSim):
         units_stats = {unit.str_id: {} for unit in self.heroes}
         team_damage = 0
         for i in range(self.n_sim):
-            from pympler.asizeof import asizeof
             attack_team = self.attack_gauntlet[0]
             defense_team = self.defense_gauntlet[0]
             game = Game(attack_team, defense_team, copy_attack=False, copy_defense=False)
@@ -278,7 +277,7 @@ class Game:
                         'freezes_taken': 0,
                         'hard_ccs': 0, # stuns, petrifies or freezes
                         'hard_ccs_taken': 0,
-                        'attack_ups': 0, # HERE
+                        'attack_ups': 0,
                         'attack_ups_taken': 0,
                         'attack_downs': 0,
                         'attack_downs_taken': 0,
@@ -337,6 +336,7 @@ class Game:
                         'healing_taken_by_source'):
                 unit.stats[stat]['Total'] = 0
         self.prefix = self.teams() + '\n'
+        self.prefix += '\n{}\n'.format(self.state())
 
     def turn(self):
         round_prefix = '\n### Turn {} ###'.format(self.round)

@@ -2100,12 +2100,17 @@ class BaseArtifact:
     damage_to_clerics = 0
     damage_to_mages = 0
     skill_damage_if_alliance = 0
+    skill_damage_if_horde = 0
     skill_damage_if_elf = 0
     skill_damage_if_undead = 0
     skill_damage_if_heaven = 0
     skill_damage_if_hell = 0
+    crit_rate_if_alliance = 0
     crit_rate_if_horde = 0
     crit_rate_if_elf = 0
+    crit_rate_if_undead = 0
+    crit_rate_if_heaven = 0
+    crit_rate_if_hell = 0
     true_damage_if_heaven = 0
 
 
@@ -2116,118 +2121,72 @@ class EmptyArtifact(BaseArtifact):
 class WarriorArtifactG1(BaseArtifact):
     atk = 150
     damage_to_warriors = 0.05
-
-
 class WarriorArtifactG2(BaseArtifact):
     atk = 195
     damage_to_warriors = 0.065
-
-
 class WarriorArtifactG3(BaseArtifact):
     atk = 240
     damage_to_warriors = 0.08
-
-
 class WarriorArtifactG4(BaseArtifact):
     atk = 300
     damage_to_warriors = 0.1
-
-
 class WarriorArtifactB1(BaseArtifact):
     atk = 240
     damage_to_warriors = 0.08
-
-
 class WarriorArtifactB2(BaseArtifact):
     atk = 300
     damage_to_warriors = 0.1
-
-
 class WarriorArtifactB3(BaseArtifact):
     atk = 360
     damage_to_warriors = 0.12
-
-
 class WarriorArtifactB4(BaseArtifact):
     atk = 450
     damage_to_warriors = 0.15
-
-
 class WarriorArtifactY1(BaseArtifact):
     atk = 360
     damage_to_warriors = 0.12
-
-
 class WarriorArtifactY2(BaseArtifact):
     atk = 420
     damage_to_warriors = 0.14
-
-
 class WarriorArtifactY3(BaseArtifact):
     atk = 480
     damage_to_warriors = 0.16
-
-
 class WarriorArtifactY4(BaseArtifact):
     atk = 540
     damage_to_warriors = 0.18
-
-
 class WarriorArtifactY5(BaseArtifact):
     atk = 600
     damage_to_warriors = 0.2
-
-
 class WarriorArtifactP1(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactP2(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactP3(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactP4(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactP5(BaseArtifact):
     atk = 840
     damage_to_warriors = 0.28
-
-
 class WarriorArtifactO1(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactO2(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactO3(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactO4(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactO5(BaseArtifact):
     atk = 0
     damage_to_warriors = 0
-
-
 class WarriorArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_warriors = 0.42
@@ -2236,118 +2195,72 @@ class WarriorArtifactO6(BaseArtifact):
 class AssassinArtifactG1(BaseArtifact):
     atk = 150
     damage_to_assassins = 0.05
-
-
 class AssassinArtifactG2(BaseArtifact):
     atk = 195
     damage_to_assassins = 0.065
-
-
 class AssassinArtifactG3(BaseArtifact):
     atk = 240
     damage_to_assassins = 0.08
-
-
 class AssassinArtifactG4(BaseArtifact):
     atk = 300
     damage_to_assassins = 0.1
-
-
 class AssassinArtifactB1(BaseArtifact):
     atk = 240
     damage_to_assassins = 0.08
-
-
 class AssassinArtifactB2(BaseArtifact):
     atk = 300
     damage_to_assassins = 0.1
-
-
 class AssassinArtifactB3(BaseArtifact):
     atk = 360
     damage_to_assassins = 0.12
-
-
 class AssassinArtifactB4(BaseArtifact):
     atk = 450
     damage_to_assassins = 0.15
-
-
 class AssassinArtifactY1(BaseArtifact):
     atk = 360
     damage_to_assassins = 0.12
-
-
 class AssassinArtifactY2(BaseArtifact):
     atk = 420
     damage_to_assassins = 0.14
-
-
 class AssassinArtifactY3(BaseArtifact):
     atk = 480
     damage_to_assassins = 0.16
-
-
 class AssassinArtifactY4(BaseArtifact):
     atk = 540
     damage_to_assassins = 0.18
-
-
 class AssassinArtifactY5(BaseArtifact):
     atk = 600
     damage_to_assassins = 0.2
-
-
 class AssassinArtifactP1(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactP2(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactP3(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactP4(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactP5(BaseArtifact):
     atk = 840
     damage_to_assassins = 0.28
-
-
 class AssassinArtifactO1(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactO2(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactO3(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactO4(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactO5(BaseArtifact):
     atk = 0
     damage_to_assassins = 0
-
-
 class AssassinArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_assassins = 0.42
@@ -2356,118 +2269,72 @@ class AssassinArtifactO6(BaseArtifact):
 class WandererArtifactG1(BaseArtifact):
     atk = 150
     damage_to_wanderers = 0.05
-
-
 class WandererArtifactG2(BaseArtifact):
     atk = 195
     damage_to_wanderers = 0.065
-
-
 class WandererArtifactG3(BaseArtifact):
     atk = 240
     damage_to_wanderers = 0.08
-
-
 class WandererArtifactG4(BaseArtifact):
     atk = 300
     damage_to_wanderers = 0.1
-
-
 class WandererArtifactB1(BaseArtifact):
     atk = 240
     damage_to_wanderers = 0.08
-
-
 class WandererArtifactB2(BaseArtifact):
     atk = 300
     damage_to_wanderers = 0.1
-
-
 class WandererArtifactB3(BaseArtifact):
     atk = 360
     damage_to_wanderers = 0.12
-
-
 class WandererArtifactB4(BaseArtifact):
     atk = 450
     damage_to_wanderers = 0.15
-
-
 class WandererArtifactY1(BaseArtifact):
     atk = 360
     damage_to_wanderers = 0.12
-
-
 class WandererArtifactY2(BaseArtifact):
     atk = 420
     damage_to_wanderers = 0.14
-
-
 class WandererArtifactY3(BaseArtifact):
     atk = 480
     damage_to_wanderers = 0.16
-
-
 class WandererArtifactY4(BaseArtifact):
     atk = 540
     damage_to_wanderers = 0.18
-
-
 class WandererArtifactY5(BaseArtifact):
     atk = 600
     damage_to_wanderers = 0.2
-
-
 class WandererArtifactP1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactP2(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactP3(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactP4(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactP5(BaseArtifact):
     atk = 840
     damage_to_wanderers = 0.28
-
-
 class WandererArtifactO1(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactO2(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactO3(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactO4(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactO5(BaseArtifact):
     atk = 0
     damage_to_wanderers = 0
-
-
 class WandererArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_wanderers = 0.42
@@ -2476,118 +2343,72 @@ class WandererArtifactO6(BaseArtifact):
 class ClericArtifactG1(BaseArtifact):
     atk = 150
     damage_to_clerics = 0.05
-
-
 class ClericArtifactG2(BaseArtifact):
     atk = 195
     damage_to_clerics = 0.065
-
-
 class ClericArtifactG3(BaseArtifact):
     atk = 240
     damage_to_clerics = 0.08
-
-
 class ClericArtifactG4(BaseArtifact):
     atk = 300
     damage_to_clerics = 0.1
-
-
 class ClericArtifactB1(BaseArtifact):
     atk = 240
     damage_to_clerics = 0.08
-
-
 class ClericArtifactB2(BaseArtifact):
     atk = 300
     damage_to_clerics = 0.1
-
-
 class ClericArtifactB3(BaseArtifact):
     atk = 360
     damage_to_clerics = 0.12
-
-
 class ClericArtifactB4(BaseArtifact):
     atk = 450
     damage_to_clerics = 0.15
-
-
 class ClericArtifactY1(BaseArtifact):
     atk = 360
     damage_to_clerics = 0.12
-
-
 class ClericArtifactY2(BaseArtifact):
     atk = 420
     damage_to_clerics = 0.14
-
-
 class ClericArtifactY3(BaseArtifact):
     atk = 480
     damage_to_clerics = 0.16
-
-
 class ClericArtifactY4(BaseArtifact):
     atk = 540
     damage_to_clerics = 0.18
-
-
 class ClericArtifactY5(BaseArtifact):
     atk = 600
     damage_to_clerics = 0.2
-
-
 class ClericArtifactP1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactP2(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactP3(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactP4(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactP5(BaseArtifact):
     atk = 840
     damage_to_clerics = 0.28
-
-
 class ClericArtifactO1(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactO2(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactO3(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactO4(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactO5(BaseArtifact):
     atk = 0
     damage_to_clerics = 0
-
-
 class ClericArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_clerics = 0.42
@@ -2596,118 +2417,72 @@ class ClericArtifactO6(BaseArtifact):
 class MageArtifactG1(BaseArtifact):
     atk = 150
     damage_to_mages = 0.05
-
-
 class MageArtifactG2(BaseArtifact):
     atk = 195
     damage_to_mages = 0.065
-
-
 class MageArtifactG3(BaseArtifact):
     atk = 240
     damage_to_mages = 0.08
-
-
 class MageArtifactG4(BaseArtifact):
     atk = 300
     damage_to_mages = 0.1
-
-
 class MageArtifactB1(BaseArtifact):
     atk = 240
     damage_to_mages = 0.08
-
-
 class MageArtifactB2(BaseArtifact):
     atk = 300
     damage_to_mages = 0.1
-
-
 class MageArtifactB3(BaseArtifact):
     atk = 360
     damage_to_mages = 0.12
-
-
 class MageArtifactB4(BaseArtifact):
     atk = 450
     damage_to_mages = 0.15
-
-
 class MageArtifactY1(BaseArtifact):
     atk = 360
     damage_to_mages = 0.12
-
-
 class MageArtifactY2(BaseArtifact):
     atk = 420
     damage_to_mages = 0.14
-
-
 class MageArtifactY3(BaseArtifact):
     atk = 480
     damage_to_mages = 0.16
-
-
 class MageArtifactY4(BaseArtifact):
     atk = 540
     damage_to_mages = 0.18
-
-
 class MageArtifactY5(BaseArtifact):
     atk = 600
     damage_to_mages = 0.2
-
-
 class MageArtifactP1(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactP2(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactP3(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactP4(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactP5(BaseArtifact):
     atk = 840
     damage_to_mages = 0.28
-
-
 class MageArtifactO1(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactO2(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactO3(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactO4(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactO5(BaseArtifact):
     atk = 0
     damage_to_mages = 0
-
-
 class MageArtifactO6(BaseArtifact):
     atk = 1280
     damage_to_mages = 0.42
@@ -2716,28 +2491,18 @@ class MageArtifactO6(BaseArtifact):
 class EyeOfHeavenO1(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
-
-
 class EyeOfHeavenO2(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
-
-
 class EyeOfHeavenO3(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
-
-
 class EyeOfHeavenO4(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
-
-
 class EyeOfHeavenO5(BaseArtifact):
     atk_bonus = 0
     hit_rate = 0
-
-
 class EyeOfHeavenO6(BaseArtifact):
     atk_bonus = 0.12
     hit_rate = 0.08
@@ -2746,29 +2511,39 @@ class EyeOfHeavenO6(BaseArtifact):
 class WindWalkerO1(BaseArtifact):
     speed = 0
     hp_bonus = 0
-
-
 class WindWalkerO2(BaseArtifact):
     speed = 0
     hp_bonus = 0
-
-
 class WindWalkerO3(BaseArtifact):
     speed = 0
     hp_bonus = 0
-
-
 class WindWalkerO4(BaseArtifact):
     speed = 0
     hp_bonus = 0
-
-
 class WindWalkerO5(BaseArtifact):
     speed = 0
     hp_bonus = 0
-
-
 class WindWalkerO6(BaseArtifact):
+    speed = 42
+    hp_bonus = 0.1
+
+
+class LightPaceO1(BaseArtifact):
+    speed = 0
+    hp_bonus = 0
+class LightPaceO2(BaseArtifact):
+    speed = 0
+    hp_bonus = 0
+class LightPaceO3(BaseArtifact):
+    speed = 0
+    hp_bonus = 0
+class LightPaceO4(BaseArtifact):
+    speed = 0
+    hp_bonus = 0
+class LightPaceO5(BaseArtifact):
+    speed = 0
+    hp_bonus = 0
+class LightPaceO6(BaseArtifact):
     speed = 42
     hp_bonus = 0.1
 
@@ -2776,415 +2551,337 @@ class WindWalkerO6(BaseArtifact):
 class ScorchingSunO1(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
-
-
 class ScorchingSunO2(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
-
-
 class ScorchingSunO3(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
-
-
 class ScorchingSunO4(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
-
-
 class ScorchingSunO5(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
-
-
 class ScorchingSunO6(BaseArtifact):
     hp_bonus = 0.08
     damage_reduction = 0.12
 
 
+class BoneGripO1(BaseArtifact):
+    hp_bonus = 0
+    damage_reduction = 0
+class BoneGripO2(BaseArtifact):
+    hp_bonus = 0
+    damage_reduction = 0
+class BoneGripO3(BaseArtifact):
+    hp_bonus = 0
+    damage_reduction = 0
+class BoneGripO4(BaseArtifact):
+    hp_bonus = 0
+    damage_reduction = 0
+class BoneGripO5(BaseArtifact):
+    hp_bonus = 0
+    damage_reduction = 0
+class BoneGripO6(BaseArtifact):
+    hp_bonus = 0.15
+    damage_reduction = 0.15
+
+
 class DragonbloodO1(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
-
-
 class DragonbloodO2(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
-
-
 class DragonbloodO3(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
-
-
 class DragonbloodO4(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
-
-
 class DragonbloodO5(BaseArtifact):
     atk_bonus = 0
     true_damage = 0
-
-
 class DragonbloodO6(BaseArtifact):
     atk_bonus = 0.08
     true_damage = 0.12
 
 
-class SoundStepO1(BaseArtifact):
+class TearsOfTheGoddessO1(BaseArtifact):
+    atk_bonus = 0
+    hp_bonus = 0
     energy = 0
-    atk = 0
-
-
-class SoundStepO2(BaseArtifact):
+class TearsOfTheGoddessO2(BaseArtifact):
+    atk_bonus = 0
+    hp_bonus = 0
     energy = 0
-    atk = 0
-
-
-class SoundStepO3(BaseArtifact):
+class TearsOfTheGoddessO3(BaseArtifact):
+    atk_bonus = 0
+    hp_bonus = 0
     energy = 0
-    atk = 0
-
-
-class SoundStepO4(BaseArtifact):
+class TearsOfTheGoddessO4(BaseArtifact):
+    atk_bonus = 0
+    hp_bonus = 0
     energy = 0
-    atk = 0
-
-
-class SoundStepO5(BaseArtifact):
+class TearsOfTheGoddessO5(BaseArtifact):
+    atk_bonus = 0
+    hp_bonus = 0
     energy = 0
-    atk = 0
+class TearsOfTheGoddessO6(BaseArtifact):
+    atk_bonus = 0.1
+    hp_bonus = 0.08
+    energy = 50
 
 
-class SoundStepO6(BaseArtifact):
-    energy = 240
-    atk = 240
-
-
-class KnightsVowO1(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-    skill_damage_if_alliance = 0
-
-
-class KnightsVowO2(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-    skill_damage_if_alliance = 0
-
-
-class KnightsVowO3(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-    skill_damage_if_alliance = 0
-
-
-class KnightsVowO4(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-    skill_damage_if_alliance = 0
-
-
-class KnightsVowO5(BaseArtifact):
-    atk = 0
-    damage_to_clerics = 0
-    skill_damage_if_alliance = 0
-
-
-class KnightsVowO6(BaseArtifact):
-    atk = 1280
-    damage_to_clerics = 0.42
+class KnightsVowO1(ClericArtifactO1):
+    skill_damage_if_alliance = 0.25
+class KnightsVowO2(ClericArtifactO2):
+    skill_damage_if_alliance = 0.25
+class KnightsVowO3(ClericArtifactO3):
+    skill_damage_if_alliance = 0.25
+class KnightsVowO4(ClericArtifactO4):
+    skill_damage_if_alliance = 0.25
+class KnightsVowO5(ClericArtifactO5):
+    skill_damage_if_alliance = 0.25
+class KnightsVowO6(ClericArtifactO6):
     skill_damage_if_alliance = 0.25
 
 
-class PrimevalSoulO1(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-    crit_rate_if_horde = 0
+class BloodlineBattlegearO1(WindWalkerO1):
+    crit_rate_if_alliance = 0.09
+class BloodlineBattlegearO2(WindWalkerO2):
+    crit_rate_if_alliance = 0.09
+class BloodlineBattlegearO3(WindWalkerO3):
+    crit_rate_if_alliance = 0.09
+class BloodlineBattlegearO4(WindWalkerO4):
+    crit_rate_if_alliance = 0.09
+class BloodlineBattlegearO5(WindWalkerO5):
+    crit_rate_if_alliance = 0.09
+class BloodlineBattlegearO6(WindWalkerO6):
+    crit_rate_if_alliance = 0.09
 
 
-class PrimevalSoulO2(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-    crit_rate_if_horde = 0
+class GospelSongO1(EyeOfHeavenO1):
+    skill_damage_if_alliance = 0.25
+class GospelSongO2(EyeOfHeavenO2):
+    skill_damage_if_alliance = 0.25
+class GospelSongO3(EyeOfHeavenO3):
+    skill_damage_if_alliance = 0.25
+class GospelSongO4(EyeOfHeavenO4):
+    skill_damage_if_alliance = 0.25
+class GospelSongO5(EyeOfHeavenO5):
+    skill_damage_if_alliance = 0.25
+class GospelSongO6(EyeOfHeavenO6):
+    skill_damage_if_alliance = 0.25
 
 
-class PrimevalSoulO3(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-    crit_rate_if_horde = 0
-
-
-class PrimevalSoulO4(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-    crit_rate_if_horde = 0
-
-
-class PrimevalSoulO5(BaseArtifact):
-    atk = 0
-    damage_to_wanderers = 0
-    crit_rate_if_horde = 0
-
-
-class PrimevalSoulO6(BaseArtifact):
-    atk = 1280
-    damage_to_wanderers = 0.42
+class PrimevalSoulO1(WandererArtifactO1):
+    crit_rate_if_horde = 0.09
+class PrimevalSoulO2(WandererArtifactO2):
+    crit_rate_if_horde = 0.09
+class PrimevalSoulO3(WandererArtifactO3):
+    crit_rate_if_horde = 0.09
+class PrimevalSoulO4(WandererArtifactO4):
+    crit_rate_if_horde = 0.09
+class PrimevalSoulO5(WandererArtifactO5):
+    crit_rate_if_horde = 0.09
+class PrimevalSoulO6(WandererArtifactO6):
     crit_rate_if_horde = 0.09
 
 
-class QueensCrownO1(BaseArtifact):
-    speed = 0
-    hp_bonus = 0
-    crit_rate_if_elf = 0
+class GunOfTheDisasterO1(WindWalkerO1):
+    crit_rate_if_horde = 0.09
+class GunOfTheDisasterO2(WindWalkerO2):
+    crit_rate_if_horde = 0.09
+class GunOfTheDisasterO3(WindWalkerO3):
+    crit_rate_if_horde = 0.09
+class GunOfTheDisasterO4(WindWalkerO4):
+    crit_rate_if_horde = 0.09
+class GunOfTheDisasterO5(WindWalkerO5):
+    crit_rate_if_horde = 0.09
+class GunOfTheDisasterO6(WindWalkerO6):
+    crit_rate_if_horde = 0.09
 
 
-class QueensCrownO2(BaseArtifact):
-    speed = 0
-    hp_bonus = 0
-    crit_rate_if_elf = 0
+class GiantLizardO1(WindWalkerO1):
+    crit_rate_if_horde = 0.09
+class GiantLizardO2(WindWalkerO2):
+    crit_rate_if_horde = 0.09
+class GiantLizardO3(WindWalkerO3):
+    crit_rate_if_horde = 0.09
+class GiantLizardO4(WindWalkerO4):
+    crit_rate_if_horde = 0.09
+class GiantLizardO5(WindWalkerO5):
+    crit_rate_if_horde = 0.09
+class GiantLizardO6(WindWalkerO6):
+    crit_rate_if_horde = 0.09
 
 
-class QueensCrownO3(BaseArtifact):
-    speed = 0
-    hp_bonus = 0
-    crit_rate_if_elf = 0
+class HellDisasterO1(EyeOfHeavenO1):
+    skill_damage_if_horde = 0.25
+class HellDisasterO2(EyeOfHeavenO2):
+    skill_damage_if_horde = 0.25
+class HellDisasterO3(EyeOfHeavenO3):
+    skill_damage_if_horde = 0.25
+class HellDisasterO4(EyeOfHeavenO4):
+    skill_damage_if_horde = 0.25
+class HellDisasterO5(EyeOfHeavenO5):
+    skill_damage_if_horde = 0.25
+class HellDisasterO6(EyeOfHeavenO6):
+    skill_damage_if_horde = 0.25
 
 
-class QueensCrownO4(BaseArtifact):
-    speed = 0
-    hp_bonus = 0
-    crit_rate_if_elf = 0
-
-
-class QueensCrownO5(BaseArtifact):
-    speed = 0
-    hp_bonus = 0
-    crit_rate_if_elf = 0
-
-
-class QueensCrownO6(BaseArtifact):
-    speed = 42
-    hp_bonus = 0.1
+class QueensCrownO1(WindWalkerO1):
+    crit_rate_if_elf = 0.09
+class QueensCrownO2(WindWalkerO2):
+    crit_rate_if_elf = 0.09
+class QueensCrownO3(WindWalkerO3):
+    crit_rate_if_elf = 0.09
+class QueensCrownO4(WindWalkerO4):
+    crit_rate_if_elf = 0.09
+class QueensCrownO5(WindWalkerO5):
+    crit_rate_if_elf = 0.09
+class QueensCrownO6(WindWalkerO6):
     crit_rate_if_elf = 0.09
 
 
-class AncientVowsO1(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_elf = 0
-
-
-class AncientVowsO2(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_elf = 0
-
-
-class AncientVowsO3(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_elf = 0
-
-
-class AncientVowsO4(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_elf = 0
-
-
-class AncientVowsO5(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_elf = 0
-
-
-class AncientVowsO6(BaseArtifact):
-    attack_bonus = 0.12
-    hit_rate = 0.08
+class AncientVowsO1(EyeOfHeavenO1):
+    skill_damage_if_elf = 0.25
+class AncientVowsO2(EyeOfHeavenO2):
+    skill_damage_if_elf = 0.25
+class AncientVowsO3(EyeOfHeavenO3):
+    skill_damage_if_elf = 0.25
+class AncientVowsO4(EyeOfHeavenO4):
+    skill_damage_if_elf = 0.25
+class AncientVowsO5(EyeOfHeavenO5):
+    skill_damage_if_elf = 0.25
+class AncientVowsO6(EyeOfHeavenO6):
     skill_damage_if_elf = 0.25
 
 
-class FineSnowDanceO1(BaseArtifact):
-    damage_to_warriors = 0.24
-    atk = 720
+class FineSnowDanceO1(WarriorArtifactO1):
+    crit_rate_if_elf = 0.09
+class FineSnowDanceO2(WarriorArtifactO2):
+    crit_rate_if_elf = 0.09
+class FineSnowDanceO3(WarriorArtifactO3):
+    crit_rate_if_elf = 0.09
+class FineSnowDanceO4(WarriorArtifactO4):
+    crit_rate_if_elf = 0.09
+class FineSnowDanceO5(WarriorArtifactO5):
+    crit_rate_if_elf = 0.09
+class FineSnowDanceO6(WarriorArtifactO6):
     crit_rate_if_elf = 0.09
 
 
-class FineSnowDanceO2(BaseArtifact):
-    damage_to_warriors = 0
-    atk = 0
-    crit_rate_if_elf = 0
-
-
-class FineSnowDanceO3(BaseArtifact):
-    damage_to_warriors = 0
-    atk = 0
-    crit_rate_if_elf = 0
-
-
-class FineSnowDanceO4(BaseArtifact):
-    damage_to_warriors = 0
-    atk = 0
-    crit_rate_if_elf = 0
-
-
-class FineSnowDanceO5(BaseArtifact):
-    damage_to_warriors = 0
-    atk = 0
-    crit_rate_if_elf = 0
-
-
-class FineSnowDanceO6(BaseArtifact):
-    damage_to_warriors = 0.42
-    atk = 1280
-    crit_rate_if_elf = 0.09
-
-
-class SoulTorrentO1(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_undead = 0
-
-
-class SoulTorrentO2(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_undead = 0
-
-
-class SoulTorrentO3(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_undead = 0
-
-
-class SoulTorrentO4(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_undead = 0
-
-
-class SoulTorrentO5(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_undead = 0
-
-
-class SoulTorrentO6(BaseArtifact):
-    atk_bonus = 0.12
-    hit_rate = 0.08
+class SoulTorrentO1(EyeOfHeavenO1):
     skill_damage_if_undead = 0.25
+class SoulTorrentO2(EyeOfHeavenO2):
+    skill_damage_if_undead = 0.25
+class SoulTorrentO3(EyeOfHeavenO3):
+    skill_damage_if_undead = 0.25
+class SoulTorrentO4(EyeOfHeavenO4):
+    skill_damage_if_undead = 0.25
+class SoulTorrentO5(EyeOfHeavenO5):
+    skill_damage_if_undead = 0.25
+class SoulTorrentO6(EyeOfHeavenO6):
+    skill_damage_if_undead = 0.25
+
+
+class SirenShellO1(MageArtifactO1):
+    skill_damage_if_undead = 0.25
+class SirenShellO2(MageArtifactO2):
+    skill_damage_if_undead = 0.25
+class SirenShellO3(MageArtifactO3):
+    skill_damage_if_undead = 0.25
+class SirenShellO4(MageArtifactO4):
+    skill_damage_if_undead = 0.25
+class SirenShellO5(MageArtifactO5):
+    skill_damage_if_undead = 0.25
+class SirenShellO6(MageArtifactO6):
+    skill_damage_if_undead = 0.25
+
+
+class StarPrayO1(WindWalkerO1):
+    crit_rate_if_undead = 0.09
+class StarPrayO2(WindWalkerO2):
+    crit_rate_if_undead = 0.09
+class StarPrayO3(WindWalkerO3):
+    crit_rate_if_undead = 0.09
+class StarPrayO4(WindWalkerO4):
+    crit_rate_if_undead = 0.09
+class StarPrayO5(WindWalkerO5):
+    crit_rate_if_undead = 0.09
+class StarPrayO6(WindWalkerO6):
+    crit_rate_if_undead = 0.09
 
 
 class GiftOfCreationO1(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
-
-
 class GiftOfCreationO2(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
-
-
 class GiftOfCreationO3(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
-
-
 class GiftOfCreationO4(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
-
-
 class GiftOfCreationO5(BaseArtifact):
     hp_bonus = 0
     damage_reduction = 0
     true_damage_if_heaven = 0
-
-
 class GiftOfCreationO6(BaseArtifact):
     hp_bonus = 0.1
     damage_reduction = 0.15
     true_damage_if_heaven = 0.12
 
 
-class AnonymousGunO1(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_heaven = 0
-
-
-class AnonymousGunO2(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_heaven = 0
-
-
-class AnonymousGunO3(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_heaven = 0
-
-
-class AnonymousGunO4(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_heaven = 0
-
-
-class AnonymousGunO5(BaseArtifact):
-    attack_bonus = 0
-    hit_rate = 0
-    skill_damage_if_heaven = 0
-
-
-class AnonymousGunO6(BaseArtifact):
-    attack_bonus = 0.12
-    hit_rate = 0.08
+class AnonymousGunO1(EyeOfHeavenO1):
+    skill_damage_if_heaven = 0.25
+class AnonymousGunO2(EyeOfHeavenO2):
+    skill_damage_if_heaven = 0.25
+class AnonymousGunO3(EyeOfHeavenO3):
+    skill_damage_if_heaven = 0.25
+class AnonymousGunO4(EyeOfHeavenO4):
+    skill_damage_if_heaven = 0.25
+class AnonymousGunO5(EyeOfHeavenO5):
+    skill_damage_if_heaven = 0.25
+class AnonymousGunO6(EyeOfHeavenO6):
     skill_damage_if_heaven = 0.25
 
 
-class EternalCurseO1(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_hell = 0
-
-
-class EternalCurseO2(BaseArtifact):
-    atk_bonus = 0
-    hit_rate = 0
-    skill_damage_if_hell = 0
-
-
-class EternalCurseO3(BaseArtifact):
-    atk_bonus = 0.075
-    hit_rate = 0.05
+class EternalCurseO1(EyeOfHeavenO1):
+    skill_damage_if_hell = 0.25
+class EternalCurseO2(EyeOfHeavenO2):
+    skill_damage_if_hell = 0.25
+class EternalCurseO3(EyeOfHeavenO3):
+    skill_damage_if_hell = 0.25
+class EternalCurseO4(EyeOfHeavenO4):
+    skill_damage_if_hell = 0.25
+class EternalCurseO5(EyeOfHeavenO5):
+    skill_damage_if_hell = 0.25
+class EternalCurseO6(EyeOfHeavenO6):
     skill_damage_if_hell = 0.25
 
 
-class EternalCurseO4(BaseArtifact):
-    atk_bonus = 0.09
-    hit_rate = 0.06
-    skill_damage_if_hell = 0.25
-
-
-class EternalCurseO5(BaseArtifact):
-    atk_bonus = 0.105
-    hit_rate = 0.07
-    skill_damage_if_hell = 0.25
-
-
-class EternalCurseO6(BaseArtifact):
-    atk_bonus = 0.12
-    hit_rate = 0.08
-    skill_damage_if_hell = 0.25
+class HolyLightJusticeO1(WindWalkerO1):
+    crit_rate_if_hell = 0.09
+class HolyLightJusticeO2(WindWalkerO2):
+    crit_rate_if_hell = 0.09
+class HolyLightJusticeO3(WindWalkerO3):
+    crit_rate_if_hell = 0.09
+class HolyLightJusticeO4(WindWalkerO4):
+    crit_rate_if_hell = 0.09
+class HolyLightJusticeO5(WindWalkerO5):
+    crit_rate_if_hell = 0.09
+class HolyLightJusticeO6(WindWalkerO6):
+    crit_rate_if_hell = 0.09
 
 
 @dataclass
@@ -3418,6 +3115,26 @@ wind_walker_artifact_from_request = {
 
 
 @dataclass
+class LightPace:
+    O1 = LightPaceO1()
+    O2 = LightPaceO2()
+    O3 = LightPaceO3()
+    O4 = LightPaceO4()
+    O5 = LightPaceO5()
+    O6 = LightPaceO6()
+
+
+light_pace_artifact_from_request = {
+    1: LightPace.O1,
+    2: LightPace.O2,
+    3: LightPace.O3,
+    4: LightPace.O4,
+    5: LightPace.O5,
+    6: LightPace.O6
+}
+
+
+@dataclass
 class ScorchingSun:
     O1 = ScorchingSunO1()
     O2 = ScorchingSunO2()
@@ -3434,6 +3151,26 @@ scorching_sun_artifact_from_request = {
     4: ScorchingSun.O4,
     5: ScorchingSun.O5,
     6: ScorchingSun.O6
+}
+
+
+@dataclass
+class BoneGrip:
+    O1 = BoneGripO1()
+    O2 = BoneGripO2()
+    O3 = BoneGripO3()
+    O4 = BoneGripO4()
+    O5 = BoneGripO5()
+    O6 = BoneGripO6()
+
+
+bone_grip_artifact_from_request = {
+    1: BoneGrip.O1,
+    2: BoneGrip.O2,
+    3: BoneGrip.O3,
+    4: BoneGrip.O4,
+    5: BoneGrip.O5,
+    6: BoneGrip.O6
 }
 
 
@@ -3458,22 +3195,22 @@ dragonblood_artifact_from_request = {
 
 
 @dataclass
-class SoundStep:
-    O1 = SoundStepO1()
-    O2 = SoundStepO2()
-    O3 = SoundStepO3()
-    O4 = SoundStepO4()
-    O5 = SoundStepO5()
-    O6 = SoundStepO6()
+class TearsOfTheGoddess:
+    O1 = TearsOfTheGoddessO1()
+    O2 = TearsOfTheGoddessO2()
+    O3 = TearsOfTheGoddessO3()
+    O4 = TearsOfTheGoddessO4()
+    O5 = TearsOfTheGoddessO5()
+    O6 = TearsOfTheGoddessO6()
 
 
-sound_step_artifact_from_request = {
-    1: SoundStep.O1,
-    2: SoundStep.O2,
-    3: SoundStep.O3,
-    4: SoundStep.O4,
-    5: SoundStep.O5,
-    6: SoundStep.O6
+tears_of_the_goddess_artifact_from_request = {
+    1: TearsOfTheGoddess.O1,
+    2: TearsOfTheGoddess.O2,
+    3: TearsOfTheGoddess.O3,
+    4: TearsOfTheGoddess.O4,
+    5: TearsOfTheGoddess.O5,
+    6: TearsOfTheGoddess.O6
 }
 
 
@@ -3498,6 +3235,46 @@ knights_vow_artifact_from_request = {
 
 
 @dataclass
+class BloodlineBattlegear:
+    O1 = BloodlineBattlegearO1()
+    O2 = BloodlineBattlegearO2()
+    O3 = BloodlineBattlegearO3()
+    O4 = BloodlineBattlegearO4()
+    O5 = BloodlineBattlegearO5()
+    O6 = BloodlineBattlegearO6()
+
+
+bloodline_battlegear_artifact_from_request = {
+    1: BloodlineBattlegear.O1,
+    2: BloodlineBattlegear.O2,
+    3: BloodlineBattlegear.O3,
+    4: BloodlineBattlegear.O4,
+    5: BloodlineBattlegear.O5,
+    6: BloodlineBattlegear.O6
+}
+
+
+@dataclass
+class GospelSong:
+    O1 = GospelSongO1()
+    O2 = GospelSongO2()
+    O3 = GospelSongO3()
+    O4 = GospelSongO4()
+    O5 = GospelSongO5()
+    O6 = GospelSongO6()
+
+
+gospel_song_artifact_from_request = {
+    1: GospelSong.O1,
+    2: GospelSong.O2,
+    3: GospelSong.O3,
+    4: GospelSong.O4,
+    5: GospelSong.O5,
+    6: GospelSong.O6
+}
+
+
+@dataclass
 class PrimevalSoul:
     O1 = PrimevalSoulO1()
     O2 = PrimevalSoulO2()
@@ -3514,6 +3291,66 @@ primeval_soul_artifact_from_request = {
     4: PrimevalSoul.O4,
     5: PrimevalSoul.O5,
     6: PrimevalSoul.O6
+}
+
+
+@dataclass
+class GunOfTheDisaster:
+    O1 = GunOfTheDisasterO1()
+    O2 = GunOfTheDisasterO2()
+    O3 = GunOfTheDisasterO3()
+    O4 = GunOfTheDisasterO4()
+    O5 = GunOfTheDisasterO5()
+    O6 = GunOfTheDisasterO6()
+
+
+gun_of_the_disaster_artifact_from_request = {
+    1: GunOfTheDisaster.O1,
+    2: GunOfTheDisaster.O2,
+    3: GunOfTheDisaster.O3,
+    4: GunOfTheDisaster.O4,
+    5: GunOfTheDisaster.O5,
+    6: GunOfTheDisaster.O6
+}
+
+
+@dataclass
+class HellDisaster:
+    O1 = HellDisasterO1()
+    O2 = HellDisasterO2()
+    O3 = HellDisasterO3()
+    O4 = HellDisasterO4()
+    O5 = HellDisasterO5()
+    O6 = HellDisasterO6()
+
+
+hell_disaster_artifact_from_request = {
+    1: HellDisaster.O1,
+    2: HellDisaster.O2,
+    3: HellDisaster.O3,
+    4: HellDisaster.O4,
+    5: HellDisaster.O5,
+    6: HellDisaster.O6
+}
+
+
+@dataclass
+class GiantLizard:
+    O1 = GiantLizardO1()
+    O2 = GiantLizardO2()
+    O3 = GiantLizardO3()
+    O4 = GiantLizardO4()
+    O5 = GiantLizardO5()
+    O6 = GiantLizardO6()
+
+
+giant_lizard_artifact_from_request = {
+    1: GiantLizard.O1,
+    2: GiantLizard.O2,
+    3: GiantLizard.O3,
+    4: GiantLizard.O4,
+    5: GiantLizard.O5,
+    6: GiantLizard.O6
 }
 
 
@@ -3598,6 +3435,46 @@ soul_torrent_artifact_from_request = {
 
 
 @dataclass
+class SirenShell:
+    O1 = SirenShellO1()
+    O2 = SirenShellO2()
+    O3 = SirenShellO3()
+    O4 = SirenShellO4()
+    O5 = SirenShellO5()
+    O6 = SirenShellO6()
+
+
+siren_shell_artifact_from_request = {
+    1: SirenShell.O1,
+    2: SirenShell.O2,
+    3: SirenShell.O3,
+    4: SirenShell.O4,
+    5: SirenShell.O5,
+    6: SirenShell.O6
+}
+
+
+@dataclass
+class StarPray:
+    O1 = StarPrayO1()
+    O2 = StarPrayO2()
+    O3 = StarPrayO3()
+    O4 = StarPrayO4()
+    O5 = StarPrayO5()
+    O6 = StarPrayO6()
+
+
+star_pray_artifact_from_request = {
+    1: StarPray.O1,
+    2: StarPray.O2,
+    3: StarPray.O3,
+    4: StarPray.O4,
+    5: StarPray.O5,
+    6: StarPray.O6
+}
+
+
+@dataclass
 class GiftOfCreation:
     O1 = GiftOfCreationO1()
     O2 = GiftOfCreationO2()
@@ -3658,6 +3535,26 @@ eternal_curse_artifact_from_request = {
 
 
 @dataclass
+class HolyLightJustice:
+    O1 = HolyLightJusticeO1()
+    O2 = HolyLightJusticeO2()
+    O3 = HolyLightJusticeO3()
+    O4 = HolyLightJusticeO4()
+    O5 = HolyLightJusticeO5()
+    O6 = HolyLightJusticeO6()
+
+
+holy_light_justice_artifact_from_request = {
+    1: HolyLightJustice.O1,
+    2: HolyLightJustice.O2,
+    3: HolyLightJustice.O3,
+    4: HolyLightJustice.O4,
+    5: HolyLightJustice.O5,
+    6: HolyLightJustice.O6
+}
+
+
+@dataclass
 class Artifact:
     empty = EmptyArtifact()
     warrior = WarriorArtifact
@@ -3667,18 +3564,28 @@ class Artifact:
     mage = MageArtifact
     eye_of_heaven = EyeOfHeaven
     wind_walker = WindWalker
+    light_pace = LightPace
     scorching_sun = ScorchingSun
+    bone_grip = BoneGrip
     dragonblood = Dragonblood
-    sound_step = SoundStep
+    tears_of_the_goddess = TearsOfTheGoddess
     knights_vow = KnightsVow
+    bloodline_battlegear = BloodlineBattlegear
+    gospel_song = GospelSong
     primeval_soul = PrimevalSoul
+    gun_of_the_disaster = GunOfTheDisaster
+    giant_lizard = GiantLizard
+    hell_disaster = HellDisaster
     queens_crown = QueensCrown
     ancient_vows = AncientVows
     fine_snow_dance = FineSnowDance
     soul_torrent = SoulTorrent
+    siren_shell = SirenShell
+    star_pray = StarPray
     gift_of_creation = GiftOfCreation
     anonymous_gun = AnonymousGun
     eternal_curse = EternalCurse
+    holy_light_justice = HolyLightJustice
 
 
 artifact_from_request = {
@@ -3690,18 +3597,28 @@ artifact_from_request = {
     'BURNING_SOUL': burning_soul_artifact_from_request,
     'EYE_OF_HEAVEN': eye_of_heaven_artifact_from_request,
     'WIND_WALKER': wind_walker_artifact_from_request,
+    'LIGHT_PACE': light_pace_artifact_from_request,
     'SCORCHING_SUN': scorching_sun_artifact_from_request,
+    'BONE_GRIP': bone_grip_artifact_from_request,
     'DRAGONBLOOD': dragonblood_artifact_from_request,
-    'SOUND_STEP': sound_step_artifact_from_request,
+    'TEARS_OF_THE_GODDESS': tears_of_the_goddess_artifact_from_request,
     'KNIGHTS_VOW': knights_vow_artifact_from_request,
+    'BLOODLINE_BATTLEGEAR': bloodline_battlegear_artifact_from_request,
+    'GOSPEL_SONG': gospel_song_artifact_from_request,
     'PRIMEVAL_SOUL': primeval_soul_artifact_from_request,
+    'GUN_OF_THE_DISASTER': gun_of_the_disaster_artifact_from_request,
+    'HELL_DISASTER': hell_disaster_artifact_from_request,
+    'GIANT_LIZARD': giant_lizard_artifact_from_request,
     'QUEENS_CROWN': queens_crown_artifact_from_request,
     'ANCIENT_VOWS': ancient_vows_artifact_from_request,
     'FINE_SNOW_DANCE': fine_snow_dance_artifact_from_request,
     'SOUL_TORRENT': soul_torrent_artifact_from_request,
+    'SIREN_SHELL': siren_shell_artifact_from_request,
+    'STAR_PRAY': star_pray_artifact_from_request,
     'GIFT_OF_CREATION': gift_of_creation_artifact_from_request,
     'ANONYMOUS_GUN': anonymous_gun_artifact_from_request,
-    'ETERNAL_CURSE': eternal_curse_artifact_from_request
+    'ETERNAL_CURSE': eternal_curse_artifact_from_request,
+    'HOLY_LIGHT_JUSTICE': holy_light_justice_artifact_from_request
 }
 
 
@@ -4088,7 +4005,7 @@ class TimedMark(BaseEffect):
         self.source = source
         self.holder = holder
         self.power = power
-        self.turns = turns + 2
+        self.turns = turns
         self.first_turn = True
         self.name = name
         super().__init__()

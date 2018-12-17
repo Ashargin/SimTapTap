@@ -8,7 +8,6 @@ from sim.models import Armor, Helmet, Weapon, Pendant, Rune, Artifact, Familiar
 from sim.processing import GameSim, GauntletAttackSim, GauntletDefenseSim, GauntletSim, Game
 from sim.tests import friend_boss_test, main_friend_boss_test, guild_boss_test, \
                     main_guild_boss_test, trial_test, main_trial_test, pvp_test, sim_setup
-from sim.gauntlets import generate_all_samples
 
 heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.lindberg,
@@ -18,34 +17,37 @@ heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chess
         Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
-# benchmark = Team([Hero.ultima(), Hero.scarlet(), Hero.monkey_king(), Hero.nameless_king(), Hero.reaper(), Hero.luna()])
-# team1 = Team([Hero.monkey_king(), Hero.verthandi(), Hero.mars(), Hero.nameless_king(), Hero.chessia(), Hero.freya()])
-# team2 = Team([Hero.ultima(), Hero.scarlet(), Hero.shudde_m_ell(), Hero.chessia(), Hero.luna(), Hero.mars()])
-# team3 = Team([Hero.ultima(), Hero.verthandi(), Hero.saw_machine(), Hero.vegvisir(), Hero.luna(), Hero.mars()])
-# team4 = Team([Hero.ultima(), Hero.verthandi(), Hero.martin(), Hero.vegvisir(), Hero.luna(), Hero.mars()])
-# team5 = Team([Hero.monkey_king(), Hero.scarlet(), Hero.shudde_m_ell(), Hero.aden(), Hero.lexar(), Hero.freya()])
+benchmark = Team([Hero.ultima(), Hero.scarlet(), Hero.monkey_king(), Hero.nameless_king(), Hero.reaper(), Hero.luna()])
+team1 = Team([Hero.wolnir(), Hero.aden(), Hero.aden(), Hero.shudde_m_ell(), Hero.shudde_m_ell(), Hero.shudde_m_ell()])
+team2 = Team([Hero.xexanoth(), Hero.chessia(), Hero.chessia(), Hero.mars(), Hero.mars(), Hero.lindberg()])
+team3 = Team([Hero.verthandi(), Hero.mars(), Hero.mars(), Hero.lindberg(), Hero.lindberg(), Hero.lindberg()])
+
 
 @click.group()
 def cli():
     pass
 
+
 @click.command(name='sim-params')
 @click.option('--time', default=4.0)
 @click.option('--cores', default=7)
 @click.option('--async/--no-async', default=True)
-def sim_params_cmd(time, cores, async):
+@click.option('--pos/--no-pos', default=True)
+def sim_params_cmd(time, cores, async, pos):
+    redo_pos = pos # variable name
     n_sim = max(10 * (round(267 * time) // 10), 10)
     print('Simulating batches of {} games\n'.format(n_sim))
-    print('Generating random gauntlets for simulations\n')
-    generate_all_samples()
 
+    positions = dict(pd.read_excel('data/results_pvp.xlsx').pos)
+    if redo_pos:
+        positions = {key: None for key in positions}
     results = None
     if async:
         pool = mp.Pool(processes=cores)
-        results = [pool.apply_async(sim_setup, args=(h, n_sim, False)) for h in heroes]
+        results = [pool.apply_async(sim_setup, args=(h, positions[h.name.value], n_sim, False)) for h in heroes]
         results = [p.get() for p in results]
     else:
-        results = [sim_setup(h, n_sim) for h in heroes]
+        results = [sim_setup(h, positions[h.name.value], n_sim) for h in heroes]
     idx = []
     data = []
     for res in results:
@@ -53,9 +55,72 @@ def sim_params_cmd(time, cores, async):
         idx.append(name)
         data.append([this_pos] + [this_rune.__class__.__name__] +
                     [this_art.__class__.__name__] + [score] + pos_scores + rune_scores + art_scores)
-    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'eye_of_heaven', 'scorching_sun', 'wind_walker', 'extra_1', 'extra_2', 'extra_3'])
-    df.to_excel(r'data/results.xlsx')
+    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'bone_grip', 'tears_of_the_goddess', 'extra_1', 'extra_2', 'extra_3'])
+    df.to_excel(r'data/results_params.xlsx')
 
+
+@click.command(name='sim-pvp')
+@click.option('--sims', default=3000)
+@click.option('--cores', default=7)
+@click.option('--attack/--defense', default=True)
+@click.option('--async/--no-async', default=True)
+def sim_pvp_cmd(sims, cores, attack, async):
+    n_sims = sims # variable name
+    print('Simulating batches of {} games\n'.format(n_sims))
+
+    positions = dict(pd.read_excel('data/results_params.xlsx').pos)
+    positions = {key: [positions[key]] for key in positions}
+    runes = {key: [None] for key in positions}
+    artifacts = {key: [None] for key in positions}
+    positions['Luna'].append(6)
+    runes['Luna'].append(None)
+    artifacts['Luna'].append(None)
+    positions['Verthandi'].append(5)
+    runes['Verthandi'].append(Rune.attack.R2)
+    artifacts['Verthandi'].append(None)
+    positions['Monkey_King'].append(4)
+    runes['Monkey_King'].append(Rune.armor_break.R2)
+    artifacts['Monkey_King'].append(None)
+    positions['Nameless_King'].append(4)
+    runes['Nameless_King'].append(Rune.armor_break.R2)
+    artifacts['Nameless_King'].append(None)
+    positions['Saw_Machine'].append(1)
+    runes['Saw_Machine'].append(Rune.evasion.R2)
+    artifacts['Saw_Machine'].append(Artifact.knights_vow.O6)
+    results = None
+    if async:
+        pool = mp.Pool(processes=cores)
+        results = [pool.apply_async(pvp_test, args=(h, pos, runes[h.name.value][i], 
+                                artifacts[h.name.value][i], n_sims, attack)) 
+                                for h in heroes for i, pos in enumerate(positions[h.name.value])]
+        results = [p.get() for p in results]
+    else:
+        results = [pvp_test(h, pos, rune=runes[h.name.value][i], artifact=artifacts[h.name.value][i], 
+                n_sim=n_sim, attack=attack) for h in heroes for i, pos in enumerate(positions[h.name.value])]
+    idx = []
+    data = []
+    for res in results:
+        h, pos, sim, winrate = res
+        name = h.name.value
+        rune = h().rune.__class__.__name__
+        artifact = h().artifact.__class__.__name__
+        stats = sim.heroes[0].stats
+        idx.append(name)
+        data.append([pos, rune, artifact, winrate, stats['damage'], stats['effective_healing'], 
+                    stats['skills'], stats['hard_ccs'], stats['silences'], 
+                    stats['effective_hard_cc_turns_taken'] + stats['effective_silence_turns_taken'], 
+                    stats['dodges'], stats['kills'], stats['deaths'], stats['turns_alive']])
+    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'winrate', 'damage', 
+                'effective_healing', 'skills', 'hard_ccs', 'silences', 
+                'turns_denied_hard_cc_or_silence', 'dodges', 
+                'kills', 'deaths', 'turns_alive'])
+    if attack:
+        df.to_excel(r'data/results_pvp_attack.xlsx')
+    else:
+        df.to_excel(r'data/results_pvp_defense.xlsx')
+
+
+cli.add_command(sim_pvp_cmd)
 cli.add_command(sim_params_cmd)
 if __name__ == '__main__':
     cli()
@@ -80,5 +145,4 @@ if __name__ == '__main__':
 # Tiger King : Tiger Attack : dot or burn?
 # Vivienne : Cleric Shine : 2 backline enemies?
 # Wolnir : Bone Pact : even when dodged?
-# Xexanoth : Weak Point Stealing : on_hit or on_attack?                                             IMPORTANT
 # Xexanoth : Weak Point Stealing : before or after on_attack?                                       PRIORITY

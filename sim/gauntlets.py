@@ -1,8 +1,11 @@
 import random as rd
+import pandas as pd
+import numpy as np
 import pickle
+import math
 
 from sim.heroes import Team, Hero
-from sim.models import Faction, Familiar
+from sim.models import Faction, Familiar, Artifact
 
 heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
@@ -22,6 +25,56 @@ tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_kin
         Hero.wolf_rider, Hero.wolnir]
 healers = [Hero.megaw, Hero.shudde_m_ell, Hero.verthandi, Hero.vivienne]
 others = [h for h in heroes if h not in tanks and h not in healers]
+pvp_tanks = [Hero.abyss_lord, Hero.grand, Hero.luna, Hero.minotaur, Hero.monkey_king, Hero.mulan, 
+            Hero.nameless_king, Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
+            Hero.verthandi, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
+frontline = [Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.dziewona, Hero.freya, 
+            Hero.mars, Hero.reaper, Hero.samurai, Hero.saw_machine, Hero.scarlet]
+backline = [Hero.gerald, Hero.hester, Hero.lexar, Hero.lindberg, Hero.martin, Hero.medusa, 
+            Hero.megaw, Hero.orphee, Hero.ripper, Hero.shudde_m_ell, Hero.tesla, Hero.vivienne, 
+            Hero.werewolf]
+
+scores = dict(pd.read_excel('data/results_pvp.xlsx').winrate)
+probas = {key: math.exp(6 * scores[key]) for key in scores}
+artifacts = {"Shudde_M'ell": Artifact.soul_torrent.O6,
+            'Mars': Artifact.wind_walker.O6,
+            'Lindberg': Artifact.gift_of_creation.O6,
+            'Xexanoth': Artifact.bone_grip.O6,
+            'Verthandi': Artifact.gift_of_creation.O6,
+            'Aden': Artifact.dragonblood.O6,
+            'Luna': Artifact.queens_crown.O6,
+            'Monkey_King': Artifact.dragonblood.O6,
+            'Vegvisir': Artifact.queens_crown.O6,
+            'Freya': Artifact.eternal_curse.O6,
+            'Chessia': Artifact.dragonblood.O6,
+            'Grand': Artifact.bone_grip.O6,
+            'Nameless_King': Artifact.gift_of_creation.O6,
+            'Ultima': Artifact.bloodline_battlegear.O6,
+            'Lexar': Artifact.hell_disaster.O6,
+            'Hester': Artifact.bone_grip.O6,
+            'Blood_Tooth': Artifact.gun_of_the_disaster.O6,
+            'Tiger_King': Artifact.dragonblood.O6,
+            'Scarlet': Artifact.dragonblood.O6,
+            'Mulan': Artifact.bone_grip.O6,
+            'Reaper': Artifact.soul_torrent.O6,
+            'Tesla': Artifact.bloodline_battlegear.O6,
+            'Centaur': Artifact.queens_crown.O6,
+            'Gerald': Artifact.star_pray.O6,
+            'Wolf_Rider': Artifact.hell_disaster.O6,
+            'Minotaur': Artifact.hell_disaster.O6,
+            'Abyss_Lord': Artifact.bone_grip.O6,
+            'Rlyeh': Artifact.bone_grip.O6,
+            'Medusa': Artifact.gun_of_the_disaster.O6,
+            'Vivienne': Artifact.gospel_song.O6,
+            'Wolnir': Artifact.bone_grip.O6,
+            'Martin': Artifact.gospel_song.O6,
+            'Werewolf': Artifact.queens_crown.O6,
+            'Saw_Machine': Artifact.bloodline_battlegear.O6,
+            'Ripper': Artifact.star_pray.O6,
+            'Dziewona': Artifact.dragonblood.O6,
+            'Megaw': Artifact.ancient_vows.O6,
+            'Samurai': Artifact.dragonblood.O6,
+            'Orphee': Artifact.queens_crown.O6}
 
 
 def generate_random_sample(n_sample=10000, enemy=False):
@@ -159,13 +212,52 @@ def generate_semirandom_sample(n_sample=10000, n_tanks=1, n_healers=1, enemy=Fal
 
     path = 'data/semirandom_sample_{}T{}H.pkl'.format(n_tanks, n_healers)
     if enemy:
-        path = path = 'data/semirandom_sample_{}T{}H_enemy.pkl'.format(n_tanks, n_healers)
+        path = 'data/semirandom_sample_{}T{}H_enemy.pkl'.format(n_tanks, n_healers)
     with open(path, 'wb') as file:
         pickle.dump(sample, file)
 
 
-# def generate_pvp_sample(n_sample=10000, enemy=False):
-#     pass
+def generate_pvp_sample(n_sample=20000, pos=None, enemy=False):
+    sample = []
+    for i in range(n_sample):
+        comp = []
+        if pos != 1 or enemy:
+            new = weighted_choice(pvp_tanks)
+            comp.append(new)
+        if pos != 2 or enemy:
+            new = weighted_choice(frontline)
+            comp.append(new)
+        if pos != 3 or enemy:
+            new = weighted_choice(frontline)
+            while new in comp:
+                new = weighted_choice(frontline)
+            comp.append(new)
+        if pos != 4 or enemy:
+            new = weighted_choice(backline)
+            comp.append(new)
+        if pos != 5 or enemy:
+            new = weighted_choice(backline)
+            while new in comp:
+                new = weighted_choice(backline)
+            comp.append(new)
+        if pos != 6 or enemy:
+            new = weighted_choice(backline)
+            while new in comp:
+                new = weighted_choice(backline)
+            comp.append(new)
+        sample.append(comp)
+
+    path = 'data/pvp_sample_{}.pkl'.format(pos)
+    if enemy:
+        path = 'data/pvp_sample_enemy.pkl'
+    with open(path, 'wb') as file:
+        pickle.dump(sample, file)
+
+
+def weighted_choice(sub):
+    sub_probas = [probas[h.name.value] for h in sub]
+    sub_probas = [p / sum(sub_probas) for p in sub_probas]
+    return np.random.choice(sub, p=sub_probas)
 
 
 def generate_all_samples(n_sample=10000):
@@ -175,15 +267,18 @@ def generate_all_samples(n_sample=10000):
         for n_healers in (0, 1, 2):
             generate_semirandom_sample(n_sample=n_sample, n_tanks=n_tanks, n_healers=n_healers)
             generate_semirandom_sample(n_sample=n_sample, n_tanks=n_tanks, n_healers=n_healers, enemy=True)
+    for pos in range(1, 7):
+        generate_pvp_sample(pos=pos)
+    generate_pvp_sample(enemy=True)
 
 
-def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, rune=None, artifact=None, player=True):
+def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, rune=None, artifact=None, player=True, reroll_tears=False):
     gauntlet = []
     for sub in sample[:length]:
         heroes = []
         if from_hero:
             for h in sub[:pos - 1]:
-                heroes.append(h())
+                heroes.append(get_new_hero(h, reroll_tears=reroll_tears))
             if rune is None and artifact is None:
                 heroes.append(hero())
             elif rune is None:
@@ -193,18 +288,29 @@ def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, r
             else:
                 heroes.append(hero(rune=rune, artifact=artifact))
             for h in sub[pos - 1:]:
-                heroes.append(h())
+                heroes.append(get_new_hero(h, reroll_tears=reroll_tears))
         else:
             for h in sub:
-                heroes.append(h())
+                heroes.append(get_new_hero(h, reroll_tears=reroll_tears))
         team = None
         if player:
-            team = Team(heroes)
+            team = Team(heroes, cancel_aura=True)
         else:
-            team = Team(heroes, pet=Familiar.empty)
+            team = Team(heroes, pet=Familiar.empty, cancel_aura=True)
         gauntlet.append(team)
 
     return gauntlet
+
+
+tear_skip_idx = 0
+def get_new_hero(h, reroll_tears=True):
+    global tear_skip_idx
+    new_hero = h()
+    if new_hero.artifact == Artifact.tears_of_the_goddess.O6 and reroll_tears:
+        if tear_skip_idx % 4 != 0:
+            new_hero = h(artifact=artifacts[h.name.value])
+        tear_skip_idx += 1
+    return new_hero
 
 
 def random_gauntlet_from_hero(hero, pos, rune=None, artifact=None, length=10000, player=True):
@@ -227,6 +333,17 @@ def semirandom_gauntlet_from_hero(hero, pos, rune=None, artifact=None, n_tanks=1
     return gauntlet
 
 
+def pvp_gauntlet_from_hero(hero, pos, rune=None, artifact=None, length=10000, player=True):
+    sample = None
+    with open('data/pvp_sample_{}.pkl'.format(pos), 'rb') as file:
+        sample = pickle.load(file)
+    gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, 
+                                    pos=pos, rune=rune, artifact=artifact, player=player,
+                                    reroll_tears=True)
+
+    return gauntlet
+
+
 def random_gauntlet(length=10000, player=False):
     sample = None
     with open('data/random_sample_enemy.pkl', 'rb') as file:
@@ -241,5 +358,14 @@ def semirandom_gauntlet(n_tanks=1, n_healers=1, length=10000, player=False):
     with open('data/semirandom_sample_{}T{}H_enemy.pkl'.format(n_tanks, n_healers), 'rb') as file:
         sample = pickle.load(file)
     gauntlet = gauntlet_from_sample(sample, length=length, player=player)
+
+    return gauntlet
+
+
+def pvp_gauntlet(length=10000, player=True):
+    sample = None
+    with open('data/pvp_sample_enemy.pkl', 'rb') as file:
+        sample = pickle.load(file)
+    gauntlet = gauntlet_from_sample(sample, length=length, player=player, reroll_tears=True)
 
     return gauntlet

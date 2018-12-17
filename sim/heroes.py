@@ -10,7 +10,18 @@ from sim.utils import targets_at_random
 
 ## Heroes
 class BaseHero:
-    def __init__(self, armor, helmet, weapon, pendant, rune, artifact, guild_tech, familiar_stats):
+    def __init__(self, armor, helmet, weapon, pendant, rune, artifact, guild_tech, 
+                                                            familiar_stats, player):
+        if not player:
+            armor = Armor.empty
+            helmet = Helmet.empty
+            weapon = Weapon.empty
+            pendant = Pendant.empty
+            rune = Rune.empty
+            artifact = Artifact.empty
+            guild_tech = guild_tech_empty
+            familiar_stats = [0, 0]
+
         self.energy = 50
         self.atk_bonus = 0
         self.hp_bonus = 0
@@ -43,6 +54,13 @@ class BaseHero:
         self.is_dead = False
         self.can_attack = True
         self.effects = []
+
+        self.chest = armor.__class__.__name__
+        self.helmet = helmet.__class__.__name__
+        self.weapon = weapon.__class__.__name__
+        self.pendant = pendant.__class__.__name__
+        self.rune = rune
+        self.artifact = artifact
 
         self.has_dropped_below_60 = False
         self.has_dropped_below_30 = False
@@ -82,18 +100,23 @@ class BaseHero:
         self.damage_to_mages += artifact.damage_to_mages
         if self.faction == Faction.ALLIANCE:
             self.skill_damage += artifact.skill_damage_if_alliance
+            self.crit_rate += artifact.crit_rate_if_alliance
+        if self.faction == Faction.HORDE:
+            self.skill_damage += artifact.skill_damage_if_horde
+            self.crit_rate += artifact.crit_rate_if_horde
         if self.faction == Faction.ELF:
             self.skill_damage += artifact.skill_damage_if_elf
             self.crit_rate += artifact.crit_rate_if_elf
         if self.faction == Faction.UNDEAD:
             self.skill_damage += artifact.skill_damage_if_undead
-        if self.faction == Faction.HELL:
-            self.skill_damage += artifact.skill_damage_if_hell
-        if self.faction == Faction.HORDE:
-            self.crit_rate += artifact.crit_rate_if_horde
+            self.crit_rate += artifact.crit_rate_if_undead
         if self.faction == Faction.HEAVEN:
             self.skill_damage += artifact.skill_damage_if_heaven
+            self.crit_rate += artifact.crit_rate_if_heaven
             self.true_damage += artifact.true_damage_if_heaven
+        if self.faction == Faction.HELL:
+            self.skill_damage += artifact.skill_damage_if_hell
+            self.crit_rate += artifact.crit_rate_if_hell
         self.atk *= (1 + equipment.atk_bonus)
         self.hp *= (1 + equipment.hp_bonus)
         self.atk *= (1 + rune.atk_bonus)
@@ -338,10 +361,10 @@ class BaseHero:
                 target.energy = max(min(target.energy + 10, 100), target.energy)
         if crit:
             self.on_crit(target)
-        if on_attack:
-            self.on_attack(target)
         if active:
             target.on_hit(self)
+        if on_attack:
+            self.on_attack(target)
 
     def hit(self, target, power, skill, active, on_attack, multi, 
                         multi_attack=False, update=True, name=''):
@@ -1171,9 +1194,9 @@ class AbyssLord(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.primeval_soul.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1191,7 +1214,7 @@ class AbyssLord(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -1248,9 +1271,9 @@ class Aden(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1268,7 +1291,7 @@ class Aden(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Blood Craving'
         hit_rate_up = 0.2
@@ -1314,9 +1337,9 @@ class BloodTooth(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.crit_damage.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1334,7 +1357,7 @@ class BloodTooth(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Rabid'
         attack_up = 0.25
@@ -1396,9 +1419,9 @@ class Centaur(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.crit_rate.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1416,7 +1439,7 @@ class Centaur(BaseHero):
             self.speed = 983  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = "Earth's Power"
         crit_rate_up = 0.3
@@ -1473,9 +1496,9 @@ class Chessia(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1493,7 +1516,7 @@ class Chessia(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Shadow Queen'
         skill_damage_up = 0.5
@@ -1554,9 +1577,9 @@ class Dziewona(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.vitality.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1574,7 +1597,7 @@ class Dziewona(BaseHero):
             self.speed = 1008  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -1636,7 +1659,7 @@ class ForestHealer(BaseHero):
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
                  rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1649,7 +1672,7 @@ class ForestHealer(BaseHero):
         self.speed = 973  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Longevity'
         hp_up = 0.3
@@ -1700,9 +1723,9 @@ class Freya(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.eternal_curse.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1720,7 +1743,7 @@ class Freya(BaseHero):
             self.speed = 971  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Demonisation'
         skill_damage_up = 0.875
@@ -1789,9 +1812,9 @@ class Gerald(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1809,7 +1832,7 @@ class Gerald(BaseHero):
             self.speed = 983  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Faith Ruin'
         damage_to_stunned = 0.75
@@ -1864,9 +1887,9 @@ class Grand(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.scorching_sun.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1884,7 +1907,7 @@ class Grand(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Living Armor'
         hp_up = 0.32
@@ -1940,9 +1963,9 @@ class Hester(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.scorching_sun.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -1960,7 +1983,7 @@ class Hester(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Wish Of Cinderella'
         hit_rate_up = 0.35
@@ -2018,9 +2041,9 @@ class Lexar(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.eye_of_heaven.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2038,7 +2061,7 @@ class Lexar(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -2114,9 +2137,9 @@ class Lindberg(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.gift_of_creation.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2133,7 +2156,7 @@ class Lindberg(BaseHero):
             self.armor = 12  # should depend on the level
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
-                         guild_tech=guild_tech, familiar_stats=familiar_stats)
+                         guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
 
         name = 'Cross Shelter'
         speed_up = 35
@@ -2218,9 +2241,9 @@ class Luna(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2238,7 +2261,7 @@ class Luna(BaseHero):
             self.speed = 1017  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Full Moon Blessing'
         crit_rate_up = 0.3
@@ -2289,9 +2312,9 @@ class Mars(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2308,7 +2331,7 @@ class Mars(BaseHero):
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats)
+                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
 
         self.has_revived = False
 
@@ -2381,9 +2404,9 @@ class Martin(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.knights_vow.O6,
+                 rune=Rune.crit_damage.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2401,7 +2424,7 @@ class Martin(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Ace'
         hp_up = 0.35
@@ -2446,9 +2469,9 @@ class Medusa(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2466,7 +2489,7 @@ class Medusa(BaseHero):
             self.speed = 991  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Eyes Of Chaos'
         attack_up = 0.4
@@ -2519,9 +2542,9 @@ class Megaw(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.ancient_vows.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2539,7 +2562,7 @@ class Megaw(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -2596,9 +2619,9 @@ class Minotaur(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.eye_of_heaven.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.hell_disaster.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2616,7 +2639,7 @@ class Minotaur(BaseHero):
             self.speed = 996  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Ancestor Totem'
         armor_up = 23
@@ -2671,9 +2694,9 @@ class MonkeyKing(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2691,7 +2714,7 @@ class MonkeyKing(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_revived = False
 
@@ -2751,9 +2774,9 @@ class Mulan(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.scorching_sun.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2771,7 +2794,7 @@ class Mulan(BaseHero):
             self.speed = 983  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Tailwind'
         hp_up = 0.15
@@ -2843,9 +2866,9 @@ class NamelessKing(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.gift_of_creation.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2862,7 +2885,7 @@ class NamelessKing(BaseHero):
             self.armor = 12  # should depend on the level
             self.speed = 1006  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats)
+                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
 
         name = 'Heir Of Sunlight'
         hp_up = 0.25
@@ -2929,9 +2952,9 @@ class Orphee(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -2949,7 +2972,7 @@ class Orphee(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Highest Answer'
         hp_up = 0.3
@@ -2995,9 +3018,9 @@ class Reaper(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.soul_torrent.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3015,7 +3038,7 @@ class Reaper(BaseHero):
             self.speed = 984  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Necromancy'
         armor_break_up = 9.6
@@ -3067,9 +3090,9 @@ class Ripper(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.soul_torrent.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3087,7 +3110,7 @@ class Ripper(BaseHero):
             self.speed = 1012  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -3153,9 +3176,9 @@ class Rlyeh(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.scorching_sun.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3173,7 +3196,7 @@ class Rlyeh(BaseHero):
             self.speed = 951  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = "Old Gods' Protection"
         attack_up = 0.2
@@ -3239,9 +3262,9 @@ class Samurai(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3259,7 +3282,7 @@ class Samurai(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = "Mind's eye"
         dodge_up = 0.25
@@ -3320,9 +3343,9 @@ class SawMachine(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3340,7 +3363,7 @@ class SawMachine(BaseHero):
             self.speed = 984  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Destruction Mode'
         hp_up = 0.2
@@ -3396,9 +3419,9 @@ class Scarlet(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3416,7 +3439,7 @@ class Scarlet(BaseHero):
             self.speed = 984  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
     def skill(self):
         name = 'Poison Nova'
@@ -3464,9 +3487,9 @@ class ShuddeMell(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.soul_torrent.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.star_pray.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3484,7 +3507,7 @@ class ShuddeMell(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Psychic Blast'
         hp_up = 0.22
@@ -3552,9 +3575,9 @@ class Tesla(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3572,7 +3595,7 @@ class Tesla(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Static Intensify'
         attack_up = 0.2
@@ -3625,9 +3648,9 @@ class TigerKing(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3645,7 +3668,7 @@ class TigerKing(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'King Of Beasts'
         hp_up = 0.3
@@ -3696,9 +3719,9 @@ class Ultima(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3716,7 +3739,7 @@ class Ultima(BaseHero):
             self.speed = 951  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -3781,9 +3804,9 @@ class Vegvisir(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3801,7 +3824,7 @@ class Vegvisir(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -3855,9 +3878,9 @@ class Verthandi(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.gift_of_creation.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3874,7 +3897,7 @@ class Verthandi(BaseHero):
             self.armor = 12  # should depend on the level
             self.speed = 973  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
-                         guild_tech=guild_tech, familiar_stats=familiar_stats)
+                         guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
 
         name = 'Fate Drama'
         true_damage_up = 0.48
@@ -3933,9 +3956,9 @@ class Vivienne(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.accuracy.R2, artifact=Artifact.eye_of_heaven.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -3953,7 +3976,7 @@ class Vivienne(BaseHero):
             self.speed = 948  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -4021,9 +4044,9 @@ class Werewolf(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -4041,7 +4064,7 @@ class Werewolf(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'War Wolf Roar'
         attack_up = 0.2
@@ -4100,9 +4123,9 @@ class WolfRider(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.wind_walker.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -4120,7 +4143,7 @@ class WolfRider(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         self.has_triggered = False
 
@@ -4153,6 +4176,7 @@ class WolfRider(BaseHero):
         for h in self.own_team.heroes:
             for e in [e for e in h.effects if e.name == 'Attack Command' and e.source.str_id == self.str_id]:
                 e.kill()
+        super().on_death(attacker)
 
     def has_taken_damage(self, attacker):
         if self.hp <= self.hp_max * 0.5 and not self.has_triggered:
@@ -4172,9 +4196,9 @@ class Wolnir(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.scorching_sun.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -4192,7 +4216,7 @@ class Wolnir(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Desperate Struggle'
         hp_up = 0.3
@@ -4238,9 +4262,9 @@ class Xexanoth(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.scorching_sun.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats):
+                 familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
             raise NotImplementedError
 
@@ -4258,7 +4282,7 @@ class Xexanoth(BaseHero):
             self.speed = 985  # should depend on the level
         super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats)
+                         familiar_stats=familiar_stats, player=player)
 
         name = 'Rebellion'
         silence_immune_up = 1.0
@@ -4415,7 +4439,7 @@ hero_from_request = {
 
 ## Team
 class Team:
-    def __init__(self, heroes, pet=default_familiar):
+    def __init__(self, heroes, pet=default_familiar, cancel_aura=False):
         if len(heroes) != 6:
             raise Warning('Teams must contain 6 heroes')
 
@@ -4424,8 +4448,9 @@ class Team:
         for i, h in enumerate(self.heroes):
             h.pos = i
 
-        self.aura = Aura(heroes)  # aura
-        self.compute_aura()
+        if not cancel_aura:
+            self.aura = Aura(heroes)  # aura
+            self.compute_aura()
 
         self.compute_pet(pet)  # familiar
 
@@ -4525,93 +4550,41 @@ class Team:
         return teams_str
 
 
-def make_boss_heroes(heroes, neutral=True, speed=0):
+def make_boss_heroes(heroes, neutral=True, multiplier=0.0, speed=0):
     for h in heroes:
         h.hp *= 100
-        h.atk /= 100
+        h.atk *= multiplier
         h.speed += speed
         if neutral:
             h.faction = Faction.EMPTY
             h.type = HeroType.EMPTY
 
 
-def dummy_centaur(neutral=True):
+def dummy_friend(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i == 2:
-            heroes.append(Hero.centaur())
+            heroes.append(Hero.centaur(star=6, player=False))
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral, speed=-165)
+    make_boss_heroes(heroes, neutral=neutral, multiplier=0.01, speed=-150)
 
     return Team(heroes, pet=Familiar.empty)
 
 
-def dummy_warriors(neutral=True):
+def dummy_guild(neutral=True):
     heroes = []
     for i in range(1, 7):
         if i in (2, 4, 6):
-            heroes.append(Hero.nameless_king())
+            heroes.append(Hero.centaur(star=6, player=False))
         else:
             heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral, speed=825)
-
-    return Team(heroes, pet=Familiar.empty)
-
-
-def dummy_assassins(neutral=True):
-    heroes = []
-    for i in range(1, 7):
-        if i in (2, 4, 6):
-            heroes.append(Hero.aden())
-        else:
-            heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral, speed=825)
-
-    return Team(heroes, pet=Familiar.empty)
-
-
-def dummy_wanderers(neutral=True):
-    heroes = []
-    for i in range(1, 7):
-        if i in (2, 4, 6):
-            heroes.append(Hero.centaur())
-        else:
-            heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral, speed=825)
-
-    return Team(heroes, pet=Familiar.empty)
-
-
-def dummy_clerics(neutral=True):
-    heroes = []
-    for i in range(1, 7):
-        if i in (2, 4, 6):
-            heroes.append(Hero.forest_healer())
-        else:
-            heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral, speed=825)
-
-    return Team(heroes, pet=Familiar.empty)
-
-
-def dummy_mages(neutral=True):
-    heroes = []
-    for i in range(1, 7):
-        if i in (2, 4, 6):
-            heroes.append(Hero.scarlet())
-        else:
-            heroes.append(Hero.empty())
-    make_boss_heroes(heroes, neutral=neutral, speed=825)
+    make_boss_heroes(heroes, neutral=neutral, multiplier=10, speed=450)
 
     return Team(heroes, pet=Familiar.empty)
 
 
 @dataclass
 class DummyTeam:
-    friend = dummy_centaur
-    guild_warrior = dummy_warriors
-    guild_assassin = dummy_assassins
-    guild_wanderer = dummy_wanderers
-    guild_cleric = dummy_clerics
-    guild_mage = dummy_mages
+    friend = dummy_friend
+    guild = dummy_guild
