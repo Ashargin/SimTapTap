@@ -39,6 +39,7 @@ class HeroName(Enum):
     VIVIENNE = 'Vivienne'
     MARTIN = 'Martin'
     SAMURAI = 'Samurai'
+    VALKYRIE = 'Valkyrie'
 
     KHALIL = 'Khalil'
     RLYEH = 'Rlyeh'
@@ -62,6 +63,7 @@ class HeroName(Enum):
     ORPHEE = 'Orphee'
     LUNA = 'Luna'
     VEGVISIR = 'Vegvisir'
+    DROW = 'Drow'
 
     FORREN = 'Forren'
     PUPPET_MAID = 'Puppet_Maid'
@@ -3636,7 +3638,7 @@ class Aura:
         self.hp_bonus = 0
         self.dodge = 0
         self.crit_rate = 0
-        self.armor_break_bonus = 0
+        self.armor_break = 0
         self.control_immune = 0
 
         if alliance_count == 6:
@@ -3649,7 +3651,7 @@ class Aura:
             self.crit_rate = 0.05
             self.hp_bonus = 0.2
         elif undead_count == 6:
-            self.armor_break_bonus = 0.2
+            self.armor_break = 6
             self.hp_bonus = 0.2
         elif heaven_count == 6:
             self.control_immune = 0.3
@@ -3675,6 +3677,18 @@ class Aura:
         elif min([horde_count, undead_count, hell_count]) == 2:
             self.atk_bonus = 0.13
             self.hp_bonus = 0.11
+        elif min([elf_count, undead_count]) == 3:
+            self.atk_bonus = 0.09
+            self.hp_bonus = 0.09
+        elif min([alliance_count, undead_count]) == 3:
+            self.atk_bonus = 0.09
+            self.hp_bonus = 0.09
+        elif min([horde_count, elf_count]) == 3:
+            self.atk_bonus = 0.09
+            self.hp_bonus = 0.09
+        elif min([alliance_count, horde_count]) == 3:
+            self.atk_bonus = 0.09
+            self.hp_bonus = 0.09
 
 
 ## Familiar
@@ -4064,27 +4078,28 @@ class CritMark(BaseEffect):
             self.source.game.actions.append(action)
 
     def trigger(self):
-        power = self.power * self.source.atk
-        damage_components = self.source.compute_damage(self.holder, power)
-        dmg = damage_components['Total damage']
+        if not self.holder.is_dead:
+            power = self.power * self.source.atk
+            damage_components = self.source.compute_damage(self.holder, power)
+            dmg = damage_components['Total damage']
 
-        self.holder.hp -= dmg
-        action = Action.crit_mark_trigger(self.source, self.holder, damage_components, self.name)
-        action.text = '\n{} takes {} damage (crit mark from {} ({}))' \
-            .format(self.holder.str_id, round(dmg), self.source.str_id, self.name)
-        self.source.game.actions.append(action)
+            self.holder.hp -= dmg
+            action = Action.crit_mark_trigger(self.source, self.holder, damage_components, self.name)
+            action.text = '\n{} takes {} damage (crit mark from {} ({}))' \
+                .format(self.holder.str_id, round(dmg), self.source.str_id, self.name)
+            self.source.game.actions.append(action)
 
-        self.source.stats['damage_by_skill'][self.name] += dmg
-        self.source.stats['damage_by_target'][self.holder.str_id] += dmg
-        self.holder.stats['damage_taken_by_skill'][self.name] += dmg
-        self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
+            self.source.stats['damage_by_skill'][self.name] += dmg
+            self.source.stats['damage_by_target'][self.holder.str_id] += dmg
+            self.holder.stats['damage_taken_by_skill'][self.name] += dmg
+            self.holder.stats['damage_taken_by_source'][self.source.str_id] += dmg
 
-        self.holder.has_taken_damage(self.source)
+            self.holder.has_taken_damage(self.source)
 
-        if self.second_hit and rd.random() <= 0.5:
-            self.source.crit_mark(self.holder, power=1.5, name=self.name)
+            if self.second_hit and rd.random() <= 0.5:
+                self.source.crit_mark(self.holder, power=1.5, name=self.name)
 
-        self.kill()
+            self.kill()
 
 
 class Silence(BaseEffect):
@@ -4953,6 +4968,33 @@ class DamageToStunned(StatUp):
         super().kill()
 
 
+class DamageToPetrified(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.damage_to_petrified += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            action = Action.damage_to_petrified(self.source, self.holder, self.up, self.turns, self.name)
+            if not self.infinite:
+                action.text = '\n{} deals {}% extra damage to petrified targets ({} from {}), {} turns left' \
+                    .format(self.holder.str_id, 100 * self.up, self.name,
+                            self.source.str_id, self.turns) \
+                            if self.verbose else ''
+            else:
+                action.text = '\n{} deals {}% extra damage to petrified targets ({} from {})' \
+                    .format(self.holder.str_id, 100 * self.up, self.name,
+                            self.source.str_id) \
+                            if self.verbose else ''
+            self.source.game.actions.append(action)
+
+    def kill(self):
+        self.holder.damage_to_petrified -= self.up
+        super().kill()
+
+
 class DamageToWarriors(StatUp):
     def tick(self):
         self.verbose = self.verbose or self.holder.game.verbose_full
@@ -5048,6 +5090,7 @@ class Effect:
     damage_to_bleeding = DamageToBleeding
     damage_to_poisoned = DamageToPoisoned
     damage_to_stunned = DamageToStunned
+    damage_to_petrified = DamageToPetrified
     damage_to_warriors = DamageToWarriors
     healing_up = HealingUp
 
@@ -5336,6 +5379,10 @@ class DamageToStunnedAction(StatUpAction):
     pass
 
 
+class DamageToPetrifiedAction(StatUpAction):
+    pass
+
+
 class DamageToWarriorsAction(StatUpAction):
     pass
 
@@ -5421,6 +5468,7 @@ class Action:
     damage_to_bleeding = DamageToBleedingAction
     damage_to_poisoned = DamageToPoisonedAction
     damage_to_stunned = DamageToStunnedAction
+    damage_to_petrified = DamageToPetrifiedAction
     damage_to_warriors = DamageToWarriorsAction
     healing_up = HealingUpAction
     die = DieAction

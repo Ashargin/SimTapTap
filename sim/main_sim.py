@@ -9,18 +9,25 @@ from sim.processing import GameSim, GauntletAttackSim, GauntletDefenseSim, Gaunt
 from sim.tests import friend_boss_test, main_friend_boss_test, guild_boss_test, \
                     main_guild_boss_test, trial_test, main_trial_test, pvp_test, sim_setup
 
-heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
+heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.drow,
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.lindberg,
         Hero.luna, Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, 
         Hero.monkey_king, Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.reaper, Hero.ripper, 
         Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
-        Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
+        Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
-benchmark = Team([Hero.ultima(), Hero.scarlet(), Hero.monkey_king(), Hero.nameless_king(), Hero.reaper(), Hero.luna()])
-team1 = Team([Hero.wolnir(), Hero.aden(), Hero.aden(), Hero.shudde_m_ell(), Hero.shudde_m_ell(), Hero.shudde_m_ell()])
-team2 = Team([Hero.xexanoth(), Hero.chessia(), Hero.chessia(), Hero.mars(), Hero.mars(), Hero.lindberg()])
-team3 = Team([Hero.verthandi(), Hero.mars(), Hero.mars(), Hero.lindberg(), Hero.lindberg(), Hero.lindberg()])
+benchmark = Team([Hero.valkyrie(), Hero.medusa(), Hero.monkey_king(), Hero.nameless_king(), Hero.reaper(), Hero.drow()])
+random = Team([rd.choice(heroes)() for i in range(6)])
+# team1 = Team([Hero.wolnir(), Hero.aden(), Hero.aden(), Hero.shudde_m_ell(), Hero.shudde_m_ell(), Hero.shudde_m_ell()])
+# team2 = Team([Hero.xexanoth(), Hero.chessia(), Hero.chessia(), Hero.mars(), Hero.mars(), Hero.lindberg()])
+# team3 = Team([Hero.verthandi(), Hero.mars(), Hero.mars(), Hero.lindberg(), Hero.lindberg(), Hero.lindberg()])
+game = Game(benchmark, random)
+game.process()
+print(game.log.text)
+sim = GameSim(benchmark, team1, n_sim=3000)
+sim.process()
+sim.print_winrate()
 
 
 @click.group()
@@ -33,21 +40,34 @@ def cli():
 @click.option('--cores', default=7)
 @click.option('--async/--no-async', default=True)
 @click.option('--pos/--no-pos', default=True)
-def sim_params_cmd(time, cores, async, pos):
+@click.option('--rune/--no-rune', default=True)
+def sim_params_cmd(time, cores, async, pos, rune):
     redo_pos = pos # variable name
+    redo_rune = rune # variable name
+
     n_sim = max(10 * (round(267 * time) // 10), 10)
     print('Simulating batches of {} games\n'.format(n_sim))
 
-    positions = dict(pd.read_excel('data/results_pvp.xlsx').pos)
+    positions = dict(pd.read_excel('data/results_params.xlsx').pos)
+    runes = dict(pd.read_excel('data/results_params.xlsx').rune)
+    rune_encoder = {'AccuracyRuneR2': 0, 'ArmorBreakRuneR2': 1, 'AttackRuneR2': 2, 
+                    'CritDamageRuneR2': 3, 'CritRateRuneR2': 4, 'EvasionRuneR2': 5, 
+                    'HpRuneR2': 6, 'SkillDamageRuneR2': 7, 'SpeedRuneR2': 8, 'VitalityRuneR2': 9}
+    encoded_runes = {key: rune_encoder[runes[key]] for key in runes}
+
     if redo_pos:
         positions = {key: None for key in positions}
+    if redo_rune:
+        encoded_runes = {key: None for key in encoded_runes}
+
     results = None
     if async:
         pool = mp.Pool(processes=cores)
-        results = [pool.apply_async(sim_setup, args=(h, positions[h.name.value], n_sim, False)) for h in heroes]
+        results = [pool.apply_async(sim_setup, args=(h, positions[h.name.value], 
+                    encoded_runes[h.name.value], n_sim, False)) for h in heroes]
         results = [p.get() for p in results]
     else:
-        results = [sim_setup(h, positions[h.name.value], n_sim) for h in heroes]
+        results = [sim_setup(h, positions[h.name.value], encoded_runes[h.name.value], n_sim) for h in heroes]
     idx = []
     data = []
     for res in results:
@@ -55,7 +75,7 @@ def sim_params_cmd(time, cores, async, pos):
         idx.append(name)
         data.append([this_pos] + [this_rune.__class__.__name__] +
                     [this_art.__class__.__name__] + [score] + pos_scores + rune_scores + art_scores)
-    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'bone_grip', 'tears_of_the_goddess', 'extra_1', 'extra_2', 'extra_3'])
+    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'bone_grip', 'scorching_sun', 'extra_1', 'extra_2', 'extra_3'])
     df.to_excel(r'data/results_params.xlsx')
 
 
@@ -74,19 +94,16 @@ def sim_pvp_cmd(sims, cores, attack, async):
     artifacts = {key: [None] for key in positions}
     positions['Luna'].append(6)
     runes['Luna'].append(None)
-    artifacts['Luna'].append(None)
+    artifacts['Luna'].append(Artifact.tears_of_the_goddess.O6)
     positions['Verthandi'].append(5)
     runes['Verthandi'].append(Rune.attack.R2)
     artifacts['Verthandi'].append(None)
     positions['Monkey_King'].append(4)
-    runes['Monkey_King'].append(Rune.armor_break.R2)
+    runes['Monkey_King'].append(None)
     artifacts['Monkey_King'].append(None)
     positions['Nameless_King'].append(4)
     runes['Nameless_King'].append(Rune.armor_break.R2)
     artifacts['Nameless_King'].append(None)
-    positions['Saw_Machine'].append(1)
-    runes['Saw_Machine'].append(Rune.evasion.R2)
-    artifacts['Saw_Machine'].append(Artifact.knights_vow.O6)
     results = None
     if async:
         pool = mp.Pool(processes=cores)

@@ -46,7 +46,7 @@ def add_dicts(dict_1, dict_2): # dict_1 will be modified, dict_2 won't
 
 def rescale_dict(mydict, scale): # modifies mydict
     for key in mydict:
-        if isinstance(mydict[key], int):
+        if not isinstance(mydict[key], dict):
             mydict[key] = round(mydict[key] * scale, 2)
             if key in ('damage', 'effective_healing', 'healing', 'damage_taken', 
                                     'effective_healing_taken', 'healing_taken'):

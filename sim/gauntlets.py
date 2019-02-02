@@ -34,7 +34,7 @@ backline = [Hero.gerald, Hero.hester, Hero.lexar, Hero.lindberg, Hero.martin, He
             Hero.megaw, Hero.orphee, Hero.ripper, Hero.shudde_m_ell, Hero.tesla, Hero.vivienne, 
             Hero.werewolf]
 
-scores = dict(pd.read_excel('data/results_pvp.xlsx').winrate)
+scores = dict(pd.read_excel('data/results_params.xlsx').score)
 probas = {key: math.exp(6 * scores[key]) for key in scores}
 artifacts = {"Shudde_M'ell": Artifact.soul_torrent.O6,
             'Mars': Artifact.wind_walker.O6,
@@ -272,7 +272,7 @@ def generate_all_samples(n_sample=10000):
     generate_pvp_sample(enemy=True)
 
 
-def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, rune=None, artifact=None, player=True, reroll_tears=False):
+def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, rune=None, artifact=None, player=True, reroll_tears=True):
     gauntlet = []
     for sub in sample[:length]:
         heroes = []
@@ -307,7 +307,7 @@ def get_new_hero(h, reroll_tears=True):
     global tear_skip_idx
     new_hero = h()
     if new_hero.artifact == Artifact.tears_of_the_goddess.O6 and reroll_tears:
-        if tear_skip_idx % 4 != 0:
+        if tear_skip_idx % 3 != 0:
             new_hero = h(artifact=artifacts[h.name.value])
         tear_skip_idx += 1
     return new_hero
@@ -338,8 +338,7 @@ def pvp_gauntlet_from_hero(hero, pos, rune=None, artifact=None, length=10000, pl
     with open('data/pvp_sample_{}.pkl'.format(pos), 'rb') as file:
         sample = pickle.load(file)
     gauntlet = gauntlet_from_sample(sample, length=length, from_hero=True, hero=hero, 
-                                    pos=pos, rune=rune, artifact=artifact, player=player,
-                                    reroll_tears=True)
+                                    pos=pos, rune=rune, artifact=artifact, player=player)
 
     return gauntlet
 
@@ -366,6 +365,6 @@ def pvp_gauntlet(length=10000, player=True):
     sample = None
     with open('data/pvp_sample_enemy.pkl', 'rb') as file:
         sample = pickle.load(file)
-    gauntlet = gauntlet_from_sample(sample, length=length, player=player, reroll_tears=True)
+    gauntlet = gauntlet_from_sample(sample, length=length, player=player)
 
     return gauntlet
