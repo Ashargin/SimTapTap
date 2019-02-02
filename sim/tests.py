@@ -218,35 +218,35 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
     best_val = -1
     best_art = None
     art_scores = []
-    neutral_artifacts = [Artifact.dragonblood.O6, Artifact.bone_grip.O6, Artifact.scorching_sun.O6]
+    neutral_artifacts = [Artifact.dragonblood.O6, Artifact.bone_grip.O6, Artifact.tears_of_the_goddess.O6, Artifact.giant_lizard.O6]
     artifacts = copy.deepcopy(neutral_artifacts)
     if hero.faction == Faction.ALLIANCE:
         artifacts.append(Artifact.knights_vow.O6)
-        artifacts.append(Artifact.bloodline_battlegear.O6)
+        artifacts.append(Artifact.ancient_vows.O6)
         artifacts.append(Artifact.gospel_song.O6)
     elif hero.faction == Faction.HORDE:
         artifacts.append(Artifact.primeval_soul.O6)
         artifacts.append(Artifact.gun_of_the_disaster.O6)
-        artifacts.append(Artifact.hell_disaster.O6)
+        artifacts.append(Artifact.blood_medal.O6)
     elif hero.faction == Faction.ELF:
-        artifacts.append(Artifact.ancient_vows.O6)
+        artifacts.append(Artifact.star_pray.O6)
         artifacts.append(Artifact.fine_snow_dance.O6)
         artifacts.append(Artifact.queens_crown.O6)
     elif hero.faction == Faction.UNDEAD:
         artifacts.append(Artifact.soul_torrent.O6)
-        artifacts.append(Artifact.siren_shell.O6)
-        artifacts.append(Artifact.star_pray.O6)
+        artifacts.append(Artifact.siren_heart.O6)
+        artifacts.append(Artifact.cursed_gun.O6)
     elif hero.faction == Faction.HEAVEN:
-        artifacts.append(Artifact.wind_walker.O6)
-        artifacts.append(Artifact.anonymous_gun.O6)
+        artifacts.append(Artifact.light_pace.O6)
+        artifacts.append(Artifact.holy_light_justice.O6)
         artifacts.append(Artifact.gift_of_creation.O6)
     elif hero.faction == Faction.HELL:
         artifacts.append(Artifact.eternal_curse.O6)
-        artifacts.append(Artifact.holy_light_justice.O6)
+        artifacts.append(Artifact.hell_disaster.O6)
     for i, artifact in enumerate(artifacts):
         sim, winrate = uniform_test(hero, pos=best_pos, n_tanks=n_tanks, rune=best_rune, artifact=artifact, n_sim=n_sim)
         del sim
-        if i <= len(neutral_artifacts):
+        if i < len(neutral_artifacts):
             art_scores.append(winrate)
         else:
             art_scores.append((winrate, artifact.__class__.__name__))
@@ -257,7 +257,7 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
             print('Artifact {}, {} winrate'.format(artifact.__class__.__name__, winrate))
     if verbose:
         print('Best artifact : {}\n'.format(best_art.__class__.__name__))
-    for i in range(6 - len(art_scores)):
+    for i in range(len(neutral_artifacts) + 3 - len(art_scores)):
         art_scores.append('')
 
     return hero.name.value, best_pos, best_rune, best_art, best_val, pos_scores, rune_scores, art_scores

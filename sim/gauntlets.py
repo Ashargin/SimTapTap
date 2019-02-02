@@ -7,12 +7,12 @@ import math
 from sim.heroes import Team, Hero
 from sim.models import Faction, Familiar, Artifact
 
-heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, 
+heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.drow,
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
         Hero.lindberg, Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, 
         Hero.monkey_king, Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.reaper, Hero.ripper, 
         Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
-        Hero.tiger_king, Hero.ultima, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
+        Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 alliance = [h for h in heroes if h.faction == Faction.ALLIANCE]
 horde = [h for h in heroes if h.faction == Faction.HORDE]
@@ -23,58 +23,22 @@ hell = [h for h in heroes if h.faction == Faction.HELL]
 tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_king, Hero.mulan,
         Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
         Hero.wolf_rider, Hero.wolnir]
-healers = [Hero.megaw, Hero.shudde_m_ell, Hero.verthandi, Hero.vivienne]
+healers = [Hero.drow, Hero.megaw, Hero.shudde_m_ell, Hero.vivienne]
 others = [h for h in heroes if h not in tanks and h not in healers]
 pvp_tanks = [Hero.abyss_lord, Hero.grand, Hero.luna, Hero.minotaur, Hero.monkey_king, Hero.mulan, 
-            Hero.nameless_king, Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
+            Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
             Hero.verthandi, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
-frontline = [Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.dziewona, Hero.freya, 
-            Hero.mars, Hero.reaper, Hero.samurai, Hero.saw_machine, Hero.scarlet]
-backline = [Hero.gerald, Hero.hester, Hero.lexar, Hero.lindberg, Hero.martin, Hero.medusa, 
-            Hero.megaw, Hero.orphee, Hero.ripper, Hero.shudde_m_ell, Hero.tesla, Hero.vivienne, 
-            Hero.werewolf]
+pvp_others = [h for h in heroes if h not in pvp_tanks]
 
 scores = dict(pd.read_excel('data/results_params.xlsx').score)
 probas = {key: math.exp(6 * scores[key]) for key in scores}
-artifacts = {"Shudde_M'ell": Artifact.soul_torrent.O6,
-            'Mars': Artifact.wind_walker.O6,
-            'Lindberg': Artifact.gift_of_creation.O6,
-            'Xexanoth': Artifact.bone_grip.O6,
-            'Verthandi': Artifact.gift_of_creation.O6,
-            'Aden': Artifact.dragonblood.O6,
-            'Luna': Artifact.queens_crown.O6,
-            'Monkey_King': Artifact.dragonblood.O6,
-            'Vegvisir': Artifact.queens_crown.O6,
-            'Freya': Artifact.eternal_curse.O6,
-            'Chessia': Artifact.dragonblood.O6,
-            'Grand': Artifact.bone_grip.O6,
-            'Nameless_King': Artifact.gift_of_creation.O6,
-            'Ultima': Artifact.bloodline_battlegear.O6,
-            'Lexar': Artifact.hell_disaster.O6,
-            'Hester': Artifact.bone_grip.O6,
-            'Blood_Tooth': Artifact.gun_of_the_disaster.O6,
-            'Tiger_King': Artifact.dragonblood.O6,
-            'Scarlet': Artifact.dragonblood.O6,
-            'Mulan': Artifact.bone_grip.O6,
-            'Reaper': Artifact.soul_torrent.O6,
-            'Tesla': Artifact.bloodline_battlegear.O6,
-            'Centaur': Artifact.queens_crown.O6,
-            'Gerald': Artifact.star_pray.O6,
-            'Wolf_Rider': Artifact.hell_disaster.O6,
-            'Minotaur': Artifact.hell_disaster.O6,
-            'Abyss_Lord': Artifact.bone_grip.O6,
-            'Rlyeh': Artifact.bone_grip.O6,
-            'Medusa': Artifact.gun_of_the_disaster.O6,
-            'Vivienne': Artifact.gospel_song.O6,
-            'Wolnir': Artifact.bone_grip.O6,
-            'Martin': Artifact.gospel_song.O6,
-            'Werewolf': Artifact.queens_crown.O6,
-            'Saw_Machine': Artifact.bloodline_battlegear.O6,
-            'Ripper': Artifact.star_pray.O6,
-            'Dziewona': Artifact.dragonblood.O6,
-            'Megaw': Artifact.ancient_vows.O6,
-            'Samurai': Artifact.dragonblood.O6,
-            'Orphee': Artifact.queens_crown.O6}
+artifacts = {'Luna': Artifact.queens_crown.O6,
+            'Chessia': Artifact.eternal_curse.O6,
+            'Scarlet': Artifact.bone_grip.O6,
+            'Centaur': Artifact.fine_snow_dance.O6,
+            'Saw_Machine': Artifact.ancient_vows.O6,
+            'Ripper': Artifact.siren_heart.O6,
+            'Dziewona': Artifact.bone_grip.O6}
 
 
 def generate_random_sample(n_sample=10000, enemy=False):
@@ -224,27 +188,12 @@ def generate_pvp_sample(n_sample=20000, pos=None, enemy=False):
         if pos != 1 or enemy:
             new = weighted_choice(pvp_tanks)
             comp.append(new)
-        if pos != 2 or enemy:
-            new = weighted_choice(frontline)
-            comp.append(new)
-        if pos != 3 or enemy:
-            new = weighted_choice(frontline)
-            while new in comp:
-                new = weighted_choice(frontline)
-            comp.append(new)
-        if pos != 4 or enemy:
-            new = weighted_choice(backline)
-            comp.append(new)
-        if pos != 5 or enemy:
-            new = weighted_choice(backline)
-            while new in comp:
-                new = weighted_choice(backline)
-            comp.append(new)
-        if pos != 6 or enemy:
-            new = weighted_choice(backline)
-            while new in comp:
-                new = weighted_choice(backline)
-            comp.append(new)
+        for i in range(2, 7):
+            if pos != i or enemy:
+                new = weighted_choice(pvp_others)
+                while new in comp:
+                    new = weighted_choice(pvp_others)
+                comp.append(new)
         sample.append(comp)
 
     path = 'data/pvp_sample_{}.pkl'.format(pos)
@@ -307,7 +256,7 @@ def get_new_hero(h, reroll_tears=True):
     global tear_skip_idx
     new_hero = h()
     if new_hero.artifact == Artifact.tears_of_the_goddess.O6 and reroll_tears:
-        if tear_skip_idx % 3 != 0:
+        if tear_skip_idx % 2 != 0:
             new_hero = h(artifact=artifacts[h.name.value])
         tear_skip_idx += 1
     return new_hero

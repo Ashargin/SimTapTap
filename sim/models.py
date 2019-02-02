@@ -2094,6 +2094,8 @@ class BaseArtifact:
     atk_bonus = 0
     hp_bonus = 0
     hit_rate = 0
+    crit_rate = 0
+    crit_damage = 0
     true_damage = 0
     damage_reduction = 0
     damage_to_warriors = 0
@@ -2547,7 +2549,7 @@ class LightPaceO5(BaseArtifact):
     hp_bonus = 0
 class LightPaceO6(BaseArtifact):
     speed = 42
-    hp_bonus = 0.1
+    hp_bonus = 0.12
 
 
 class ScorchingSunO1(BaseArtifact):
@@ -2636,6 +2638,32 @@ class TearsOfTheGoddessO6(BaseArtifact):
     energy = 50
 
 
+class GiantLizardO1(BaseArtifact):
+    atk_bonus = 0
+    crit_rate = 0
+    crit_damage = 0
+class GiantLizardO2(BaseArtifact):
+    atk_bonus = 0
+    crit_rate = 0
+    crit_damage = 0
+class GiantLizardO3(BaseArtifact):
+    atk_bonus = 0
+    crit_rate = 0
+    crit_damage = 0
+class GiantLizardO4(BaseArtifact):
+    atk_bonus = 0
+    crit_rate = 0
+    crit_damage = 0
+class GiantLizardO5(BaseArtifact):
+    atk_bonus = 0
+    crit_rate = 0
+    crit_damage = 0
+class GiantLizardO6(BaseArtifact):
+    atk_bonus = 0.1
+    crit_rate = 0.1
+    crit_damage = 0.25
+
+
 class KnightsVowO1(ClericArtifactO1):
     skill_damage_if_alliance = 0.25
 class KnightsVowO2(ClericArtifactO2):
@@ -2650,17 +2678,17 @@ class KnightsVowO6(ClericArtifactO6):
     skill_damage_if_alliance = 0.25
 
 
-class BloodlineBattlegearO1(WindWalkerO1):
+class AncientVowsO1(WindWalkerO1):
     crit_rate_if_alliance = 0.09
-class BloodlineBattlegearO2(WindWalkerO2):
+class AncientVowsO2(WindWalkerO2):
     crit_rate_if_alliance = 0.09
-class BloodlineBattlegearO3(WindWalkerO3):
+class AncientVowsO3(WindWalkerO3):
     crit_rate_if_alliance = 0.09
-class BloodlineBattlegearO4(WindWalkerO4):
+class AncientVowsO4(WindWalkerO4):
     crit_rate_if_alliance = 0.09
-class BloodlineBattlegearO5(WindWalkerO5):
+class AncientVowsO5(WindWalkerO5):
     crit_rate_if_alliance = 0.09
-class BloodlineBattlegearO6(WindWalkerO6):
+class AncientVowsO6(WindWalkerO6):
     crit_rate_if_alliance = 0.09
 
 
@@ -2706,31 +2734,17 @@ class GunOfTheDisasterO6(WindWalkerO6):
     crit_rate_if_horde = 0.09
 
 
-class GiantLizardO1(WindWalkerO1):
-    crit_rate_if_horde = 0.09
-class GiantLizardO2(WindWalkerO2):
-    crit_rate_if_horde = 0.09
-class GiantLizardO3(WindWalkerO3):
-    crit_rate_if_horde = 0.09
-class GiantLizardO4(WindWalkerO4):
-    crit_rate_if_horde = 0.09
-class GiantLizardO5(WindWalkerO5):
-    crit_rate_if_horde = 0.09
-class GiantLizardO6(WindWalkerO6):
-    crit_rate_if_horde = 0.09
-
-
-class HellDisasterO1(EyeOfHeavenO1):
+class BloodMedalO1(EyeOfHeavenO1):
     skill_damage_if_horde = 0.25
-class HellDisasterO2(EyeOfHeavenO2):
+class BloodMedalO2(EyeOfHeavenO2):
     skill_damage_if_horde = 0.25
-class HellDisasterO3(EyeOfHeavenO3):
+class BloodMedalO3(EyeOfHeavenO3):
     skill_damage_if_horde = 0.25
-class HellDisasterO4(EyeOfHeavenO4):
+class BloodMedalO4(EyeOfHeavenO4):
     skill_damage_if_horde = 0.25
-class HellDisasterO5(EyeOfHeavenO5):
+class BloodMedalO5(EyeOfHeavenO5):
     skill_damage_if_horde = 0.25
-class HellDisasterO6(EyeOfHeavenO6):
+class BloodMedalO6(EyeOfHeavenO6):
     skill_damage_if_horde = 0.25
 
 
@@ -2748,17 +2762,17 @@ class QueensCrownO6(WindWalkerO6):
     crit_rate_if_elf = 0.09
 
 
-class AncientVowsO1(EyeOfHeavenO1):
+class StarPrayO1(EyeOfHeavenO1):
     skill_damage_if_elf = 0.25
-class AncientVowsO2(EyeOfHeavenO2):
+class StarPrayO2(EyeOfHeavenO2):
     skill_damage_if_elf = 0.25
-class AncientVowsO3(EyeOfHeavenO3):
+class StarPrayO3(EyeOfHeavenO3):
     skill_damage_if_elf = 0.25
-class AncientVowsO4(EyeOfHeavenO4):
+class StarPrayO4(EyeOfHeavenO4):
     skill_damage_if_elf = 0.25
-class AncientVowsO5(EyeOfHeavenO5):
+class StarPrayO5(EyeOfHeavenO5):
     skill_damage_if_elf = 0.25
-class AncientVowsO6(EyeOfHeavenO6):
+class StarPrayO6(EyeOfHeavenO6):
     skill_damage_if_elf = 0.25
 
 
@@ -2790,31 +2804,31 @@ class SoulTorrentO6(EyeOfHeavenO6):
     skill_damage_if_undead = 0.25
 
 
-class SirenShellO1(MageArtifactO1):
+class CursedGunO1(MageArtifactO1):
     skill_damage_if_undead = 0.25
-class SirenShellO2(MageArtifactO2):
+class CursedGunO2(MageArtifactO2):
     skill_damage_if_undead = 0.25
-class SirenShellO3(MageArtifactO3):
+class CursedGunO3(MageArtifactO3):
     skill_damage_if_undead = 0.25
-class SirenShellO4(MageArtifactO4):
+class CursedGunO4(MageArtifactO4):
     skill_damage_if_undead = 0.25
-class SirenShellO5(MageArtifactO5):
+class CursedGunO5(MageArtifactO5):
     skill_damage_if_undead = 0.25
-class SirenShellO6(MageArtifactO6):
+class CursedGunO6(MageArtifactO6):
     skill_damage_if_undead = 0.25
 
 
-class StarPrayO1(WindWalkerO1):
+class SirenHeartO1(WindWalkerO1):
     crit_rate_if_undead = 0.09
-class StarPrayO2(WindWalkerO2):
+class SirenHeartO2(WindWalkerO2):
     crit_rate_if_undead = 0.09
-class StarPrayO3(WindWalkerO3):
+class SirenHeartO3(WindWalkerO3):
     crit_rate_if_undead = 0.09
-class StarPrayO4(WindWalkerO4):
+class SirenHeartO4(WindWalkerO4):
     crit_rate_if_undead = 0.09
-class StarPrayO5(WindWalkerO5):
+class SirenHeartO5(WindWalkerO5):
     crit_rate_if_undead = 0.09
-class StarPrayO6(WindWalkerO6):
+class SirenHeartO6(WindWalkerO6):
     crit_rate_if_undead = 0.09
 
 
@@ -2844,17 +2858,17 @@ class GiftOfCreationO6(BaseArtifact):
     true_damage_if_heaven = 0.12
 
 
-class AnonymousGunO1(EyeOfHeavenO1):
+class HolyLightJusticeO1(EyeOfHeavenO1):
     skill_damage_if_heaven = 0.25
-class AnonymousGunO2(EyeOfHeavenO2):
+class HolyLightJusticeO2(EyeOfHeavenO2):
     skill_damage_if_heaven = 0.25
-class AnonymousGunO3(EyeOfHeavenO3):
+class HolyLightJusticeO3(EyeOfHeavenO3):
     skill_damage_if_heaven = 0.25
-class AnonymousGunO4(EyeOfHeavenO4):
+class HolyLightJusticeO4(EyeOfHeavenO4):
     skill_damage_if_heaven = 0.25
-class AnonymousGunO5(EyeOfHeavenO5):
+class HolyLightJusticeO5(EyeOfHeavenO5):
     skill_damage_if_heaven = 0.25
-class AnonymousGunO6(EyeOfHeavenO6):
+class HolyLightJusticeO6(EyeOfHeavenO6):
     skill_damage_if_heaven = 0.25
 
 
@@ -2872,17 +2886,17 @@ class EternalCurseO6(EyeOfHeavenO6):
     skill_damage_if_hell = 0.25
 
 
-class HolyLightJusticeO1(WindWalkerO1):
+class HellDisasterO1(WindWalkerO1):
     crit_rate_if_hell = 0.09
-class HolyLightJusticeO2(WindWalkerO2):
+class HellDisasterO2(WindWalkerO2):
     crit_rate_if_hell = 0.09
-class HolyLightJusticeO3(WindWalkerO3):
+class HellDisasterO3(WindWalkerO3):
     crit_rate_if_hell = 0.09
-class HolyLightJusticeO4(WindWalkerO4):
+class HellDisasterO4(WindWalkerO4):
     crit_rate_if_hell = 0.09
-class HolyLightJusticeO5(WindWalkerO5):
+class HellDisasterO5(WindWalkerO5):
     crit_rate_if_hell = 0.09
-class HolyLightJusticeO6(WindWalkerO6):
+class HellDisasterO6(WindWalkerO6):
     crit_rate_if_hell = 0.09
 
 
@@ -3217,6 +3231,26 @@ tears_of_the_goddess_artifact_from_request = {
 
 
 @dataclass
+class GiantLizard:
+    O1 = GiantLizardO1()
+    O2 = GiantLizardO2()
+    O3 = GiantLizardO3()
+    O4 = GiantLizardO4()
+    O5 = GiantLizardO5()
+    O6 = GiantLizardO6()
+
+
+giant_lizard_artifact_from_request = {
+    1: GiantLizard.O1,
+    2: GiantLizard.O2,
+    3: GiantLizard.O3,
+    4: GiantLizard.O4,
+    5: GiantLizard.O5,
+    6: GiantLizard.O6
+}
+
+
+@dataclass
 class KnightsVow:
     O1 = KnightsVowO1()
     O2 = KnightsVowO2()
@@ -3237,22 +3271,22 @@ knights_vow_artifact_from_request = {
 
 
 @dataclass
-class BloodlineBattlegear:
-    O1 = BloodlineBattlegearO1()
-    O2 = BloodlineBattlegearO2()
-    O3 = BloodlineBattlegearO3()
-    O4 = BloodlineBattlegearO4()
-    O5 = BloodlineBattlegearO5()
-    O6 = BloodlineBattlegearO6()
+class AncientVows:
+    O1 = AncientVowsO1()
+    O2 = AncientVowsO2()
+    O3 = AncientVowsO3()
+    O4 = AncientVowsO4()
+    O5 = AncientVowsO5()
+    O6 = AncientVowsO6()
 
 
-bloodline_battlegear_artifact_from_request = {
-    1: BloodlineBattlegear.O1,
-    2: BloodlineBattlegear.O2,
-    3: BloodlineBattlegear.O3,
-    4: BloodlineBattlegear.O4,
-    5: BloodlineBattlegear.O5,
-    6: BloodlineBattlegear.O6
+ancient_vows_artifact_from_request = {
+    1: AncientVows.O1,
+    2: AncientVows.O2,
+    3: AncientVows.O3,
+    4: AncientVows.O4,
+    5: AncientVows.O5,
+    6: AncientVows.O6
 }
 
 
@@ -3317,42 +3351,22 @@ gun_of_the_disaster_artifact_from_request = {
 
 
 @dataclass
-class HellDisaster:
-    O1 = HellDisasterO1()
-    O2 = HellDisasterO2()
-    O3 = HellDisasterO3()
-    O4 = HellDisasterO4()
-    O5 = HellDisasterO5()
-    O6 = HellDisasterO6()
+class BloodMedal:
+    O1 = BloodMedalO1()
+    O2 = BloodMedalO2()
+    O3 = BloodMedalO3()
+    O4 = BloodMedalO4()
+    O5 = BloodMedalO5()
+    O6 = BloodMedalO6()
 
 
-hell_disaster_artifact_from_request = {
-    1: HellDisaster.O1,
-    2: HellDisaster.O2,
-    3: HellDisaster.O3,
-    4: HellDisaster.O4,
-    5: HellDisaster.O5,
-    6: HellDisaster.O6
-}
-
-
-@dataclass
-class GiantLizard:
-    O1 = GiantLizardO1()
-    O2 = GiantLizardO2()
-    O3 = GiantLizardO3()
-    O4 = GiantLizardO4()
-    O5 = GiantLizardO5()
-    O6 = GiantLizardO6()
-
-
-giant_lizard_artifact_from_request = {
-    1: GiantLizard.O1,
-    2: GiantLizard.O2,
-    3: GiantLizard.O3,
-    4: GiantLizard.O4,
-    5: GiantLizard.O5,
-    6: GiantLizard.O6
+blood_medal_artifact_from_request = {
+    1: BloodMedal.O1,
+    2: BloodMedal.O2,
+    3: BloodMedal.O3,
+    4: BloodMedal.O4,
+    5: BloodMedal.O5,
+    6: BloodMedal.O6
 }
 
 
@@ -3377,22 +3391,22 @@ queens_crown_artifact_from_request = {
 
 
 @dataclass
-class AncientVows:
-    O1 = AncientVowsO1()
-    O2 = AncientVowsO2()
-    O3 = AncientVowsO3()
-    O4 = AncientVowsO4()
-    O5 = AncientVowsO5()
-    O6 = AncientVowsO6()
+class StarPray:
+    O1 = StarPrayO1()
+    O2 = StarPrayO2()
+    O3 = StarPrayO3()
+    O4 = StarPrayO4()
+    O5 = StarPrayO5()
+    O6 = StarPrayO6()
 
 
-ancient_vows_artifact_from_request = {
-    1: AncientVows.O1,
-    2: AncientVows.O2,
-    3: AncientVows.O3,
-    4: AncientVows.O4,
-    5: AncientVows.O5,
-    6: AncientVows.O6
+star_pray_artifact_from_request = {
+    1: StarPray.O1,
+    2: StarPray.O2,
+    3: StarPray.O3,
+    4: StarPray.O4,
+    5: StarPray.O5,
+    6: StarPray.O6
 }
 
 
@@ -3437,42 +3451,42 @@ soul_torrent_artifact_from_request = {
 
 
 @dataclass
-class SirenShell:
-    O1 = SirenShellO1()
-    O2 = SirenShellO2()
-    O3 = SirenShellO3()
-    O4 = SirenShellO4()
-    O5 = SirenShellO5()
-    O6 = SirenShellO6()
+class SirenHeart:
+    O1 = SirenHeartO1()
+    O2 = SirenHeartO2()
+    O3 = SirenHeartO3()
+    O4 = SirenHeartO4()
+    O5 = SirenHeartO5()
+    O6 = SirenHeartO6()
 
 
-siren_shell_artifact_from_request = {
-    1: SirenShell.O1,
-    2: SirenShell.O2,
-    3: SirenShell.O3,
-    4: SirenShell.O4,
-    5: SirenShell.O5,
-    6: SirenShell.O6
+siren_heart_artifact_from_request = {
+    1: SirenHeart.O1,
+    2: SirenHeart.O2,
+    3: SirenHeart.O3,
+    4: SirenHeart.O4,
+    5: SirenHeart.O5,
+    6: SirenHeart.O6
 }
 
 
 @dataclass
-class StarPray:
-    O1 = StarPrayO1()
-    O2 = StarPrayO2()
-    O3 = StarPrayO3()
-    O4 = StarPrayO4()
-    O5 = StarPrayO5()
-    O6 = StarPrayO6()
+class CursedGun:
+    O1 = CursedGunO1()
+    O2 = CursedGunO2()
+    O3 = CursedGunO3()
+    O4 = CursedGunO4()
+    O5 = CursedGunO5()
+    O6 = CursedGunO6()
 
 
-star_pray_artifact_from_request = {
-    1: StarPray.O1,
-    2: StarPray.O2,
-    3: StarPray.O3,
-    4: StarPray.O4,
-    5: StarPray.O5,
-    6: StarPray.O6
+cursed_gun_artifact_from_request = {
+    1: CursedGun.O1,
+    2: CursedGun.O2,
+    3: CursedGun.O3,
+    4: CursedGun.O4,
+    5: CursedGun.O5,
+    6: CursedGun.O6
 }
 
 
@@ -3497,22 +3511,22 @@ gift_of_creation_artifact_from_request = {
 
 
 @dataclass
-class AnonymousGun:
-    O1 = AnonymousGunO1()
-    O2 = AnonymousGunO2()
-    O3 = AnonymousGunO3()
-    O4 = AnonymousGunO4()
-    O5 = AnonymousGunO5()
-    O6 = AnonymousGunO6()
+class HolyLightJustice:
+    O1 = HolyLightJusticeO1()
+    O2 = HolyLightJusticeO2()
+    O3 = HolyLightJusticeO3()
+    O4 = HolyLightJusticeO4()
+    O5 = HolyLightJusticeO5()
+    O6 = HolyLightJusticeO6()
 
 
-anonymous_gun_artifact_from_request = {
-    1: AnonymousGun.O1,
-    2: AnonymousGun.O2,
-    3: AnonymousGun.O3,
-    4: AnonymousGun.O4,
-    5: AnonymousGun.O5,
-    6: AnonymousGun.O6
+holy_light_justice_artifact_from_request = {
+    1: HolyLightJustice.O1,
+    2: HolyLightJustice.O2,
+    3: HolyLightJustice.O3,
+    4: HolyLightJustice.O4,
+    5: HolyLightJustice.O5,
+    6: HolyLightJustice.O6
 }
 
 
@@ -3537,22 +3551,22 @@ eternal_curse_artifact_from_request = {
 
 
 @dataclass
-class HolyLightJustice:
-    O1 = HolyLightJusticeO1()
-    O2 = HolyLightJusticeO2()
-    O3 = HolyLightJusticeO3()
-    O4 = HolyLightJusticeO4()
-    O5 = HolyLightJusticeO5()
-    O6 = HolyLightJusticeO6()
+class HellDisaster:
+    O1 = HellDisasterO1()
+    O2 = HellDisasterO2()
+    O3 = HellDisasterO3()
+    O4 = HellDisasterO4()
+    O5 = HellDisasterO5()
+    O6 = HellDisasterO6()
 
 
-holy_light_justice_artifact_from_request = {
-    1: HolyLightJustice.O1,
-    2: HolyLightJustice.O2,
-    3: HolyLightJustice.O3,
-    4: HolyLightJustice.O4,
-    5: HolyLightJustice.O5,
-    6: HolyLightJustice.O6
+hell_disaster_artifact_from_request = {
+    1: HellDisaster.O1,
+    2: HellDisaster.O2,
+    3: HellDisaster.O3,
+    4: HellDisaster.O4,
+    5: HellDisaster.O5,
+    6: HellDisaster.O6
 }
 
 
@@ -3571,23 +3585,23 @@ class Artifact:
     bone_grip = BoneGrip
     dragonblood = Dragonblood
     tears_of_the_goddess = TearsOfTheGoddess
+    giant_lizard = GiantLizard
     knights_vow = KnightsVow
-    bloodline_battlegear = BloodlineBattlegear
+    ancient_vows = AncientVows
     gospel_song = GospelSong
     primeval_soul = PrimevalSoul
     gun_of_the_disaster = GunOfTheDisaster
-    giant_lizard = GiantLizard
-    hell_disaster = HellDisaster
+    blood_medal = BloodMedal
     queens_crown = QueensCrown
-    ancient_vows = AncientVows
+    star_pray = StarPray
     fine_snow_dance = FineSnowDance
     soul_torrent = SoulTorrent
-    siren_shell = SirenShell
-    star_pray = StarPray
+    siren_heart = SirenHeart
+    cursed_gun = CursedGun
     gift_of_creation = GiftOfCreation
-    anonymous_gun = AnonymousGun
-    eternal_curse = EternalCurse
     holy_light_justice = HolyLightJustice
+    eternal_curse = EternalCurse
+    hell_disaster = HellDisaster
 
 
 artifact_from_request = {
@@ -3604,23 +3618,23 @@ artifact_from_request = {
     'BONE_GRIP': bone_grip_artifact_from_request,
     'DRAGONBLOOD': dragonblood_artifact_from_request,
     'TEARS_OF_THE_GODDESS': tears_of_the_goddess_artifact_from_request,
+    'GIANT_LIZARD': giant_lizard_artifact_from_request,
     'KNIGHTS_VOW': knights_vow_artifact_from_request,
-    'BLOODLINE_BATTLEGEAR': bloodline_battlegear_artifact_from_request,
+    'ANCIENT_VOWS': ancient_vows_artifact_from_request,
     'GOSPEL_SONG': gospel_song_artifact_from_request,
     'PRIMEVAL_SOUL': primeval_soul_artifact_from_request,
     'GUN_OF_THE_DISASTER': gun_of_the_disaster_artifact_from_request,
-    'HELL_DISASTER': hell_disaster_artifact_from_request,
-    'GIANT_LIZARD': giant_lizard_artifact_from_request,
+    'BLOOD_MEDAL': blood_medal_artifact_from_request,
     'QUEENS_CROWN': queens_crown_artifact_from_request,
-    'ANCIENT_VOWS': ancient_vows_artifact_from_request,
+    'STAR_PRAY': star_pray_artifact_from_request,
     'FINE_SNOW_DANCE': fine_snow_dance_artifact_from_request,
     'SOUL_TORRENT': soul_torrent_artifact_from_request,
-    'SIREN_SHELL': siren_shell_artifact_from_request,
-    'STAR_PRAY': star_pray_artifact_from_request,
+    'SIREN_HEART': siren_heart_artifact_from_request,
+    'CURSED_GUN': cursed_gun_artifact_from_request,
     'GIFT_OF_CREATION': gift_of_creation_artifact_from_request,
-    'ANONYMOUS_GUN': anonymous_gun_artifact_from_request,
+    'HOLY_LIGHT_JUSTICE': holy_light_justice_artifact_from_request,
     'ETERNAL_CURSE': eternal_curse_artifact_from_request,
-    'HOLY_LIGHT_JUSTICE': holy_light_justice_artifact_from_request
+    'HELL_DISASTER': hell_disaster_artifact_from_request
 }
 
 

@@ -17,17 +17,11 @@ heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chess
         Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
-benchmark = Team([Hero.valkyrie(), Hero.medusa(), Hero.monkey_king(), Hero.nameless_king(), Hero.reaper(), Hero.drow()])
-random = Team([rd.choice(heroes)() for i in range(6)])
+# benchmark = Team([Hero.valkyrie(), Hero.medusa(), Hero.monkey_king(), Hero.nameless_king(), Hero.reaper(), Hero.drow()])
+# random = Team([rd.choice(heroes)() for i in range(6)])
 # team1 = Team([Hero.wolnir(), Hero.aden(), Hero.aden(), Hero.shudde_m_ell(), Hero.shudde_m_ell(), Hero.shudde_m_ell()])
 # team2 = Team([Hero.xexanoth(), Hero.chessia(), Hero.chessia(), Hero.mars(), Hero.mars(), Hero.lindberg()])
 # team3 = Team([Hero.verthandi(), Hero.mars(), Hero.mars(), Hero.lindberg(), Hero.lindberg(), Hero.lindberg()])
-game = Game(benchmark, random)
-game.process()
-print(game.log.text)
-sim = GameSim(benchmark, team1, n_sim=3000)
-sim.process()
-sim.print_winrate()
 
 
 @click.group()
@@ -72,10 +66,14 @@ def sim_params_cmd(time, cores, async, pos, rune):
     data = []
     for res in results:
         name, this_pos, this_rune, this_art, score, pos_scores, rune_scores, art_scores = res
+        totg_score = art_scores[2]
+        other_art_scores = art_scores[:2] + [art_scores[3]] + [0 if x == '' else x[0] for x in art_scores[4:]]
+        totg_reliance = max(totg_score - max(other_art_scores), 0)
+        totg_reliance = round(100 * totg_reliance, 1)
         idx.append(name)
-        data.append([this_pos] + [this_rune.__class__.__name__] +
-                    [this_art.__class__.__name__] + [score] + pos_scores + rune_scores + art_scores)
-    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'bone_grip', 'scorching_sun', 'extra_1', 'extra_2', 'extra_3'])
+        data.append([this_pos, this_rune.__class__.__name__, this_art.__class__.__name__, score] + 
+                    pos_scores + rune_scores + art_scores + [totg_reliance])
+    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'bone_grip', 'tears_of_the_goddess', 'giant_lizard', 'extra_1', 'extra_2', 'extra_3', 'totg_reliance'])
     df.to_excel(r'data/results_params.xlsx')
 
 
