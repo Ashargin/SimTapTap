@@ -30,15 +30,15 @@ pvp_tanks = [Hero.abyss_lord, Hero.grand, Hero.luna, Hero.minotaur, Hero.monkey_
             Hero.verthandi, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 pvp_others = [h for h in heroes if h not in pvp_tanks]
 
-scores = dict(pd.read_excel('data/results_params.xlsx').score)
+scores = dict(pd.read_excel('data/results_pvp.xlsx').winrate)
 probas = {key: math.exp(6 * scores[key]) for key in scores}
-artifacts = {'Luna': Artifact.queens_crown.O6,
-            'Chessia': Artifact.eternal_curse.O6,
-            'Scarlet': Artifact.bone_grip.O6,
-            'Centaur': Artifact.fine_snow_dance.O6,
-            'Saw_Machine': Artifact.ancient_vows.O6,
-            'Ripper': Artifact.siren_heart.O6,
-            'Dziewona': Artifact.bone_grip.O6}
+artifacts = {'Blood_Tooth': Artifact.bone_grip.O6,
+            'Freya': Artifact.eternal_curse.O6,
+            'Chessia': Artifact.dragonblood.O6,
+            'Luna': Artifact.queens_crown.O6,
+            'Ripper': Artifact.cursed_gun.O6,
+            'Valkyrie': Artifact.gospel_song.O6}
+no_totg = ['Abyss_Lord', 'Aden', 'Gerald', 'Lexar', 'Martin', 'Medusa', 'Minotaur', 'Mulan', 'Orphee', 'Rlyeh', 'Vegvisir', 'Vivienne', 'Werewolf', 'Xexanoth']
 
 
 def generate_random_sample(n_sample=10000, enemy=False):
@@ -228,6 +228,8 @@ def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, r
         if from_hero:
             for h in sub[:pos - 1]:
                 heroes.append(get_new_hero(h, reroll_tears=reroll_tears))
+            if artifact is None:
+                artifact = None if hero.name.value in no_totg else Artifact.tears_of_the_goddess.O6
             if rune is None and artifact is None:
                 heroes.append(hero())
             elif rune is None:

@@ -30,7 +30,8 @@ class BaseSim:
 
 
 class GameSim(BaseSim):
-    def __init__(self, attack_team, defense_team, n_sim=1000):
+    def __init__(self, attack_team, defense_team, n_sim=1000, max_turns=15):
+        self.max_turns = max_turns
         self.attack_team = attack_team
         self.defense_team = defense_team
         for h in self.attack_team.heroes:
@@ -54,7 +55,7 @@ class GameSim(BaseSim):
     def process(self):
         units_stats = {unit.str_id: {} for unit in self.heroes + self.pets}
         for i in range(self.n_sim):
-            game = Game(self.attack_team, self.defense_team)
+            game = Game(self.attack_team, self.defense_team, max_turns=self.max_turns)
             game.process()
             winner = game.winner
             self.compute_winner(winner)
@@ -203,7 +204,8 @@ class GauntletSim(BaseSim):
 
 class Game:
     def __init__(self, attack_team, defense_team, verbose_full=False, 
-                                    copy_attack=True, copy_defense=True):
+                                    copy_attack=True, copy_defense=True, max_turns=15):
+        self.max_turns = max_turns
         self.actions = []
         self.rounds = []
         self.attack_team = attack_team
@@ -512,7 +514,7 @@ class Game:
         return state_str
 
     def is_finished(self):
-        return True if self.attack_team.is_dead() or self.defense_team.is_dead() or self.round > 15 else False
+        return True if self.attack_team.is_dead() or self.defense_team.is_dead() or self.round > self.max_turns else False
 
     def process(self):
         self.round = 1

@@ -198,7 +198,7 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
     best_rune = None
     if encoded_rune is not None:
         best_rune = runes[encoded_rune]
-    rune_scores = [0] * 10
+    rune_scores = [0] * len(runes)
     if encoded_rune is None:
         best_val = -1
         best_rune = None
@@ -217,6 +217,8 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
 
     best_val = -1
     best_art = None
+    second_best_val = -1
+    second_best_art = None
     art_scores = []
     neutral_artifacts = [Artifact.dragonblood.O6, Artifact.bone_grip.O6, Artifact.tears_of_the_goddess.O6, Artifact.giant_lizard.O6]
     artifacts = copy.deepcopy(neutral_artifacts)
@@ -251,8 +253,13 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
         else:
             art_scores.append((winrate, artifact.__class__.__name__))
         if winrate > best_val:
+            second_best_val = best_val
+            second_best_art = best_art
             best_val = winrate
             best_art = artifact
+        elif winrate > second_best_val:
+            second_best_val = winrate
+            second_best_art = artifact
         if verbose:
             print('Artifact {}, {} winrate'.format(artifact.__class__.__name__, winrate))
     if verbose:
@@ -260,4 +267,4 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
     for i in range(len(neutral_artifacts) + 3 - len(art_scores)):
         art_scores.append('')
 
-    return hero.name.value, best_pos, best_rune, best_art, best_val, pos_scores, rune_scores, art_scores
+    return hero.name.value, best_pos, best_rune, best_art, second_best_art, best_val, pos_scores, rune_scores, art_scores
