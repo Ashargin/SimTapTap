@@ -38,7 +38,7 @@ artifacts = {'Blood_Tooth': Artifact.bone_grip.O6,
             'Luna': Artifact.queens_crown.O6,
             'Ripper': Artifact.cursed_gun.O6,
             'Valkyrie': Artifact.gospel_song.O6}
-no_totg = ['Abyss_Lord', 'Aden', 'Gerald', 'Lexar', 'Martin', 'Medusa', 'Minotaur', 'Mulan', 'Orphee', 'Rlyeh', 'Vegvisir', 'Vivienne', 'Werewolf', 'Xexanoth']
+no_totg = ['Abyss_Lord', 'Aden', 'Gerald', 'Lexar', 'Martin', 'Minotaur', 'Mulan', 'Orphee', 'Rlyeh', 'Vegvisir', 'Vivienne', 'Werewolf', 'Xexanoth']
 
 
 def generate_random_sample(n_sample=10000, enemy=False):
@@ -222,14 +222,14 @@ def generate_all_samples(n_sample=10000):
 
 
 def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, rune=None, artifact=None, player=True, reroll_tears=True):
+    if artifact is None:
+        artifact = None if hero.name.value in no_totg else Artifact.tears_of_the_goddess.O6
     gauntlet = []
     for sub in sample[:length]:
         heroes = []
         if from_hero:
             for h in sub[:pos - 1]:
                 heroes.append(get_new_hero(h, reroll_tears=reroll_tears))
-            if artifact is None:
-                artifact = None if hero.name.value in no_totg else Artifact.tears_of_the_goddess.O6
             if rune is None and artifact is None:
                 heroes.append(hero())
             elif rune is None:

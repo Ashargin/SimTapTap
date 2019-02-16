@@ -1,4 +1,3 @@
-import random as rd
 import pandas as pd
 import click
 import multiprocessing as mp
@@ -16,12 +15,6 @@ heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chess
         Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
         Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
         Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
-
-benchmark = Team([Hero.wolf_rider(), Hero.shudde_m_ell(), Hero.valkyrie(), Hero.drow(), Hero.lindberg(), Hero.freya()])
-# random = Team([rd.choice(heroes)() for i in range(6)])
-team1 = Team([Hero.xexanoth(), Hero.verthandi(), Hero.chessia(), Hero.mars(), Hero.lindberg(), Hero.freya()])
-# team2 = Team([Hero.xexanoth(), Hero.chessia(), Hero.chessia(), Hero.mars(), Hero.mars(), Hero.lindberg()])
-# team3 = Team([Hero.verthandi(), Hero.mars(), Hero.mars(), Hero.lindberg(), Hero.lindberg(), Hero.lindberg()])
 
 
 @click.group()
@@ -58,7 +51,7 @@ def sim_params_cmd(time, cores, async, pos, rune):
     if async:
         pool = mp.Pool(processes=cores)
         results = [pool.apply_async(sim_setup, args=(h, positions[h.name.value], 
-                    encoded_runes[h.name.value], n_sim, False)) for h in heroes]
+                    encoded_runes[h.name.value], n_sim, False)) for h in [Hero.medusa]]
         results = [p.get() for p in results]
     else:
         results = [sim_setup(h, positions[h.name.value], encoded_runes[h.name.value], n_sim) for h in heroes]

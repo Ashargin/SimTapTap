@@ -2596,7 +2596,7 @@ class Medusa(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.bone_grip.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.gun_of_the_disaster.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:

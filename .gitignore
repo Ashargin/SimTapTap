@@ -1,9 +1,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.csv
-*.pkl
-*.xlsx
 
 .cache/
 .pytest_cache/
