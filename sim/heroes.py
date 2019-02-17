@@ -222,9 +222,11 @@ class BaseHero:
         if target.is_petrified():
             petrified_extra_damage = self.damage_to_petrified
 
+        true_damage_bonus = self.true_damage / (1 + self.true_damage)
+
         dmg = (power + skill_damage * self.atk) * (1 - damage_reduction_from_armor) \
               * (1 + crit_damage) * (1 + faction_damage) \
-              * (1 + self.true_damage) * (1 - target.damage_reduction) \
+              * (1 + true_damage_bonus) * (1 - target.damage_reduction) \
               * (1 + type_damage) \
               * (1 + poisoned_extra_damage) * (1 + bleeding_extra_damage) \
               * (1 + stunned_extra_damage) * (1 + petrified_extra_damage)
