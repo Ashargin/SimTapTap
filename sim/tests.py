@@ -194,7 +194,7 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
 
     runes = [Rune.accuracy.R2, Rune.armor_break.R2, Rune.attack.R2, Rune.crit_damage.R2, 
             Rune.crit_rate.R2, Rune.evasion.R2, Rune.hp.R2, Rune.skill_damage.R2, 
-            Rune.speed.R2, Rune.vitality.R2]
+            Rune.speed.R2, Rune.vitality.R2, Rune.storm_attack_rune.R2]
     best_rune = None
     if encoded_rune is not None:
         best_rune = runes[encoded_rune]

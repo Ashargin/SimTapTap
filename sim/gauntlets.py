@@ -10,10 +10,10 @@ from sim.models import Faction, Familiar, Artifact
 heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.drow,
         Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
         Hero.lindberg, Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, 
-        Hero.monkey_king, Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.reaper, Hero.ripper, 
-        Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
-        Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
-        Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
+        Hero.monkey_king, Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.phoenix, Hero.reaper, 
+        Hero.ripper, Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, 
+        Hero.tesla, Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, 
+        Hero.vivienne, Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 alliance = [h for h in heroes if h.faction == Faction.ALLIANCE]
 horde = [h for h in heroes if h.faction == Faction.HORDE]
 elf = [h for h in heroes if h.faction == Faction.ELF]
@@ -23,22 +23,23 @@ hell = [h for h in heroes if h.faction == Faction.HELL]
 tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_king, Hero.mulan,
         Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
         Hero.wolf_rider, Hero.wolnir]
-healers = [Hero.drow, Hero.megaw, Hero.shudde_m_ell, Hero.vivienne]
+healers = [Hero.drow, Hero.megaw, Hero.phoenix, Hero.shudde_m_ell, Hero.vivienne]
 others = [h for h in heroes if h not in tanks and h not in healers]
 pvp_tanks = [Hero.abyss_lord, Hero.grand, Hero.luna, Hero.minotaur, Hero.monkey_king, Hero.mulan, 
-            Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
+            Hero.phoenix, Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
             Hero.verthandi, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 pvp_others = [h for h in heroes if h not in pvp_tanks]
 
-scores = dict(pd.read_excel('data/results_pvp.xlsx').winrate)
+scores = dict(pd.read_excel('data/results_params.xlsx').score) # pvp.winrate
 probas = {key: math.exp(6 * scores[key]) for key in scores}
-artifacts = {'Blood_Tooth': Artifact.bone_grip.O6,
-            'Freya': Artifact.eternal_curse.O6,
-            'Chessia': Artifact.dragonblood.O6,
-            'Luna': Artifact.queens_crown.O6,
-            'Ripper': Artifact.cursed_gun.O6,
-            'Valkyrie': Artifact.gospel_song.O6}
-no_totg = ['Abyss_Lord', 'Aden', 'Gerald', 'Lexar', 'Martin', 'Minotaur', 'Mulan', 'Orphee', 'Rlyeh', 'Vegvisir', 'Vivienne', 'Werewolf', 'Xexanoth']
+artifacts = {'Blood_Tooth': Artifact.gun_of_the_disaster.O6,
+            'Chessia': Artifact.bone_grip.O6,
+            'Freya': Artifact.hell_disaster.O6,
+            'Hester': Artifact.bone_grip.O6,
+            'Mars': Artifact.bone_grip.O6,
+            'Ripper': Artifact.siren_heart.O6,
+            'Valkyrie': Artifact.dragonblood.O6}
+no_totg = ['Abyss_Lord', 'Gerald', 'Lexar', 'Medusa', 'Megaw', 'Mulan', 'Rlyeh', 'Vegvisir', 'Werewolf', 'Wolf_Rider']
 
 
 def generate_random_sample(n_sample=10000, enemy=False):
@@ -222,12 +223,12 @@ def generate_all_samples(n_sample=10000):
 
 
 def gauntlet_from_sample(sample, length, from_hero=False, hero=None, pos=None, rune=None, artifact=None, player=True, reroll_tears=True):
-    if artifact is None:
-        artifact = None if hero.name.value in no_totg else Artifact.tears_of_the_goddess.O6
     gauntlet = []
     for sub in sample[:length]:
         heroes = []
         if from_hero:
+            if artifact is None:
+                artifact = None if hero.name.value in no_totg else Artifact.tears_of_the_goddess.O6
             for h in sub[:pos - 1]:
                 heroes.append(get_new_hero(h, reroll_tears=reroll_tears))
             if rune is None and artifact is None:

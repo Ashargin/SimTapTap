@@ -9,12 +9,12 @@ from sim.tests import friend_boss_test, main_friend_boss_test, master_friend_bos
                     main_guild_boss_test, master_guild_boss_test, trial_test, main_trial_test, pvp_test, sim_setup
 
 heroes = [Hero.abyss_lord, Hero.aden, Hero.blood_tooth, Hero.centaur, Hero.chessia, Hero.drow,
-        Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.lindberg,
-        Hero.luna, Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, 
-        Hero.monkey_king, Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.reaper, Hero.ripper, 
-        Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, Hero.tesla, 
-        Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, Hero.vivienne, 
-        Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
+        Hero.dziewona, Hero.freya, Hero.gerald, Hero.grand, Hero.hester, Hero.lexar, Hero.luna, 
+        Hero.lindberg, Hero.mars, Hero.martin, Hero.medusa, Hero.megaw, Hero.minotaur, 
+        Hero.monkey_king, Hero.mulan, Hero.nameless_king, Hero.orphee, Hero.phoenix, Hero.reaper, 
+        Hero.ripper, Hero.rlyeh, Hero.samurai, Hero.saw_machine, Hero.scarlet, Hero.shudde_m_ell, 
+        Hero.tesla, Hero.tiger_king, Hero.ultima, Hero.valkyrie, Hero.vegvisir, Hero.verthandi, 
+        Hero.vivienne, Hero.werewolf, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
 
 
 @click.group()
@@ -39,7 +39,8 @@ def sim_params_cmd(time, cores, async, pos, rune):
     runes = dict(pd.read_excel('data/results_params.xlsx').rune)
     rune_encoder = {'AccuracyRuneR2': 0, 'ArmorBreakRuneR2': 1, 'AttackRuneR2': 2, 
                     'CritDamageRuneR2': 3, 'CritRateRuneR2': 4, 'EvasionRuneR2': 5, 
-                    'HpRuneR2': 6, 'SkillDamageRuneR2': 7, 'SpeedRuneR2': 8, 'VitalityRuneR2': 9}
+                    'HpRuneR2': 6, 'SkillDamageRuneR2': 7, 'SpeedRuneR2': 8, 'VitalityRuneR2': 9,
+                    'StormAttackRuneR2': 10}
     encoded_runes = {key: rune_encoder[runes[key]] for key in runes}
 
     if redo_pos:
@@ -51,7 +52,7 @@ def sim_params_cmd(time, cores, async, pos, rune):
     if async:
         pool = mp.Pool(processes=cores)
         results = [pool.apply_async(sim_setup, args=(h, positions[h.name.value], 
-                    encoded_runes[h.name.value], n_sim, False)) for h in [Hero.medusa]]
+                    encoded_runes[h.name.value], n_sim, False)) for h in heroes]
         results = [p.get() for p in results]
     else:
         results = [sim_setup(h, positions[h.name.value], encoded_runes[h.name.value], n_sim) for h in heroes]
@@ -66,7 +67,7 @@ def sim_params_cmd(time, cores, async, pos, rune):
         idx.append(name)
         data.append([this_pos, this_rune.__class__.__name__, this_art.__class__.__name__, this_second_art.__class__.__name__, score] + 
                     pos_scores + rune_scores + art_scores + [totg_reliance])
-    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'second_artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'dragonblood', 'bone_grip', 'tears_of_the_goddess', 'giant_lizard', 'extra_1', 'extra_2', 'extra_3', 'totg_reliance'])
+    df = pd.DataFrame(data, index=idx, columns=['pos', 'rune', 'artifact', 'second_artifact', 'score', '1', '2', '3', '4', '5', '6', 'accuracy', 'armor_break', 'attack', 'crit_damage', 'crit_rate', 'evasion', 'hp', 'skill_damage', 'speed', 'vitality', 'storm_attack', 'dragonblood', 'bone_grip', 'tears_of_the_goddess', 'giant_lizard', 'extra_1', 'extra_2', 'extra_3', 'totg_reliance'])
     df.to_excel(r'data/results_params.xlsx')
 
 
@@ -124,6 +125,7 @@ if __name__ == '__main__':
     cli()
 
 # todo:
+# CHECK : energy on attack/skill : all targets?
 # set prefered settings (rune/artifact)
 # tier list : pvp (atk/def), trial, den, expedition, guild boss, friend boss
 

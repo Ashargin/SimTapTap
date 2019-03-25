@@ -267,6 +267,8 @@ class Game:
                         'dots_taken': 0,
                         'bleeds': 0,
                         'bleeds_taken': 0,
+                        'burns': 0,
+                        'burns_taken': 0,
                         'poisons': 0,
                         'poisons_taken': 0,
                         'silences': 0,
