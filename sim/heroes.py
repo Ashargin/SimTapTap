@@ -1428,7 +1428,7 @@ class BloodTooth(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 rune=Rune.crit_damage.R2, artifact=Artifact.giant_lizard.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1510,7 +1510,7 @@ class Centaur(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.bone_grip.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.star_pray.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1666,7 +1666,7 @@ class Drow(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.accuracy.R2, artifact=Artifact.star_pray.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.star_pray.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1760,7 +1760,7 @@ class Dziewona(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.bone_grip.O6,
+                 rune=Rune.storm_attack.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1908,7 +1908,7 @@ class Freya(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1997,7 +1997,7 @@ class Gerald(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.bone_grip.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.soul_torrent.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2152,7 +2152,7 @@ class Hester(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 rune=Rune.hp.R2, artifact=Artifact.siren_heart.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2232,7 +2232,7 @@ class Lexar(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.blood_medal.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.giant_lizard.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2329,7 +2329,7 @@ class Lindberg(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.holy_light_justice.O6,
+                 rune=Rune.accuracy.R2, artifact=Artifact.holy_light_justice.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2433,7 +2433,7 @@ class Luna(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2506,7 +2506,7 @@ class Mars(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2602,7 +2602,7 @@ class Martin(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.gospel_song.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2667,7 +2667,7 @@ class Medusa(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.gun_of_the_disaster.O6,
+                 rune=Rune.speed.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2904,7 +2904,7 @@ class MonkeyKing(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.dragonblood.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3076,7 +3076,7 @@ class NamelessKing(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.gift_of_creation.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.holy_light_justice.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3160,7 +3160,7 @@ class Orphee(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.storm_attack.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3342,7 +3342,7 @@ class Reaper(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.siren_heart.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.giant_lizard.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3414,7 +3414,7 @@ class Ripper(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 rune=Rune.attack.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3592,7 +3592,7 @@ class Samurai(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.bone_grip.O6,
+                 rune=Rune.storm_attack.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3673,7 +3673,7 @@ class SawMachine(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.ancient_vows.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3749,7 +3749,7 @@ class Scarlet(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.bone_grip.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.blood_medal.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4137,7 +4137,7 @@ class Valkyrie(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.storm_attack_rune.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 rune=Rune.armor_break.R2, artifact=Artifact.gospel_song.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4219,7 +4219,7 @@ class Vegvisir(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.star_pray.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4378,7 +4378,7 @@ class Vivienne(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.gospel_song.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4466,7 +4466,7 @@ class Werewolf(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.hp.R2, artifact=Artifact.queens_crown.O6,
+                 rune=Rune.hp.R2, artifact=Artifact.star_pray.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4545,7 +4545,7 @@ class WolfRider(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.gun_of_the_disaster.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4618,7 +4618,7 @@ class Wolnir(BaseHero):
 
     def __init__(self, star=10, tier=6, level=250,
                  armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.siren_heart.O6,
+                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:

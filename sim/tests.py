@@ -36,7 +36,7 @@ def main_friend_boss_test(hero, rune=Rune.attack.R2, artifact=Artifact.dragonblo
     print('Damage from self : {}\n'.format(damage_from_self))
 
     return sim, damage
-    
+
 
 def master_friend_boss_test(heroes, n_sim=100):
     idx = []
@@ -179,8 +179,7 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
         best_pos = -1
         pos_scores = []
         for pos in [1, 2, 3, 4, 5, 6]:
-            n_tanks = 0 if pos == 1 else 1
-            sim, winrate = uniform_test(hero, pos=pos, n_tanks=n_tanks, n_sim=n_sim)
+            _, _, sim, winrate = pvp_test(hero, pos=pos, n_sim=n_sim)
             del sim
             pos_scores.append(winrate)
             if winrate > best_val:
@@ -190,11 +189,10 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
                 print('Pos {}, {} winrate'.format(pos, winrate))
         if verbose:
             print('Best pos : {}\n'.format(best_pos))
-    n_tanks = 0 if best_pos == 1 else 1
 
     runes = [Rune.accuracy.R2, Rune.armor_break.R2, Rune.attack.R2, Rune.crit_damage.R2, 
             Rune.crit_rate.R2, Rune.evasion.R2, Rune.hp.R2, Rune.skill_damage.R2, 
-            Rune.speed.R2, Rune.vitality.R2, Rune.storm_attack_rune.R2]
+            Rune.speed.R2, Rune.vitality.R2, Rune.storm_attack.R2]
     best_rune = None
     if encoded_rune is not None:
         best_rune = runes[encoded_rune]
@@ -204,7 +202,7 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
         best_rune = None
         rune_scores = []
         for rune in runes:
-            sim, winrate = uniform_test(hero, pos=best_pos, n_tanks=n_tanks, rune=rune, n_sim=n_sim)
+            _, _, sim, winrate = pvp_test(hero, pos=best_pos, rune=rune, n_sim=n_sim)
             del sim
             rune_scores.append(winrate)
             if winrate > best_val:
@@ -246,7 +244,7 @@ def sim_setup(hero, pos=None, encoded_rune=None, n_sim=1000, verbose=True):
         artifacts.append(Artifact.eternal_curse.O6)
         artifacts.append(Artifact.hell_disaster.O6)
     for i, artifact in enumerate(artifacts):
-        sim, winrate = uniform_test(hero, pos=best_pos, n_tanks=n_tanks, rune=best_rune, artifact=artifact, n_sim=n_sim)
+        _, _, sim, winrate = pvp_test(hero, pos=best_pos, rune=best_rune, artifact=artifact, n_sim=n_sim)
         del sim
         if i < len(neutral_artifacts):
             art_scores.append(winrate)

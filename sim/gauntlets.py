@@ -25,21 +25,19 @@ tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_kin
         Hero.wolf_rider, Hero.wolnir]
 healers = [Hero.drow, Hero.megaw, Hero.phoenix, Hero.shudde_m_ell, Hero.vivienne]
 others = [h for h in heroes if h not in tanks and h not in healers]
+
 pvp_tanks = [Hero.abyss_lord, Hero.grand, Hero.luna, Hero.minotaur, Hero.monkey_king, Hero.mulan, 
             Hero.phoenix, Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir, 
-            Hero.verthandi, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth]
+            Hero.verthandi, Hero.wolf_rider, Hero.wolnir, Hero.xexanoth,
+            Hero.megaw, Hero.vivienne]
 pvp_others = [h for h in heroes if h not in pvp_tanks]
 
-scores = dict(pd.read_excel('data/results_params.xlsx').score) # pvp.winrate
+scores = dict(pd.read_excel('data/results_params.xlsx').score)
 probas = {key: math.exp(6 * scores[key]) for key in scores}
-artifacts = {'Blood_Tooth': Artifact.gun_of_the_disaster.O6,
-            'Chessia': Artifact.bone_grip.O6,
-            'Freya': Artifact.hell_disaster.O6,
-            'Hester': Artifact.bone_grip.O6,
-            'Mars': Artifact.bone_grip.O6,
-            'Ripper': Artifact.siren_heart.O6,
-            'Valkyrie': Artifact.dragonblood.O6}
-no_totg = ['Abyss_Lord', 'Gerald', 'Lexar', 'Medusa', 'Megaw', 'Mulan', 'Rlyeh', 'Vegvisir', 'Werewolf', 'Wolf_Rider']
+artifacts = {'Chessia': Artifact.bone_grip.O6,
+            'Freya': Artifact.bone_grip.O6,
+            'Mars': Artifact.holy_light_justice.O6}
+no_totg = ['Abyss_Lord', 'Gerald', 'Grand', 'Hester', 'Lexar', 'Minotaur', 'Mulan', 'Orphee', 'Rlyeh', 'Samurai', 'Vivienne', 'Werewolf', 'Xexanoth']
 
 
 def generate_random_sample(n_sample=10000, enemy=False):

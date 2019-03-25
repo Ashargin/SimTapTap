@@ -2205,7 +2205,7 @@ class Rune:
     vitality = VitalityRune
     speed = SpeedRune
     hp = HpRune
-    storm_attack_rune = StormAttackRune
+    storm_attack = StormAttackRune
 
 
 rune_from_request = {
