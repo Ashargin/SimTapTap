@@ -13,11 +13,11 @@ def targets_at_random(heroes, n):
 
 
 def format_stats(stats, pet=False):
-    for stat in ('damage_by_skill', 'damage_by_target', 'damage_taken_by_skill', 'damage_taken_by_source', 
-                'effective_healing_by_skill', 'effective_healing_by_target', 
-                'effective_healing_taken_by_skill', 'effective_healing_taken_by_source', 
-                'healing_by_skill', 'healing_by_target', 'healing_taken_by_skill', 
-                'healing_taken_by_source'):
+    for stat in ('damage_by_skill', 'damage_by_target', 'damage_taken_by_skill', 'damage_taken_by_source',
+                 'effective_healing_by_skill', 'effective_healing_by_target',
+                 'effective_healing_taken_by_skill', 'effective_healing_taken_by_source',
+                 'healing_by_skill', 'healing_by_target', 'healing_taken_by_skill',
+                 'healing_taken_by_source'):
         data = stats[stat]
         data['Total'] = sum(data[key] for key in data.keys())
         stats[stat] = {key: round(data[key]) for key in data}
@@ -31,7 +31,7 @@ def format_stats(stats, pet=False):
     return stats
 
 
-def add_dicts(dict_1, dict_2): # dict_1 will be modified, dict_2 won't
+def add_dicts(dict_1, dict_2):  # dict_1 will be modified, dict_2 won't
     for key in dict_2:
         if key in dict_1:
             if isinstance(dict_2[key], int):
@@ -39,17 +39,17 @@ def add_dicts(dict_1, dict_2): # dict_1 will be modified, dict_2 won't
             else:
                 dict_1[key] = add_dicts(dict_1[key], dict_2[key])
         else:
-            dict_1[key] = dict_2[key]     
+            dict_1[key] = dict_2[key]
 
     return dict_1
 
 
-def rescale_dict(mydict, scale): # modifies mydict
+def rescale_dict(mydict, scale):  # modifies mydict
     for key in mydict:
         if not isinstance(mydict[key], dict):
             mydict[key] = round(mydict[key] * scale, 2)
-            if key in ('damage', 'effective_healing', 'healing', 'damage_taken', 
-                                    'effective_healing_taken', 'healing_taken'):
+            if key in ('damage', 'effective_healing', 'healing', 'damage_taken',
+                       'effective_healing_taken', 'healing_taken'):
                 mydict[key] = round(mydict[key])
         else:
             new_val = rescale_dict(mydict[key], scale)

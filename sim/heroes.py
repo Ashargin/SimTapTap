@@ -1,19 +1,70 @@
 import random as rd
-from dataclasses import dataclass
+import pandas as pd
 import copy
 
-from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, Familiar, Effect, Action
+from sim.models import Faction, HeroType, HeroName, Equipment, Armor, Helmet, Weapon, Pendant, Rune, Artifact, Aura, \
+    Familiar, Effect, Action
 from sim.settings import guild_tech_maxed, guild_tech_empty, default_familiar_stats, default_familiar
 from sim.processing import EmptyGame
 from sim.utils import targets_at_random
 
+# Heroes settings
+runes = dict(pd.read_excel('data/results_params.xlsx').rune)
+artifacts = dict(pd.read_excel('data/results_params.xlsx').artifact)
+artifacts2 = dict(pd.read_excel('data/results_params.xlsx').second_artifact)
+artifacts = {key: artifacts[key] if artifacts[key] != 'TearsOfTheGoddessO6' else artifacts2[key]
+             for key in artifacts.keys()}
+rune_encoder = {'AccuracyRuneR2': Rune.accuracy.R2, 'ArmorBreakRuneR2': Rune.armor_break.R2,
+                'AttackRuneR2': Rune.attack.R2,
+                'CritDamageRuneR2': Rune.crit_damage.R2, 'CritRateRuneR2': Rune.crit_rate.R2,
+                'EvasionRuneR2': Rune.evasion.R2,
+                'HpRuneR2': Rune.hp.R2, 'SkillDamageRuneR2': Rune.skill_damage.R2, 'SpeedRuneR2': Rune.speed.R2,
+                'VitalityRuneR2': Rune.vitality.R2,
+                'StormAttackRuneR2': Rune.storm_attack.R2}
+artifact_encoder = {'BoneGripO6': Artifact.bone_grip.O6,
+                    'ScorchingSunO6': Artifact.scorching_sun.O6,
+                    'WindWalkerO6': Artifact.wind_walker.O6,
+                    'GiantLizardO6': Artifact.giant_lizard.O6,
+                    'DragonbloodO6': Artifact.dragonblood.O6,
+                    'TearsOfTheGoddessO6': Artifact.tears_of_the_goddess.O6,
 
-## Heroes
+                    'SoulTorrentO6': Artifact.soul_torrent.O6,
+                    'SirenHeartO6': Artifact.siren_heart.O6,
+                    'CursedGunO6': Artifact.cursed_gun.O6,
+
+                    'AncientVowsO6': Artifact.ancient_vows.O6,
+                    'GospelSongO6': Artifact.gospel_song.O6,
+                    'KnightsVowO6': Artifact.knights_vow.O6,
+
+                    'BloodMedalO6': Artifact.blood_medal.O6,
+                    'GunOfTheDisasterO6': Artifact.gun_of_the_disaster.O6,
+                    'PrimevalSoulO6': Artifact.primeval_soul.O6,
+
+                    'StarPrayO6': Artifact.star_pray.O6,
+                    'QueensCrownO6': Artifact.queens_crown.O6,
+                    'FineSnowDanceO6': Artifact.fine_snow_dance.O6,
+
+                    'GiftOfCreationO6': Artifact.gift_of_creation.O6,
+                    'HolyLightJusticeO6': Artifact.holy_light_justice.O6,
+
+                    'EternalCurseO6': Artifact.eternal_curse.O6,
+                    'HellDisasterO6': Artifact.hell_disaster.O6,
+                    }
+runes = {key: rune_encoder[runes[key]] for key in runes.keys()}
+artifacts = {key: artifact_encoder[artifacts[key]] for key in artifacts.keys()}
+
+
+# Heroes
 class BaseHero:
-    def __init__(self, armor, helmet, weapon, pendant, rune, artifact, guild_tech, 
-                                                            familiar_stats, player):
+    def __init__(self, chest, helmet, weapon, pendant, rune, artifact, guild_tech,
+                 familiar_stats, player):
+        if rune is None:
+            rune = runes[self.name.value]
+        if artifact is None:
+            artifact = artifacts[self.name.value]
+
         if not player:
-            armor = Armor.empty
+            chest = Armor.empty
             helmet = Helmet.empty
             weapon = Weapon.empty
             pendant = Pendant.empty
@@ -37,6 +88,7 @@ class BaseHero:
         self.silence_immune = 0
         self.stun_immune = 0
         self.burn_immune = 0
+        self.bleed_immune = 0
         self.damage_to_warriors = 0
         self.damage_to_assassins = 0
         self.damage_to_wanderers = 0
@@ -48,6 +100,7 @@ class BaseHero:
         self.damage_to_burning = 0
         self.damage_to_petrified = 0
         self.healing_bonus = 0
+        self.healing_received_bonus = 0
 
         self.own_team = None
         self.op_team = None
@@ -58,10 +111,10 @@ class BaseHero:
         self.can_attack = True
         self.effects = []
 
-        self.chest = armor.__class__.__name__
-        self.helmet = helmet.__class__.__name__
-        self.weapon = weapon.__class__.__name__
-        self.pendant = pendant.__class__.__name__
+        self.chest = chest
+        self.helmet = helmet
+        self.weapon = weapon
+        self.pendant = pendant
         self.rune = rune
         self.artifact = artifact
 
@@ -69,15 +122,15 @@ class BaseHero:
         self.has_dropped_below_30 = False
 
         self.compute_familiar_stats(familiar_stats)
-        self.compute_items(armor, helmet, weapon, pendant, rune, artifact)
+        self.compute_items(chest, helmet, weapon, pendant, rune, artifact)
         self.compute_guild_tech(guild_tech)
 
     def compute_familiar_stats(self, familiar_stats):
         self.hp += familiar_stats[0]
         self.atk += familiar_stats[1]
 
-    def compute_items(self, armor, helmet, weapon, pendant, rune, artifact):
-        equipment = Equipment(armor, helmet, weapon, pendant)  # equipment
+    def compute_items(self, chest, helmet, weapon, pendant, rune, artifact):
+        equipment = Equipment(chest, helmet, weapon, pendant)  # equipment
         self.atk += equipment.atk
         self.hp += equipment.hp
         self.atk += rune.atk  # rune
@@ -191,7 +244,7 @@ class BaseHero:
             return self.damage_to_mages
         return 0
 
-    def compute_damage(self, target, power, skill=False, active=False, burn=False):
+    def compute_damage(self, target, power, skill=False, active=False, burn=False, bleed=False):
         faction_damage = 0
         if self.faction_bonus(target):
             faction_damage = 0.3
@@ -238,6 +291,8 @@ class BaseHero:
               * (1 + burning_extra_damage)
         if burn:
             dmg *= 1 - target.burn_immune
+        if bleed:
+            dmg *= 1 - target.bleed_immune
 
         damage_components = {'Power': power,
                              'Skill damage': skill_damage,
@@ -250,7 +305,8 @@ class BaseHero:
                              'Poisoned extra damage': poisoned_extra_damage,
                              'Bleeding extra damage': bleeding_extra_damage,
                              'Stunned extra damage': stunned_extra_damage,
-                             'Burn immunity': target.burn_immune,
+                             'Burn resistance': target.burn_immune,
+                             'Bleed resistance': target.bleed_immune,
                              'Total damage': dmg}
 
         return damage_components
@@ -296,24 +352,24 @@ class BaseHero:
             for e in [e for e in self.effects if isinstance(e, Effect.stun)]:
                 action = Action.is_stunned(e.source, self, e.turns, e.name)
                 action.text = '\n{} is stunned by {} ({}, {} turns left) ' \
-                                 'and cannot play' \
+                              'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
                 self.game.actions.append(action)
             for e in [e for e in self.effects if isinstance(e, Effect.petrify)]:
                 action = Action.is_petrified(e.source, self, e.turns, e.name)
                 action.text = '\n{} is petrified by {} ({}, {} turns left) ' \
-                                 'and cannot play' \
+                              'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
                 self.game.actions.append(action)
             for e in [e for e in self.effects if isinstance(e, Effect.freeze)]:
                 action = Action.is_frozen(e.source, self, e.turns, e.name)
                 action.text = '\n{} is frozen by {} ({}, {} turns left) ' \
-                                 'and cannot play' \
+                              'and cannot play' \
                     .format(self.str_id, e.source.str_id, e.name, e.turns)
                 self.game.actions.append(action)
-            hard_ccs = [e for e in self.effects if isinstance(e, Effect.stun) 
-                                                or isinstance(e, Effect.petrify)
-                                                or isinstance(e, Effect.freeze)]
+            hard_ccs = [e for e in self.effects if isinstance(e, Effect.stun)
+                        or isinstance(e, Effect.petrify)
+                        or isinstance(e, Effect.freeze)]
             source = hard_ccs[0].source
             source.stats['effective_hard_cc_turns'] += 1
             self.stats['effective_hard_cc_turns_taken'] += 1
@@ -323,7 +379,7 @@ class BaseHero:
                 for e in [e for e in self.effects if isinstance(e, Effect.silence)]:
                     action = Action.is_silenced(e.source, self, e.turns, e.name)
                     action.text = '\n{} is silenced by {} ({}, {} turns left) ' \
-                                     'and cannot use its skill' \
+                                  'and cannot use its skill' \
                         .format(self.str_id, e.source.str_id, e.name, e.turns)
                     self.game.actions.append(action)
                 silences = [e for e in self.effects if isinstance(e, Effect.silence)]
@@ -383,8 +439,8 @@ class BaseHero:
         if on_attack:
             self.on_attack(target)
 
-    def hit(self, target, power, skill, active, on_attack, multi, 
-                        multi_attack=False, update=True, name=''):
+    def hit(self, target, power, skill, active, on_attack, multi,
+            multi_attack=False, update=True, name=''):
         if not multi:
             if not target.is_dead:
                 damage_components = self.compute_damage(target, power, skill=skill, active=active)
@@ -426,7 +482,7 @@ class BaseHero:
 
     def hit_attack(self, target, power, multi=False, name='attack'):
         crits = self.hit(target, power, skill=False, active=True,
-                        on_attack=True, multi=multi, multi_attack=multi, name=name)
+                         on_attack=True, multi=multi, multi_attack=multi, name=name)
 
         return crits
 
@@ -451,18 +507,18 @@ class BaseHero:
         if not target.is_dead:
             target.hp -= power
             damage_components = {'Power': power,
-                                'Skill damage': 0,
-                                'Damage reduction from armor': 0,
-                                'Crit damage': 0,
-                                'True damage': 0,
-                                'Damage reduction': 0,
-                                'Faction damage': 0,
-                                'Base type damage': 0,
-                                'Extra type damage': 0,
-                                'Poisoned extra damage': 0,
-                                'Bleeding extra damage': 0,
-                                'Stunned extra damage': 0,
-                                'Total damage': power}
+                                 'Skill damage': 0,
+                                 'Damage reduction from armor': 0,
+                                 'Crit damage': 0,
+                                 'True damage': 0,
+                                 'Damage reduction': 0,
+                                 'Faction damage': 0,
+                                 'Base type damage': 0,
+                                 'Extra type damage': 0,
+                                 'Poisoned extra damage': 0,
+                                 'Bleeding extra damage': 0,
+                                 'Stunned extra damage': 0,
+                                 'Total damage': power}
             action = Action.hit(self, target, damage_components, name)
             action.text = '\n{} takes {} damage from {} ({})' \
                 .format(target.str_id, round(power), self.str_id, name)
@@ -477,8 +533,8 @@ class BaseHero:
             target.stats['effective_healing_taken_by_skill'][name] -= power
             target.stats['effective_healing_taken_by_source'][self.str_id] -= power
 
-            self.update_state(target, on_attack=False, active=False, 
-                                        crit=False, energy_on_hit=False)
+            self.update_state(target, on_attack=False, active=False,
+                              crit=False, energy_on_hit=False)
 
     def dot(self, target, power, turns, name=''):
         if not target.is_dead:
@@ -496,7 +552,6 @@ class BaseHero:
 
     def heal(self, target, power, turns, name='', override=False):
         if not target.is_dead and (not self.game.is_finished() or override):
-            power *= 1 + self.healing_bonus
             heal = Effect.heal(self, target, power, turns, name=name)
             target.effects.append(heal)
             heal.tick()
@@ -523,7 +578,7 @@ class BaseHero:
             return True
 
     def bleed(self, target, power, turns, name=''):
-        if not target.is_dead:
+        if not target.is_dead and target.bleed_immune < 1.0:
             bleed = Effect.bleed(self, target, power, turns, name=name)
             target.effects.append(bleed)
             bleed.tick()
@@ -534,7 +589,7 @@ class BaseHero:
             target.stats['dots_taken'] += 1
 
     def try_bleed(self, target, power, turns, chance, name=''):
-        if rd.random() <= chance:
+        if rd.random() <= chance and target.bleed_immune < 1.0:
             self.bleed(target, power, turns, name=name)
             return True
 
@@ -638,9 +693,9 @@ class BaseHero:
 
     def cleanse(self, target, name):
         for e in [e for e in target.effects if isinstance(e, Effect.stun)
-                                        or isinstance(e, Effect.petrify)
-                                        or isinstance(e, Effect.freeze)
-                                        or isinstance(e, Effect.silence)]:
+                                               or isinstance(e, Effect.petrify)
+                                               or isinstance(e, Effect.freeze)
+                                               or isinstance(e, Effect.silence)]:
             e.kill()
         action = Action.cleanse(self, target, name)
         action.text = "\n{}'s controls are removed by {} ({})" \
@@ -857,14 +912,21 @@ class BaseHero:
     def stun_immune_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead and not self.game.is_finished():
             stun_immune_up = Effect.stun_immune_up(self, target, up, turns,
-                                                         name=name, passive=passive)
+                                                   name=name, passive=passive)
             target.effects.append(stun_immune_up)
             stun_immune_up.tick()
+
+    def bleed_immune_up(self, target, up, turns, name='', passive=False):
+        if not target.is_dead and not self.game.is_finished():
+            bleed_immune_up = Effect.bleed_immune_up(self, target, up, turns,
+                                                     name=name, passive=passive)
+            target.effects.append(bleed_immune_up)
+            bleed_immune_up.tick()
 
     def burn_immune_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead and not self.game.is_finished():
             burn_immune_up = Effect.burn_immune_up(self, target, up, turns,
-                                                         name=name, passive=passive)
+                                                   name=name, passive=passive)
             target.effects.append(burn_immune_up)
             burn_immune_up.tick()
 
@@ -1022,7 +1084,7 @@ class BaseHero:
     def damage_to_petrified_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead and not self.game.is_finished():
             damage_to_petrified = Effect.damage_to_petrified(self, target, up, turns,
-                                                         name=name, passive=passive)
+                                                             name=name, passive=passive)
             target.effects.append(damage_to_petrified)
             damage_to_petrified.tick()
 
@@ -1036,9 +1098,16 @@ class BaseHero:
     def healing_up(self, target, up, turns, name='', passive=False):
         if not target.is_dead and not self.game.is_finished():
             healing_up = Effect.healing_up(self, target, up, turns,
-                                        name=name, passive=passive)
+                                           name=name, passive=passive)
             target.effects.append(healing_up)
             healing_up.tick()
+
+    def healing_received_down(self, target, down, turns, name='', passive=False):
+        if not target.is_dead and not self.game.is_finished():
+            healing_received_down = Effect.healing_received_down(self, target, down, turns,
+                                                                 name=name, passive=passive)
+            target.effects.append(healing_received_down)
+            healing_received_down.tick()
 
     def is_poisoned(self):
         return True if any([isinstance(e, Effect.poison) for e in self.effects]) else False
@@ -1280,8 +1349,8 @@ class AbyssLord(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1290,8 +1359,8 @@ class AbyssLord(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 409206.4
-        self.atk = 16025.0
+        self.hp = 102330.7
+        self.atk = 4020.0
         self.armor = 10
         self.speed = 1201
         if self.star == 9:
@@ -1299,7 +1368,7 @@ class AbyssLord(BaseHero):
             self.atk = 14000.0  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1314,7 +1383,7 @@ class AbyssLord(BaseHero):
         self.armor_up(self, up=armor_up, turns=None,
                       name=name, passive=True)
         self.hp_up(self, up=hp_up, turns=None,
-                       name=name, passive=True)
+                   name=name, passive=True)
 
     def skill(self):
         name = 'Abyssal Blade'
@@ -1357,8 +1426,8 @@ class Aden(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1367,8 +1436,8 @@ class Aden(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 342715.0
-        self.atk = 25582.0
+        self.hp = 85722.0
+        self.atk = 6410.0
         self.armor = 9
         self.speed = 1221
         if self.star == 9:
@@ -1376,7 +1445,7 @@ class Aden(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1427,8 +1496,8 @@ class BloodTooth(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.crit_damage.R2, artifact=Artifact.giant_lizard.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1437,8 +1506,8 @@ class BloodTooth(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 295686.6
-        self.atk = 27622.2
+        self.hp = 73950.8
+        self.atk = 6934.0
         self.armor = 9
         self.speed = 1218
         if self.star == 9:
@@ -1446,7 +1515,7 @@ class BloodTooth(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1479,7 +1548,6 @@ class BloodTooth(BaseHero):
     def skill(self):
         name = 'Power Torture'
         targets = targets_at_random(self.op_team.get_backline(), 2)
-        targets_hit = None
         if self.star >= 10:
             targets_hit = targets
         else:
@@ -1509,8 +1577,8 @@ class Centaur(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.star_pray.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1519,8 +1587,8 @@ class Centaur(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 401747.0
-        self.atk = 24125.3
+        self.hp = 100466.0
+        self.atk = 6060.0
         self.armor = 10
         self.speed = 1188
         if self.star == 9:
@@ -1528,7 +1596,7 @@ class Centaur(BaseHero):
             self.atk = 13402.1  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 983  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1584,8 +1652,8 @@ class Chessia(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1594,8 +1662,8 @@ class Chessia(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 367773.0
-        self.atk = 25466.1
+        self.hp = 91957.0
+        self.atk = 6410.0
         self.armor = 10
         self.speed = 1202
         if self.star == 9:
@@ -1603,7 +1671,7 @@ class Chessia(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1659,14 +1727,14 @@ class Chessia(BaseHero):
         super().on_attack(target)
 
 
-class Drow(BaseHero):
-    name = HeroName.DROW
-    faction = Faction.ELF
-    type = HeroType.CLERIC
+class Dettlaff(BaseHero):
+    name = HeroName.DETTLAFF
+    faction = Faction.UNDEAD
+    type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.star_pray.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1675,8 +1743,99 @@ class Drow(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 332749.6
-        self.atk = 27097.6
+        self.hp = 69871.1
+        self.atk = 6409.6
+        self.armor = 9
+        self.speed = 1191
+        if self.star == 9:
+            self.hp = 200000  # should depend on the level
+            self.atk = 14000  # should depend on the level
+            self.armor = 10  # should depend on the level
+            self.speed = 985  # should depend on the level
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech,
+                         familiar_stats=familiar_stats, player=player)
+
+        name = 'Blue Blood'
+        hp_up = 0.30
+        attack_up = 0.25
+        bleed_immune_up = 1.0
+        if self.star >= 7:
+            hp_up = 0.35
+            attack_up = 0.35
+            bleed_immune_up = 1.0
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
+        self.attack_up(self, up=attack_up, turns=None,
+                       name=name, passive=True)
+        self.bleed_immune_up(self, up=bleed_immune_up, turns=None,
+                             name=name, passive=True)
+
+        name = 'Bloodthirsty'
+        damage_to_bleeding_up = 0.45
+        if self.star >= 9:
+            damage_to_bleeding_up = 0.6
+        self.damage_to_bleeding_up(self, up=damage_to_bleeding_up, turns=None,
+                                   name=name, passive=True)
+
+    def attack(self):
+        name = 'attack'
+        min_enemy_hp = min([h.hp for h in self.op_team.heroes if not h.is_dead])
+        candidates = [h for h in self.op_team.heroes if h.hp == min_enemy_hp]
+        rd.shuffle(candidates)
+        target = candidates[0]
+        super().attack(target=target, power=self.atk, name=name)
+
+    def skill(self):
+        name = 'Dark Omen'
+        max_enemy_attack = max([h.atk for h in self.op_team.heroes if not h.is_dead])
+        candidates = [h for h in self.op_team.heroes if h.atk == max_enemy_attack]
+        rd.shuffle(candidates)
+        target = candidates[0]
+        dodged = self.compute_dodge(target, name=name)
+        if not dodged:
+            dmg_power = self.atk * 2.35
+            heal_power = 1.0
+            if self.star >= 10:
+                dmg_power = self.atk * 2.7
+                if target.hp <= target.hp_max * 0.5:
+                    dmg_power += self.atk * 0.5
+                heal_power = 1.2
+
+            self.hit_skill(target, power=dmg_power, name=name)
+            self.heal(self, power=heal_power, turns=1, name=name)
+        super().skill()
+
+    def on_attack(self, target):
+        name = 'Erode Bone'
+        bleed_power = 0.28
+        healing_received_down = 0.3
+        if self.star >= 7:
+            bleed_power = 0.36
+            healing_received_down = 0.5
+        self.bleed(target, power=bleed_power, turns=2, name=name)
+        self.healing_received_down(target, down=healing_received_down, turns=2, name=name)
+        super().on_attack(target)
+
+
+class Drow(BaseHero):
+    name = HeroName.DROW
+    faction = Faction.ELF
+    type = HeroType.CLERIC
+
+    def __init__(self, star=10, tier=6, level=250,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
+                 guild_tech=guild_tech_maxed,
+                 familiar_stats=default_familiar_stats, player=True):
+        if level < 200 or tier < 6:
+            raise NotImplementedError
+
+        self.star = star
+        self.tier = tier
+        self.level = level
+        self.hp = 83216.0
+        self.atk = 6817.6
         self.armor = 9
         self.speed = 1189
         if self.star == 9:
@@ -1684,7 +1843,7 @@ class Drow(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1699,11 +1858,11 @@ class Drow(BaseHero):
             hp_up = 0.25
             crit_rate_up = 0.35
         self.attack_up(self, up=attack_up, turns=None,
-                            name=name, passive=True)
+                       name=name, passive=True)
         self.hp_up(self, up=hp_up, turns=None,
-                       name=name, passive=True)
+                   name=name, passive=True)
         self.crit_rate_up(self, up=crit_rate_up, turns=None,
-                       name=name, passive=True)
+                          name=name, passive=True)
 
     def skill(self):
         name = 'Heart-Taking Thorn'
@@ -1759,8 +1918,8 @@ class Dziewona(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.storm_attack.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1769,8 +1928,8 @@ class Dziewona(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 303321.0
-        self.atk = 23717.6
+        self.hp = 75874.0
+        self.atk = 5944.0
         self.armor = 9
         self.speed = 1215
         if self.star == 9:
@@ -1778,7 +1937,7 @@ class Dziewona(BaseHero):
             self.atk = 13496.1  # should depend on the level
             self.armor = 9  # should depend on the level
             self.speed = 1008  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1835,80 +1994,14 @@ class Dziewona(BaseHero):
         super().has_taken_damage(attacker)
 
 
-class ForestHealer(BaseHero):
-    name = HeroName.FOREST_HEALER
-    faction = Faction.ELF
-    type = HeroType.CLERIC
-
-    def __init__(self, star=9, tier=6, level=200,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.queens_crown.O6,
-                 guild_tech=guild_tech_maxed,
-                 familiar_stats=default_familiar_stats, player=True):
-        if level < 200 or tier < 6:
-            raise NotImplementedError
-
-        self.star = star
-        self.tier = tier
-        self.level = level
-        self.hp = 191062.2  # should depend on the level
-        self.atk = 11944.0  # should depend on the level
-        self.armor = 10  # should depend on the level
-        self.speed = 973  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
-                         rune=rune, artifact=artifact, guild_tech=guild_tech,
-                         familiar_stats=familiar_stats, player=player)
-
-        name = 'Longevity'
-        hp_up = 0.3
-        if self.star >= 8:
-            hp_up = 0.4
-        self.hp_up(self, up=hp_up, turns=None,
-                   name=name, passive=True)
-
-    def skill(self):
-        name = "Nature's Hymn"
-        targets_hit = self.targets_hit(self.op_team.get_backline(), name=name)
-
-        hit_power = [self.atk * 0.89] * len(targets_hit)
-        heal_power = 1.85
-        self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
-        if targets_hit:
-            for target in self.own_team.heroes:
-                self.heal(target, power=heal_power, turns=1, name=name)
-        super().skill()
-
-    def on_attack(self, target):
-        name = 'Healing Heart'
-        power = 0.64
-        if self.star >= 7:
-            power = 0.81
-        for target in self.own_team.get_frontline():
-            self.heal(target, power=power, turns=1, name=name)
-        super().on_attack(target)
-
-    def on_death(self, attacker):
-        name = 'Meaning Of Life'
-        power = 1.2
-        crit_rate_up = 0.11
-        if self.star >= 9:
-            power = 1.6
-            crit_rate_up = 0.135
-        for target in self.own_team.heroes:
-            self.heal(target, power=power, turns=1, name=name)
-        for target in self.own_team.heroes:
-            self.crit_rate_up(target, up=crit_rate_up, turns=3, name=name)
-        super().on_death(attacker)
-
-
 class Freya(BaseHero):
     name = HeroName.FREYA
     faction = Faction.HELL
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -1917,8 +2010,8 @@ class Freya(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 280069.2
-        self.atk = 26282.0
+        self.hp = 70046.4
+        self.atk = 6585.0
         self.armor = 9
         self.speed = 1174
         if self.star == 9:
@@ -1926,7 +2019,7 @@ class Freya(BaseHero):
             self.atk = 14530.4  # should depend on the level
             self.armor = 9  # should depend on the level
             self.speed = 971  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -1996,8 +2089,8 @@ class Gerald(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.soul_torrent.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2006,8 +2099,8 @@ class Gerald(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 420978.0
-        self.atk = 21445.1
+        self.hp = 105244.0
+        self.atk = 5360.7
         self.armor = 13
         self.speed = 1188
         if self.star == 9:
@@ -2015,7 +2108,7 @@ class Gerald(BaseHero):
             self.atk = 12320.2  # should depend on the level
             self.armor = 13  # should depend on the level
             self.speed = 983  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2073,8 +2166,8 @@ class Grand(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2083,8 +2176,8 @@ class Grand(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 434090.2
-        self.atk = 18065
+        self.hp = 108565.9
+        self.atk = 4545.0
         self.armor = 12
         self.speed = 1207
         if self.star == 9:
@@ -2092,7 +2185,7 @@ class Grand(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2103,9 +2196,9 @@ class Grand(BaseHero):
             hp_up = 0.44
             damage_reduction_up = 0.26
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
+                   name=name, passive=True)
         self.damage_reduction_up(self, up=damage_reduction_up, turns=None,
-                       name=name, passive=True)
+                                 name=name, passive=True)
 
     def skill(self):
         name = 'Leech Seed'
@@ -2151,8 +2244,8 @@ class Hester(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.hp.R2, artifact=Artifact.siren_heart.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2161,8 +2254,8 @@ class Hester(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 317132.0
-        self.atk = 27330.3
+        self.hp = 79312.0
+        self.atk = 6875.8
         self.armor = 8
         self.speed = 1177
         if self.star == 9:
@@ -2170,7 +2263,7 @@ class Hester(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2181,7 +2274,7 @@ class Hester(BaseHero):
             hit_rate_up = 0.45
             attack_up = 0.45
         self.hit_rate_up(self, up=hit_rate_up, turns=None,
-                            name=name, passive=True)
+                         name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
                        name=name, passive=True)
 
@@ -2231,8 +2324,8 @@ class Lexar(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.giant_lizard.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2241,8 +2334,8 @@ class Lexar(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 478729.0
-        self.atk = 23018.0
+        self.hp = 119696.0
+        self.atk = 5769.0
         self.armor = 12
         self.speed = 1207
         if self.star == 9:
@@ -2250,7 +2343,7 @@ class Lexar(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2291,8 +2384,8 @@ class Lexar(BaseHero):
         if self.star >= 8:
             attack_up = 2.0
             healing_up = 1.5
-        self.attack_up(self, up=attack_up*perc, turns=None, name=name)
-        self.healing_up(self, up=healing_up*perc, turns=None, name=name)
+        self.attack_up(self, up=attack_up * perc, turns=None, name=name)
+        self.healing_up(self, up=healing_up * perc, turns=None, name=name)
 
         if self.hp <= self.hp_max * 0.5 and not self.has_triggered:
             self.has_triggered = True
@@ -2317,8 +2410,8 @@ class Lexar(BaseHero):
         if self.star >= 8:
             attack_up = 2.0
             healing_up = 1.5
-        self.attack_up(self, up=attack_up*perc, turns=None, name=name)
-        self.healing_up(self, up=healing_up*perc, turns=None, name=name)
+        self.attack_up(self, up=attack_up * perc, turns=None, name=name)
+        self.healing_up(self, up=healing_up * perc, turns=None, name=name)
         super().has_been_healed(source)
 
 
@@ -2328,8 +2421,8 @@ class Lindberg(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.accuracy.R2, artifact=Artifact.holy_light_justice.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2338,8 +2431,8 @@ class Lindberg(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 497144.0
-        self.atk = 26281.6
+        self.hp = 124300.0
+        self.atk = 6584.8
         self.armor = 11
         self.speed = 1219
         if self.star == 9:
@@ -2347,7 +2440,7 @@ class Lindberg(BaseHero):
             self.atk = 14000.0  # should depend on the level
             self.armor = 12  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
                          guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
 
         name = 'Cross Shelter'
@@ -2359,9 +2452,9 @@ class Lindberg(BaseHero):
             attack_up = 0.25
             stun_immune_up = 1.0
         self.speed_up(self, up=speed_up, turns=None,
-                          name=name, passive=True)
+                      name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
-                            name=name, passive=True)
+                       name=name, passive=True)
         self.stun_immune_up(self, up=stun_immune_up, turns=None,
                             name=name, passive=True)
 
@@ -2407,8 +2500,8 @@ class Lindberg(BaseHero):
         if self.star >= 9:
             crit_rate_up = 1.0
             crit_damage_up = 2.0
-        self.crit_rate_up(self, up=crit_rate_up*perc, turns=None, name=name)
-        self.crit_damage_up(self, up=crit_damage_up*perc, turns=None, name=name)
+        self.crit_rate_up(self, up=crit_rate_up * perc, turns=None, name=name)
+        self.crit_damage_up(self, up=crit_damage_up * perc, turns=None, name=name)
         super().has_taken_damage(attacker)
 
     def has_been_healed(self, source):
@@ -2421,8 +2514,8 @@ class Lindberg(BaseHero):
         if self.star >= 9:
             crit_rate_up = 1.0
             crit_damage_up = 2.0
-        self.crit_rate_up(self, up=crit_rate_up*perc, turns=None, name=name)
-        self.crit_damage_up(self, up=crit_damage_up*perc, turns=None, name=name)
+        self.crit_rate_up(self, up=crit_rate_up * perc, turns=None, name=name)
+        self.crit_damage_up(self, up=crit_damage_up * perc, turns=None, name=name)
         super().has_been_healed(source)
 
 
@@ -2432,8 +2525,8 @@ class Luna(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2442,8 +2535,8 @@ class Luna(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 403088.0
-        self.atk = 20337.6
+        self.hp = 100815.0
+        self.atk = 5127.6
         self.armor = 10
         self.speed = 1225
         if self.star == 9:
@@ -2451,7 +2544,7 @@ class Luna(BaseHero):
             self.atk = 12837.8  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 1017  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2505,8 +2598,8 @@ class Mars(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.tears_of_the_goddess.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2515,8 +2608,8 @@ class Mars(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 369113.0
-        self.atk = 24475.3
+        self.hp = 92307.0
+        self.atk = 6118.4
         self.armor = 10
         self.speed = 1196
         if self.star == 9:
@@ -2524,8 +2617,9 @@ class Mars(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats,
+                         player=player)
 
         self.has_revived = False
 
@@ -2538,11 +2632,11 @@ class Mars(BaseHero):
             attack_up = 0.3
             speed_up = 40
         self.true_damage_up(self, up=true_damage_up, turns=None,
-                   name=name, passive=True)
+                            name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
-                            name=name, passive=True)
+                       name=name, passive=True)
         self.speed_up(self, up=speed_up, turns=None,
-                            name=name, passive=True)
+                      name=name, passive=True)
 
     def skill(self):
         name = 'Eye Of Thunderstorm'
@@ -2601,8 +2695,8 @@ class Martin(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2611,8 +2705,8 @@ class Martin(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 354894.2
-        self.atk = 23076.6
+        self.hp = 88752.1
+        self.atk = 5769.1
         self.armor = 11
         self.speed = 1175
         if self.star == 9:
@@ -2620,7 +2714,7 @@ class Martin(BaseHero):
             self.atk = 14000.0  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2635,9 +2729,9 @@ class Martin(BaseHero):
         self.hp_up(self, up=hp_up, turns=None,
                    name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
-                            name=name, passive=True)
+                       name=name, passive=True)
         self.skill_damage_up(self, up=skill_damage_up, turns=None,
-                            name=name, passive=True)
+                             name=name, passive=True)
 
     def skill(self):
         name = 'Hand Of God'
@@ -2666,8 +2760,8 @@ class Medusa(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2676,8 +2770,8 @@ class Medusa(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 355419.0
-        self.atk = 22726.6
+        self.hp = 88869.0
+        self.atk = 5710.6
         self.armor = 10
         self.speed = 1196
         if self.star == 9:
@@ -2685,7 +2779,7 @@ class Medusa(BaseHero):
             self.atk = 12790.5  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 991  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2701,7 +2795,7 @@ class Medusa(BaseHero):
         if self.star >= 9:
             damage_to_petrified_up = 0.605
         self.damage_to_petrified_up(self, up=damage_to_petrified_up, turns=None,
-                                   name=name, passive=True)
+                                    name=name, passive=True)
 
     def attack(self):
         name = 'attack'
@@ -2751,8 +2845,8 @@ class Megaw(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2761,8 +2855,8 @@ class Megaw(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 261130.0
-        self.atk = 20220.7
+        self.hp = 65326.0
+        self.atk = 5069.2
         self.armor = 9
         self.speed = 1149
         if self.star == 9:
@@ -2770,7 +2864,7 @@ class Megaw(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2783,9 +2877,9 @@ class Megaw(BaseHero):
             attack_up = 0.4
             crit_rate_up = 0.3
         self.attack_up(self, up=attack_up, turns=None,
-                      name=name, passive=True)
-        self.crit_rate_up(self, up=crit_rate_up, turns=None,
                        name=name, passive=True)
+        self.crit_rate_up(self, up=crit_rate_up, turns=None,
+                          name=name, passive=True)
 
     def skill(self):
         name = 'Sacred Heal'
@@ -2828,8 +2922,8 @@ class Minotaur(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.blood_medal.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2838,8 +2932,8 @@ class Minotaur(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 396503.0
-        self.atk = 19463.2
+        self.hp = 99125.0
+        self.atk = 4894.4
         self.armor = 12
         self.speed = 1202
         if self.star == 9:
@@ -2847,7 +2941,7 @@ class Minotaur(BaseHero):
             self.atk = 10909.4  # should depend on the level
             self.armor = 12  # should depend on the level
             self.speed = 996  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2903,8 +2997,8 @@ class MonkeyKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2913,8 +3007,8 @@ class MonkeyKing(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 448018.0
-        self.atk = 25757.0
+        self.hp = 112004.0
+        self.atk = 6468.0
         self.armor = 12
         self.speed = 1211
         if self.star == 9:
@@ -2922,7 +3016,7 @@ class MonkeyKing(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -2983,8 +3077,8 @@ class Mulan(BaseHero):
     type = HeroType.WANDERER
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -2993,8 +3087,8 @@ class Mulan(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 333799.1
-        self.atk = 25233.0
+        self.hp = 83449.5
+        self.atk = 6351.0
         self.armor = 12
         self.speed = 1188
         if self.star == 9:
@@ -3002,7 +3096,7 @@ class Mulan(BaseHero):
             self.atk = 13966.2  # should depend on the level
             self.armor = 12  # should depend on the level
             self.speed = 983  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3015,15 +3109,14 @@ class Mulan(BaseHero):
             dodge_up = 0.2
             speed_up = 60
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
-        self.dodge_up(self, up=dodge_up, turns=None,
                    name=name, passive=True)
+        self.dodge_up(self, up=dodge_up, turns=None,
+                      name=name, passive=True)
         self.speed_up(self, up=speed_up, turns=None,
-                       name=name, passive=True)
+                      name=name, passive=True)
 
     def skill(self):
         name = 'Gale Cut'
-        targets = None
         if self.star >= 10:
             targets = targets_at_random(self.op_team.heroes, 4)
         else:
@@ -3075,8 +3168,8 @@ class NamelessKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.holy_light_justice.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3085,8 +3178,8 @@ class NamelessKing(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 484206.9
-        self.atk = 25291.0
+        self.hp = 121095.3
+        self.atk = 6351.0
         self.armor = 12
         self.speed = 1213
         if self.star == 9:
@@ -3094,8 +3187,9 @@ class NamelessKing(BaseHero):
             self.atk = 14012.8  # should depend on the level
             self.armor = 12  # should depend on the level
             self.speed = 1006  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, 
-                rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
+                         rune=rune, artifact=artifact, guild_tech=guild_tech, familiar_stats=familiar_stats,
+                         player=player)
 
         name = 'Heir Of Sunlight'
         hp_up = 0.25
@@ -3106,11 +3200,11 @@ class NamelessKing(BaseHero):
             true_damage_up = 0.36
             crit_rate_up = 0.24
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
-        self.true_damage_up(self, up=true_damage_up, turns=None,
                    name=name, passive=True)
+        self.true_damage_up(self, up=true_damage_up, turns=None,
+                            name=name, passive=True)
         self.crit_rate_up(self, up=crit_rate_up, turns=None,
-                       name=name, passive=True)
+                          name=name, passive=True)
 
     def skill(self):
         name = 'Lightning Storm'
@@ -3159,8 +3253,8 @@ class Orphee(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.storm_attack.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3169,8 +3263,8 @@ class Orphee(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 229253.8
-        self.atk = 32284.0
+        self.hp = 57342.3
+        self.atk = 8100.0
         self.armor = 9
         self.speed = 1169
         if self.star == 9:
@@ -3178,7 +3272,7 @@ class Orphee(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3189,9 +3283,9 @@ class Orphee(BaseHero):
             hp_up = 0.3
             crit_rate_up = 0.45
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
+                   name=name, passive=True)
         self.crit_rate_up(self, up=crit_rate_up, turns=None,
-                       name=name, passive=True)
+                          name=name, passive=True)
 
     def skill(self):
         name = 'Starstorm'
@@ -3225,8 +3319,8 @@ class Phoenix(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.blood_medal.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3235,8 +3329,8 @@ class Phoenix(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 332575.1
-        self.atk = 26515.0
+        self.hp = 83157.9
+        self.atk = 6643.0
         self.armor = 10
         self.speed = 1186
         if self.star == 9:
@@ -3244,7 +3338,7 @@ class Phoenix(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3287,7 +3381,7 @@ class Phoenix(BaseHero):
             self.burn(target, power=burn_power, turns=3, name=name)
             self.try_armor_down(target, down=armor_down, turns=3, chance=0.77, name=name)
         random = targets_at_random(self.own_team.heroes, 1)
-        if self.star >= 10:
+        if self.star >= 10 and targets_hit:
             self.attack_up(self, up=0.3, turns=3, name=name)
 
         super().skill()
@@ -3330,7 +3424,7 @@ class Phoenix(BaseHero):
     def on_death(self, attacker):
         for h in self.own_team.heroes:
             for e in [e for e in h.effects if e.name == 'Flame Ambition' and e.source.str_id == self.str_id \
-                                                                and isinstance(e, Effect.damage_to_burning)]:
+                                              and isinstance(e, Effect.damage_to_burning)]:
                 e.kill()
         super().on_death(attacker)
 
@@ -3341,8 +3435,8 @@ class Reaper(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.giant_lizard.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3351,8 +3445,8 @@ class Reaper(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 313460.7
-        self.atk = 25640.7
+        self.hp = 78379.2
+        self.atk = 6410.0
         self.armor = 8
         self.speed = 1189
         if self.star == 9:
@@ -3360,7 +3454,7 @@ class Reaper(BaseHero):
             self.atk = 14624.2  # should depend on the level
             self.armor = 8  # should depend on the level
             self.speed = 984  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3413,8 +3507,8 @@ class Ripper(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.attack.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3423,8 +3517,8 @@ class Ripper(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 302855.0
-        self.atk = 23600.7
+        self.hp = 75757.0
+        self.atk = 5943.7
         self.armor = 9
         self.speed = 1219
         if self.star == 9:
@@ -3432,7 +3526,7 @@ class Ripper(BaseHero):
             self.atk = 15141.9  # should depend on the level
             self.armor = 9  # should depend on the level
             self.speed = 1012  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3452,7 +3546,6 @@ class Ripper(BaseHero):
     def skill(self):
         name = 'Venom Wind'
         targets = targets_at_random(self.op_team.get_backline(), 2)
-        targets_hit = None
         if self.star >= 10:
             targets_hit = targets
         else:
@@ -3502,8 +3595,8 @@ class Rlyeh(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3512,8 +3605,8 @@ class Rlyeh(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 272027.5
-        self.atk = 24475.2
+        self.hp = 68006.6
+        self.atk = 6118.4
         self.armor = 10
         self.speed = 1152
         if self.star == 9:
@@ -3521,7 +3614,7 @@ class Rlyeh(BaseHero):
             self.atk = 13636.6  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 951  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3573,7 +3666,7 @@ class Rlyeh(BaseHero):
             candidates = [h for h in self.own_team.heroes if h.hp == min_hp]
             rd.shuffle(candidates)
             target = candidates[0]
-            self.try_heal(target, power=power, turns=1, chance=0.5, name=name)
+            self.try_heal(target, power=power, turns=1, chance=chance, name=name)
         super().on_attack(target)
 
     def on_hit(self, attacker):
@@ -3591,8 +3684,8 @@ class Samurai(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.storm_attack.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3601,8 +3694,8 @@ class Samurai(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 312820.0
-        self.atk = 21561.4
+        self.hp = 78205.0
+        self.atk = 5419.2
         self.armor = 12
         self.speed = 1216
         if self.star == 9:
@@ -3610,7 +3703,7 @@ class Samurai(BaseHero):
             self.atk = 14000.0  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3621,7 +3714,7 @@ class Samurai(BaseHero):
             dodge_up = 0.25
             attack_up = 0.4
         self.dodge_up(self, up=dodge_up, turns=None,
-                   name=name, passive=True)
+                      name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
                        name=name, passive=True)
 
@@ -3639,7 +3732,6 @@ class Samurai(BaseHero):
     def skill(self):
         name = 'Kifuu'
         targets = targets_at_random(self.op_team.get_backline(), 2)
-        targets_hit = None
         if self.star >= 10:
             targets_hit = self.targets_hit(targets, name=name)
         else:
@@ -3672,8 +3764,8 @@ class SawMachine(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3682,8 +3774,8 @@ class SawMachine(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 369463.0
-        self.atk = 21037.0
+        self.hp = 92365.3
+        self.atk = 5303.0
         self.armor = 13
         self.speed = 1189
         if star == 9:
@@ -3691,7 +3783,7 @@ class SawMachine(BaseHero):
             self.atk = 11661.9  # should depend on the level
             self.armor = 13  # should depend on the level
             self.speed = 984  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3748,8 +3840,8 @@ class Scarlet(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.blood_medal.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3758,8 +3850,8 @@ class Scarlet(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 267890.0
-        self.atk = 29254.0
+        self.hp = 67016.0
+        self.atk = 7342.0
         self.armor = 9
         self.speed = 1189
         if self.star == 9:
@@ -3767,7 +3859,7 @@ class Scarlet(BaseHero):
             self.atk = 16505.5  # should depend on the level
             self.armor = 9  # should depend on the level
             self.speed = 984  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3819,8 +3911,8 @@ class ShuddeMell(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.soul_torrent.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3829,8 +3921,8 @@ class ShuddeMell(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 340092.8
-        self.atk = 25232.5
+        self.hp = 85023.2
+        self.atk = 6351.6
         self.armor = 11
         self.speed = 1188
         if self.star == 9:
@@ -3838,7 +3930,7 @@ class ShuddeMell(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3867,7 +3959,7 @@ class ShuddeMell(BaseHero):
 
         self.hit_attack(targets_hit, power, multi=True, name=name)
         for target in targets_hit:
-            name = 'Dominoll'
+            name = 'Domino'
             self.try_silence(target, turns=2, chance=chance, name=name)
 
     def skill(self):
@@ -3880,7 +3972,6 @@ class ShuddeMell(BaseHero):
             heal_power = 1.0
         self.hit_skill(targets_hit, power=hit_power, multi=True, name=name)
         if targets_hit:
-            heal_targets = None
             if self.star >= 10:
                 heal_targets = self.own_team.heroes
             else:
@@ -3907,8 +3998,8 @@ class Tesla(BaseHero):
     type = HeroType.MAGE
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.speed.R2, artifact=Artifact.ancient_vows.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3917,8 +4008,8 @@ class Tesla(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 263053.3
-        self.atk = 26456.8
+        self.hp = 65791.8
+        self.atk = 6643.2
         self.armor = 11
         self.speed = 1186
         if self.star == 9:
@@ -3926,7 +4017,7 @@ class Tesla(BaseHero):
             self.atk = 14000.0  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -3937,9 +4028,9 @@ class Tesla(BaseHero):
             attack_up = 0.25
             hp_up = 0.35
         self.attack_up(self, up=attack_up, turns=None,
-                   name=name, passive=True)
-        self.hp_up(self, up=hp_up, turns=None,
                        name=name, passive=True)
+        self.hp_up(self, up=hp_up, turns=None,
+                   name=name, passive=True)
 
     def skill(self):
         name = 'Plasma Field'
@@ -3980,8 +4071,8 @@ class TigerKing(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.star_pray.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -3990,8 +4081,8 @@ class TigerKing(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 459440.0
-        self.atk = 15734.0
+        self.hp = 114860.0
+        self.atk = 3962.0
         self.armor = 12
         self.speed = 1206
         if self.star == 9:
@@ -3999,7 +4090,7 @@ class TigerKing(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4012,7 +4103,7 @@ class TigerKing(BaseHero):
         self.hp_up(self, up=hp_up, turns=None,
                    name=name, passive=True)
         self.armor_up(self, up=armor_up, turns=None,
-                       name=name, passive=True)
+                      name=name, passive=True)
 
     def skill(self):
         name = 'Tiger Attack'
@@ -4051,8 +4142,8 @@ class Ultima(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4061,8 +4152,8 @@ class Ultima(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 367947.8
-        self.atk = 22843.0
+        self.hp = 92015.7
+        self.atk = 5710.0
         self.armor = 12
         self.speed = 1152
         if self.star == 9:
@@ -4070,7 +4161,7 @@ class Ultima(BaseHero):
             self.atk = 12743.7  # should depend on the level
             self.armor = 12  # should depend on the level
             self.speed = 951  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4136,8 +4227,8 @@ class Valkyrie(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.armor_break.R2, artifact=Artifact.gospel_song.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4146,8 +4237,8 @@ class Valkyrie(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 493938.4
-        self.atk = 24066.9
+        self.hp = 123484.6
+        self.atk = 6060.0
         self.armor = 12
         self.speed = 1200
         if self.star == 9:
@@ -4155,7 +4246,7 @@ class Valkyrie(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4168,9 +4259,9 @@ class Valkyrie(BaseHero):
             armor_up = 7
             attack_up = 0.3
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
+                   name=name, passive=True)
         self.armor_up(self, up=armor_up, turns=None,
-                       name=name, passive=True)
+                      name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
                        name=name, passive=True)
 
@@ -4196,10 +4287,10 @@ class Valkyrie(BaseHero):
                 if not target.is_dead:
                     for e in target.effects:
                         if e.name == 'Gungnir' and e.source.str_id == self.str_id \
-                                            and isinstance(e, Effect.attack_down):
+                                and isinstance(e, Effect.attack_down):
                             e.kill()
                 self.attack_down(target, down=0.2, turns=3, name=name)
-            
+
         super().skill()
 
     def on_attack(self, target):
@@ -4218,8 +4309,8 @@ class Vegvisir(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.star_pray.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4228,8 +4319,8 @@ class Vegvisir(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 414918.0
-        self.atk = 16724.0
+        self.hp = 103729.0
+        self.atk = 4195.0
         self.armor = 12
         self.speed = 1208
         if self.star == 9:
@@ -4237,7 +4328,7 @@ class Vegvisir(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4297,8 +4388,8 @@ class Verthandi(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.gift_of_creation.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4307,8 +4398,8 @@ class Verthandi(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 427680.0
-        self.atk = 23193.1
+        self.hp = 106934.0
+        self.atk = 5826.8
         self.armor = 12
         self.speed = 1177
         if self.star == 9:
@@ -4316,7 +4407,7 @@ class Verthandi(BaseHero):
             self.atk = 13213.7  # should depend on the level
             self.armor = 12  # should depend on the level
             self.speed = 973  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant, rune=rune, artifact=artifact,
                          guild_tech=guild_tech, familiar_stats=familiar_stats, player=player)
 
         name = 'Fate Drama'
@@ -4332,7 +4423,6 @@ class Verthandi(BaseHero):
 
     def skill(self):
         name = 'Goddess Benison'
-        targets_hit = None
         if self.star >= 10:
             targets_hit = self.op_team.heroes
         else:
@@ -4377,8 +4467,8 @@ class Vivienne(BaseHero):
     type = HeroType.CLERIC
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4387,8 +4477,8 @@ class Vivienne(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 332108.8
-        self.atk = 21794.4
+        self.hp = 83041.4
+        self.atk = 5477.6
         self.armor = 12
         self.speed = 1152
         if self.star == 9:
@@ -4396,7 +4486,7 @@ class Vivienne(BaseHero):
             self.atk = 12696.7  # should depend on the level
             self.armor = 12  # should depend on the level
             self.speed = 948  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4409,7 +4499,7 @@ class Vivienne(BaseHero):
             hp_up = 0.35
             attack_up = 0.25
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
+                   name=name, passive=True)
         self.attack_up(self, up=attack_up, turns=None,
                        name=name, passive=True)
 
@@ -4465,8 +4555,8 @@ class Werewolf(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.hp.R2, artifact=Artifact.star_pray.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4475,8 +4565,8 @@ class Werewolf(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 312120.0
-        self.atk = 22319.2
+        self.hp = 78030.0
+        self.atk = 5594.4
         self.armor = 10
         self.speed = 1216
         if self.star == 9:
@@ -4484,7 +4574,7 @@ class Werewolf(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4495,9 +4585,9 @@ class Werewolf(BaseHero):
             attack_up = 0.25
             hit_rate_up = 0.2
         self.attack_up(self, up=attack_up, turns=None,
-                            name=name, passive=True)
-        self.hit_rate_up(self, up=hit_rate_up, turns=None,
                        name=name, passive=True)
+        self.hit_rate_up(self, up=hit_rate_up, turns=None,
+                         name=name, passive=True)
 
     def attack(self):
         name = 'attack'
@@ -4544,8 +4634,8 @@ class WolfRider(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4554,8 +4644,8 @@ class WolfRider(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 274882.8
-        self.atk = 25990.0
+        self.hp = 68764.2
+        self.atk = 6526.0
         self.armor = 10
         self.speed = 1208
         if self.star == 9:
@@ -4563,7 +4653,7 @@ class WolfRider(BaseHero):
             self.atk = 14000.0  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4576,9 +4666,9 @@ class WolfRider(BaseHero):
             armor_up = 12
             hp_up = 0.4
         self.armor_up(self, up=armor_up, turns=None,
-                            name=name, passive=True)
+                      name=name, passive=True)
         self.hp_up(self, up=hp_up, turns=None,
-                       name=name, passive=True)
+                   name=name, passive=True)
 
     def skill(self):
         name = 'Wolf Claw Sunder'
@@ -4617,8 +4707,8 @@ class Wolnir(BaseHero):
     type = HeroType.WARRIOR
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.evasion.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4627,8 +4717,8 @@ class Wolnir(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 493997.1
-        self.atk = 17191.0
+        self.hp = 123542.8
+        self.atk = 4312.0
         self.armor = 9
         self.speed = 1206
         if self.star == 9:
@@ -4636,7 +4726,7 @@ class Wolnir(BaseHero):
             self.atk = 14000.0  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4647,9 +4737,9 @@ class Wolnir(BaseHero):
             hp_up = 0.4
             hit_rate_up = 0.2
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
+                   name=name, passive=True)
         self.hit_rate_up(self, up=hit_rate_up, turns=None,
-                       name=name, passive=True)
+                         name=name, passive=True)
 
     def skill(self):
         name = 'Power Of Hades'
@@ -4666,7 +4756,7 @@ class Wolnir(BaseHero):
                 self.try_freeze(target, turns=2, chance=0.3, name=name)
         if targets_hit:
             self.heal(self, power=heal_power, turns=1, name=name)
-        super().skill() 
+        super().skill()
 
     def on_attack(self, target):
         name = 'Bloodthirst'
@@ -4683,8 +4773,8 @@ class Xexanoth(BaseHero):
     type = HeroType.ASSASSIN
 
     def __init__(self, star=10, tier=6, level=250,
-                 armor=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
-                 rune=Rune.vitality.R2, artifact=Artifact.bone_grip.O6,
+                 chest=Armor.O3, helmet=Helmet.O3, weapon=Weapon.O3, pendant=Pendant.O3,
+                 rune=None, artifact=None,
                  guild_tech=guild_tech_maxed,
                  familiar_stats=default_familiar_stats, player=True):
         if level < 200 or tier < 6:
@@ -4693,8 +4783,8 @@ class Xexanoth(BaseHero):
         self.star = star
         self.tier = tier
         self.level = level
-        self.hp = 458216.1
-        self.atk = 26349.0
+        self.hp = 114568.4
+        self.atk = 6585.0
         self.armor = 11
         self.speed = 1219
         if self.star == 9:
@@ -4702,7 +4792,7 @@ class Xexanoth(BaseHero):
             self.atk = 14000  # should depend on the level
             self.armor = 10  # should depend on the level
             self.speed = 985  # should depend on the level
-        super().__init__(armor=armor, helmet=helmet, weapon=weapon, pendant=pendant,
+        super().__init__(chest=chest, helmet=helmet, weapon=weapon, pendant=pendant,
                          rune=rune, artifact=artifact, guild_tech=guild_tech,
                          familiar_stats=familiar_stats, player=player)
 
@@ -4716,7 +4806,7 @@ class Xexanoth(BaseHero):
         if self.star >= 8:
             speed_up = 40
         self.speed_up(self, up=speed_up, turns=None,
-                            name=name, passive=True)
+                      name=name, passive=True)
 
         name = 'Death Focus'
         hp_up = 0.25
@@ -4725,9 +4815,9 @@ class Xexanoth(BaseHero):
             hp_up = 0.3
             skill_damage_up = 0.5
         self.hp_up(self, up=hp_up, turns=None,
-                            name=name, passive=True)
+                   name=name, passive=True)
         self.skill_damage_up(self, up=skill_damage_up, turns=None,
-                            name=name, passive=True)
+                             name=name, passive=True)
 
     def attack(self):
         name = 'attack'
@@ -4770,7 +4860,6 @@ class Xexanoth(BaseHero):
         super().on_hit(attacker)
 
 
-@dataclass
 class Hero:
     empty = EmptyHero
     abyss_lord = AbyssLord
@@ -4778,9 +4867,9 @@ class Hero:
     blood_tooth = BloodTooth
     centaur = Centaur
     chessia = Chessia
+    dettlaff = Dettlaff
     drow = Drow
     dziewona = Dziewona
-    forest_healer = ForestHealer
     freya = Freya
     gerald = Gerald
     grand = Grand
@@ -4825,9 +4914,9 @@ hero_from_request = {
     'BLOOD_TOOTH': Hero.blood_tooth,
     'CENTAUR': Hero.centaur,
     'CHESSIA': Hero.chessia,
+    'DETTLAFF': Hero.dettlaff,
     'DROW': Hero.drow,
     'DZIEWONA': Hero.dziewona,
-    'FOREST_HEALER': Hero.forest_healer,
     'FREYA': Hero.freya,
     'GERALD': Hero.gerald,
     'GRAND': Hero.grand,
@@ -4866,7 +4955,7 @@ hero_from_request = {
 }
 
 
-## Team
+# Team
 class Team:
     def __init__(self, heroes, pet=default_familiar, cancel_aura=False):
         if len(heroes) != 6:
@@ -4910,7 +4999,7 @@ class Team:
                     up = 0.305
                 for h2 in self.heroes:
                     h.damage_to_stunned_up(h2, up=up, turns=None,
-                                        name=name, passive=True)
+                                           name=name, passive=True)
 
         for h in self.heroes:
             if isinstance(h, Phoenix):
@@ -4920,7 +5009,7 @@ class Team:
                     up = 0.30
                 for h2 in self.heroes:
                     h.damage_to_burning_up(h2, up=up, turns=None,
-                                        name=name, passive=True)
+                                           name=name, passive=True)
 
         for h in self.heroes:
             h.hp_max = h.hp
@@ -4931,9 +5020,9 @@ class Team:
         for h in self.heroes:
             h.atk *= (1 + self.aura.atk_bonus)
             h.hp *= (1 + self.aura.hp_bonus)
-            h.dodge += self.aura.dodge
             h.crit_rate += self.aura.crit_rate
             h.control_immune += self.aura.control_immune
+            h.armor += self.aura.armor
             h.armor_break += self.aura.armor_break
 
     def compute_pet(self, pet):
@@ -5008,7 +5097,7 @@ def dummy_friend(neutral=True):
             heroes.append(Hero.empty())
     make_boss_heroes(heroes, neutral=neutral, multiplier=0.01, speed=-150)
 
-    return Team(heroes, pet=Familiar.empty)
+    return Team(heroes, pet=Familiar.empty())
 
 
 def dummy_guild(neutral=True):
@@ -5020,10 +5109,9 @@ def dummy_guild(neutral=True):
             heroes.append(Hero.empty())
     make_boss_heroes(heroes, neutral=neutral, multiplier=5, speed=450)
 
-    return Team(heroes, pet=Familiar.empty)
+    return Team(heroes, pet=Familiar.empty())
 
 
-@dataclass
 class DummyTeam:
     friend = dummy_friend
     guild = dummy_guild

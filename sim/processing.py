@@ -1,4 +1,3 @@
-import numpy as np
 import random as rd
 import copy
 from collections import defaultdict
@@ -20,8 +19,8 @@ class BaseSim:
         print('# {} #\n'.format(stat))
         len_max = max(len(u.str_id) for u in self.heroes + self.pets)
         for u in self.heroes + self.pets:
-            print('{}{} : {}'.format(u.str_id, ' ' * (len_max - len(u.str_id)), 
-                                                    self.stats[stat][u.str_id]))
+            print('{}{} : {}'.format(u.str_id, ' ' * (len_max - len(u.str_id)),
+                                     self.stats[stat][u.str_id]))
 
     def print_winrate(self):
         print('Attacker winrate : {}%'.format(100 * self.wins_1 / self.n_sim))
@@ -69,7 +68,7 @@ class GameSim(BaseSim):
             rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
             unit.stats = units_stats[unit.str_id]
         self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
-                                            for key in self.heroes[0].stats.keys()}
+                      for key in self.heroes[0].stats.keys()}
 
 
 class GauntletAttackSim(BaseSim):
@@ -106,7 +105,7 @@ class GauntletAttackSim(BaseSim):
             rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
             unit.stats = units_stats[unit.str_id]
         self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
-                                            for key in self.heroes[0].stats.keys()}
+                      for key in self.heroes[0].stats.keys()}
 
 
 class GauntletDefenseSim(BaseSim):
@@ -143,12 +142,12 @@ class GauntletDefenseSim(BaseSim):
             rescale_dict(units_stats[unit.str_id], 1 / self.n_sim)
             unit.stats = units_stats[unit.str_id]
         self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
-                                            for key in self.heroes[0].stats.keys()}
+                      for key in self.heroes[0].stats.keys()}
 
 
 class GauntletSim(BaseSim):
-    def __init__(self, attack_gauntlet, defense_gauntlet, test_team=None, 
-                                                test_pos=None, n_sim=1000):
+    def __init__(self, attack_gauntlet, defense_gauntlet, test_team=None,
+                 test_pos=None, n_sim=1000):
         self.attack_gauntlet = attack_gauntlet
         self.defense_gauntlet = defense_gauntlet
         self.heroes = []
@@ -181,12 +180,12 @@ class GauntletSim(BaseSim):
             if self.test_team == 1:
                 unit = game.attack_team.heroes[self.test_pos - 1]
                 add_dicts(units_stats[unit.str_id], unit.stats)
-                team_damage += sum([game.stats['damage'][h.str_id] 
+                team_damage += sum([game.stats['damage'][h.str_id]
                                     for h in game.attack_team.heroes])
             elif self.test_team == 2:
                 unit = game.defense_team.heroes[self.test_pos - 1]
                 add_dicts(units_stats[unit.str_id], unit.stats)
-                team_damage += sum([game.stats['damage'][h.str_id] 
+                team_damage += sum([game.stats['damage'][h.str_id]
                                     for h in game.defense_team.heroes])
 
             del game
@@ -199,12 +198,12 @@ class GauntletSim(BaseSim):
             team_damage *= 1 / self.n_sim
             self.team_damage = round(team_damage)
         self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
-                                            for key in self.heroes[0].stats.keys()}
+                      for key in self.heroes[0].stats.keys()}
 
 
 class Game:
-    def __init__(self, attack_team, defense_team, verbose_full=False, 
-                                    copy_attack=True, copy_defense=True, max_turns=15):
+    def __init__(self, attack_team, defense_team, verbose_full=False,
+                 copy_attack=True, copy_defense=True, max_turns=15):
         self.max_turns = max_turns
         self.actions = []
         self.rounds = []
@@ -230,114 +229,114 @@ class Game:
         for unit in self.heroes + self.pets:
             unit.game = self
             unit.stats = {'damage': 0,
-                        'effective_healing': 0,
-                        'healing': 0, # healing = effective_healing + overheal
-                        'damage_taken': 0,
-                        'effective_healing_taken': 0,
-                        'healing_taken': 0,
-                        'damage_by_skill': defaultdict(int),
-                        'damage_by_target': defaultdict(int),
-                        'effective_healing_by_skill': defaultdict(int),
-                        'effective_healing_by_target': defaultdict(int),
-                        'healing_by_skill': defaultdict(int),
-                        'healing_by_target': defaultdict(int),
-                        'damage_taken_by_skill': defaultdict(int),
-                        'damage_taken_by_source': defaultdict(int),
-                        'effective_healing_taken_by_skill': defaultdict(int),
-                        'effective_healing_taken_by_source': defaultdict(int),
-                        'healing_taken_by_skill': defaultdict(int),
-                        'healing_taken_by_source': defaultdict(int),
-                        'kills': 0,
-                        'deaths': 0,
-                        'skills': 0,
-                        'turns_played': 0,
-                        'effective_hard_cc_turns': 0,
-                        'effective_hard_cc_turns_taken': 0,
-                        'effective_silence_turns': 0,
-                        'effective_silence_turns_taken': 0,
-                        'turns_alive': 0,
-                        'game_length': 0,
-                        'hits': 0,
-                        'hits_taken': 0,
-                        'crits': 0,
-                        'crits_taken': 0,
-                        'dodges': 0,
-                        'dodges_taken': 0,
-                        'dots': 0, # including poisons and bleeds
-                        'dots_taken': 0,
-                        'bleeds': 0,
-                        'bleeds_taken': 0,
-                        'burns': 0,
-                        'burns_taken': 0,
-                        'poisons': 0,
-                        'poisons_taken': 0,
-                        'silences': 0,
-                        'silences_taken': 0,
-                        'stuns': 0,
-                        'stuns_taken': 0,
-                        'petrifies': 0,
-                        'petrifies_taken': 0,
-                        'freezes': 0,
-                        'freezes_taken': 0,
-                        'hard_ccs': 0, # stuns, petrifies or freezes
-                        'hard_ccs_taken': 0,
-                        'attack_ups': 0,
-                        'attack_ups_taken': 0,
-                        'attack_downs': 0,
-                        'attack_downs_taken': 0,
-                        'hp_ups': 0,
-                        'hp_ups_taken': 0,
-                        'hp_downs': 0,
-                        'hp_downs_taken': 0,
-                        'crit_rate_ups': 0,
-                        'crit_rate_ups_taken': 0,
-                        'crit_rate_downs': 0,
-                        'crit_rate_downs_taken': 0,
-                        'crit_damage_ups': 0,
-                        'crit_damage_ups_taken': 0,
-                        'crit_damage_downs': 0,
-                        'crit_damage_downs_taken': 0,
-                        'hit_rate_ups': 0,
-                        'hit_rate_ups_taken': 0,
-                        'hit_rate_downs': 0,
-                        'hit_rate_downs_taken': 0,
-                        'dodge_ups': 0,
-                        'dodge_ups_taken': 0,
-                        'dodge_downs': 0,
-                        'dodge_downs_taken': 0,
-                        'skill_damage_ups': 0,
-                        'skill_damage_ups_taken': 0,
-                        'skill_damage_downs': 0,
-                        'skill_damage_downs_taken': 0,
-                        'control_immune_ups': 0,
-                        'control_immune_ups_taken': 0,
-                        'control_immune_downs': 0,
-                        'control_immune_downs_taken': 0,
-                        'armor_break_ups': 0,
-                        'armor_break_ups_taken': 0,
-                        'armor_break_downs': 0,
-                        'armor_break_downs_taken': 0,
-                        'armor_ups': 0,
-                        'armor_ups_taken': 0,
-                        'armor_downs': 0,
-                        'armor_downs_taken': 0,
-                        'speed_ups': 0,
-                        'speed_ups_taken': 0,
-                        'speed_downs': 0,
-                        'speed_downs_taken': 0,
-                        'energy_ups': 0,
-                        'energy_ups_taken': 0,
-                        'energy_downs': 0,
-                        'energy_downs_taken': 0,
-                        'damage_reduction_ups': 0,
-                        'damage_reduction_ups_taken': 0,
-                        'true_damage_ups': 0,
-                        'true_damage_ups_taken': 0}
-            for stat in ('damage_by_skill', 'damage_by_target', 'effective_healing_by_skill', 
-                        'effective_healing_by_target', 'healing_by_skill', 'healing_by_target', 
-                        'damage_taken_by_skill', 'damage_taken_by_source', 'effective_healing_taken_by_skill', 
-                        'effective_healing_taken_by_source', 'healing_taken_by_skill', 
-                        'healing_taken_by_source'):
+                          'effective_healing': 0,
+                          'healing': 0,  # healing = effective_healing + overheal
+                          'damage_taken': 0,
+                          'effective_healing_taken': 0,
+                          'healing_taken': 0,
+                          'damage_by_skill': defaultdict(int),
+                          'damage_by_target': defaultdict(int),
+                          'effective_healing_by_skill': defaultdict(int),
+                          'effective_healing_by_target': defaultdict(int),
+                          'healing_by_skill': defaultdict(int),
+                          'healing_by_target': defaultdict(int),
+                          'damage_taken_by_skill': defaultdict(int),
+                          'damage_taken_by_source': defaultdict(int),
+                          'effective_healing_taken_by_skill': defaultdict(int),
+                          'effective_healing_taken_by_source': defaultdict(int),
+                          'healing_taken_by_skill': defaultdict(int),
+                          'healing_taken_by_source': defaultdict(int),
+                          'kills': 0,
+                          'deaths': 0,
+                          'skills': 0,
+                          'turns_played': 0,
+                          'effective_hard_cc_turns': 0,
+                          'effective_hard_cc_turns_taken': 0,
+                          'effective_silence_turns': 0,
+                          'effective_silence_turns_taken': 0,
+                          'turns_alive': 0,
+                          'game_length': 0,
+                          'hits': 0,
+                          'hits_taken': 0,
+                          'crits': 0,
+                          'crits_taken': 0,
+                          'dodges': 0,
+                          'dodges_taken': 0,
+                          'dots': 0,  # including poisons and bleeds
+                          'dots_taken': 0,
+                          'bleeds': 0,
+                          'bleeds_taken': 0,
+                          'burns': 0,
+                          'burns_taken': 0,
+                          'poisons': 0,
+                          'poisons_taken': 0,
+                          'silences': 0,
+                          'silences_taken': 0,
+                          'stuns': 0,
+                          'stuns_taken': 0,
+                          'petrifies': 0,
+                          'petrifies_taken': 0,
+                          'freezes': 0,
+                          'freezes_taken': 0,
+                          'hard_ccs': 0,  # stuns, petrifies or freezes
+                          'hard_ccs_taken': 0,
+                          'attack_ups': 0,
+                          'attack_ups_taken': 0,
+                          'attack_downs': 0,
+                          'attack_downs_taken': 0,
+                          'hp_ups': 0,
+                          'hp_ups_taken': 0,
+                          'hp_downs': 0,
+                          'hp_downs_taken': 0,
+                          'crit_rate_ups': 0,
+                          'crit_rate_ups_taken': 0,
+                          'crit_rate_downs': 0,
+                          'crit_rate_downs_taken': 0,
+                          'crit_damage_ups': 0,
+                          'crit_damage_ups_taken': 0,
+                          'crit_damage_downs': 0,
+                          'crit_damage_downs_taken': 0,
+                          'hit_rate_ups': 0,
+                          'hit_rate_ups_taken': 0,
+                          'hit_rate_downs': 0,
+                          'hit_rate_downs_taken': 0,
+                          'dodge_ups': 0,
+                          'dodge_ups_taken': 0,
+                          'dodge_downs': 0,
+                          'dodge_downs_taken': 0,
+                          'skill_damage_ups': 0,
+                          'skill_damage_ups_taken': 0,
+                          'skill_damage_downs': 0,
+                          'skill_damage_downs_taken': 0,
+                          'control_immune_ups': 0,
+                          'control_immune_ups_taken': 0,
+                          'control_immune_downs': 0,
+                          'control_immune_downs_taken': 0,
+                          'armor_break_ups': 0,
+                          'armor_break_ups_taken': 0,
+                          'armor_break_downs': 0,
+                          'armor_break_downs_taken': 0,
+                          'armor_ups': 0,
+                          'armor_ups_taken': 0,
+                          'armor_downs': 0,
+                          'armor_downs_taken': 0,
+                          'speed_ups': 0,
+                          'speed_ups_taken': 0,
+                          'speed_downs': 0,
+                          'speed_downs_taken': 0,
+                          'energy_ups': 0,
+                          'energy_ups_taken': 0,
+                          'energy_downs': 0,
+                          'energy_downs_taken': 0,
+                          'damage_reduction_ups': 0,
+                          'damage_reduction_ups_taken': 0,
+                          'true_damage_ups': 0,
+                          'true_damage_ups_taken': 0}
+            for stat in ('damage_by_skill', 'damage_by_target', 'effective_healing_by_skill',
+                         'effective_healing_by_target', 'healing_by_skill', 'healing_by_target',
+                         'damage_taken_by_skill', 'damage_taken_by_source', 'effective_healing_taken_by_skill',
+                         'effective_healing_taken_by_source', 'healing_taken_by_skill',
+                         'healing_taken_by_source'):
                 unit.stats[stat]['Total'] = 0
         self.prefix = self.teams() + '\n'
         self.prefix += '\n{}\n'.format(self.state())
@@ -440,11 +439,11 @@ class Game:
     def state(self):
         names = [h.str_id if not h.is_dead else 'DEAD' for h in self.heroes]
         hps = [str(round(h.hp)) if not h.is_dead else '' for h in self.heroes]
-        energies = [str(int(h.energy) if h.energy == int(h.energy) else h.energy) 
-                            if not h.is_dead else '' for h in self.heroes]
-        hps_energies = [('{}|{}'.format(hps[i], energies[i])) 
-                            if not h.is_dead else ' '
-                            for i, h in enumerate(self.heroes)]
+        energies = [str(int(h.energy) if h.energy == int(h.energy) else h.energy)
+                    if not h.is_dead else '' for h in self.heroes]
+        hps_energies = [('{}|{}'.format(hps[i], energies[i]))
+                        if not h.is_dead else ' '
+                        for i, h in enumerate(self.heroes)]
         names_len_max_1 = max([len(names[i]) for i in (0, 3, 6, 9)])
         names_len_max_2 = max([len(names[i]) for i in (1, 4, 7, 10)])
         names_len_max_3 = max([len(names[i]) for i in (2, 5, 8, 11)])
@@ -536,7 +535,7 @@ class Game:
         for pet in self.pets:
             pet.stats = format_stats(pet.stats, pet=True)
         self.stats = {key: {u.str_id: u.stats[key] for u in self.heroes + self.pets}
-                                            for key in self.heroes[0].stats.keys()}
+                      for key in self.heroes[0].stats.keys()}
 
         if self.defense_team.is_dead() and self.attack_team.is_dead() or \
                 not self.defense_team.is_dead() and not self.attack_team.is_dead():
@@ -557,8 +556,8 @@ class Game:
         print('# {} #\n'.format(stat))
         len_max = max(len(e.str_id) for e in self.heroes + self.pets)
         for e in self.heroes + self.pets:
-            print('{}{} : {}'.format(e.str_id, ' ' * (len_max - len(e.str_id)), 
-                                                    self.stats[stat][e.str_id]))
+            print('{}{} : {}'.format(e.str_id, ' ' * (len_max - len(e.str_id)),
+                                     self.stats[stat][e.str_id]))
 
 
 class EmptyGame:
