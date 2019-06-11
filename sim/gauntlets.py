@@ -21,14 +21,14 @@ tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_kin
 healers = [Hero.drow, Hero.megaw, Hero.phoenix, Hero.shudde_m_ell, Hero.vivienne]
 others = [h for h in heroes if h not in tanks and h not in healers]
 
-positions = dict(pd.read_excel('data/results_params.xlsx').pos)
+positions = dict(pd.read_excel('data/results_params.xlsx', index_col=0).pos)
 pvp_tanks = [h for h in heroes if positions[h.name.value] == 1]
 pvp_others = [h for h in heroes if h not in pvp_tanks]
-scores = dict(pd.read_excel('data/results_params.xlsx').score)
+scores = dict(pd.read_excel('data/results_params.xlsx', index_col=0).score)
 for new_hero in new_heroes:
     scores[new_hero] = new_heroes[new_hero]
 probas = {key: math.exp(6 * scores[key]) for key in scores}
-totg_reliance = pd.read_excel('data/results_params.xlsx').totg_reliance
+totg_reliance = pd.read_excel('data/results_params.xlsx', index_col=0).totg_reliance
 need_totg = list(totg_reliance.sort_values().tail(5).index)
 no_totg = list(totg_reliance[totg_reliance == 0].index)
 

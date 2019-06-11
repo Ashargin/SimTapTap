@@ -9,9 +9,9 @@ from sim.processing import EmptyGame
 from sim.utils import targets_at_random
 
 # Heroes settings
-runes = dict(pd.read_excel('data/results_params.xlsx').rune)
-artifacts = dict(pd.read_excel('data/results_params.xlsx').artifact)
-artifacts2 = dict(pd.read_excel('data/results_params.xlsx').second_artifact)
+runes = dict(pd.read_excel('data/results_params.xlsx', index_col=0).rune)
+artifacts = dict(pd.read_excel('data/results_params.xlsx', index_col=0).artifact)
+artifacts2 = dict(pd.read_excel('data/results_params.xlsx', index_col=0).second_artifact)
 artifacts = {key: artifacts[key] if artifacts[key] != 'TearsOfTheGoddessO6' else artifacts2[key]
              for key in artifacts.keys()}
 rune_encoder = {'AccuracyRuneR2': Rune.accuracy.R2, 'ArmorBreakRuneR2': Rune.armor_break.R2,
@@ -262,7 +262,7 @@ class BaseHero:
 
         skill_damage = 0
         if skill:
-            skill_damage = max(self.skill_damage, 0)
+            skill_damage = self.skill_damage
 
         poisoned_extra_damage = 0
         if target.is_poisoned():
@@ -280,9 +280,9 @@ class BaseHero:
         if target.is_petrified():
             petrified_extra_damage = self.damage_to_petrified
 
-        true_damage_bonus = self.true_damage / (1 + self.true_damage)
+        true_damage_bonus = self.true_damage
 
-        dmg = (power + skill_damage * self.atk) * (1 - damage_reduction_from_armor) \
+        dmg = max(power + skill_damage * self.atk, 0) * (1 - damage_reduction_from_armor) \
               * (1 + crit_damage) * (1 + faction_damage) \
               * (1 + true_damage_bonus) * (1 - target.damage_reduction) \
               * (1 + type_damage) \
@@ -1144,9 +1144,9 @@ class BaseHero:
                 if self.hp <= 0.31 * self.hp_max and not self.has_dropped_below_30:
                     h.attack_up(h, up=up2, turns=None, name=name)
 
-        if self.hp <= 0.6 * self.hp_max:
+        if self.hp <= 0.61 * self.hp_max:
             self.has_dropped_below_60 = True
-        if self.hp <= 0.3 * self.hp_max:
+        if self.hp <= 0.31 * self.hp_max:
             self.has_dropped_below_30 = True
 
         if self.hp <= 0:
