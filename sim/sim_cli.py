@@ -132,16 +132,6 @@ if __name__ == '__main__':
     cli()
 
 # todo:
-# CHECK : energy on attack/skill : all targets?
-# set prefered settings (rune/artifact)
-# tier list : pvp (atk/def), trial, den, expedition, guild boss, friend boss
-
 # connect the engine to the server
 # set stats depending on the hero level
 # add empty runes/artifacts
-
-# Freya : Hollow Descent : energy decreased or drained?
-# Mars : Miracle Of Resurrection : overkill?
-# Nameless King : Lightning Storm : additional mark on skill or on first mark triggered?            IMPORTANT
-# Vivienne : Cleric Shine : 2 backline enemies?
-# Wolnir : Bone Pact : even when dodged?

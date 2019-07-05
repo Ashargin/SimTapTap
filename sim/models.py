@@ -83,6 +83,7 @@ class HeroName(Enum):
     VERTHANDI = 'Verthandi'
     MARS = 'Mars'
     LINDBERG = 'Lindberg'
+    SKULD = 'Skuld'
 
     DARK_JUDGE = 'Dark_Judge'
     FREYA = 'Freya'
@@ -4413,19 +4414,23 @@ class Dot(BaseEffect):
 
 
 class Heal(BaseEffect):
-    def __init__(self, source, holder, power, turns, name=''):
+    def __init__(self, source, holder, power, turns, ignore_bonus=False, name=''):
         self.source = source
         self.holder = holder
         self.power = power
         self.turns = turns
+        self.ignore_bonus = ignore_bonus
         self.name = name
         self.hot = True if self.turns > 1 else False
         super().__init__()
 
     def tick(self):
         if not self.holder.is_dead:
-            power = self.power * self.source.atk * (1 + self.source.healing_bonus) * (
-                    1 + self.holder.healing_received_bonus)
+            power = self.power * self.source.atk
+            if not self.ignore_bonus:
+                power *= (1 + self.source.healing_bonus) * (1 + self.holder.healing_received_bonus)
+                if self.source.str_id == self.holder.str_id:
+                    power *= 1 + self.source.self_healing_bonus
             effective_healing = min(power, self.holder.hp_max - self.holder.hp)
             self.holder.hp += effective_healing
             self.source.stats['effective_healing_by_skill'][self.name] += effective_healing
@@ -5688,6 +5693,33 @@ class HealingReceivedDown(StatDown):
             [0] + [e.down for e in self.holder.effects if isinstance(e, Effect.healing_received_down)])
 
 
+class SelfHealingUp(StatUp):
+    def tick(self):
+        self.verbose = self.verbose or self.holder.game.verbose_full
+        if not self.holder.is_dead:
+            if not self.has_been_set:
+                self.holder.self_healing_bonus += self.up
+                self.has_been_set = True
+
+            self.turns -= 1
+            action = Action.self_healing_up(self.source, self.holder, self.up, self.turns, self.name)
+            if not self.infinite:
+                action.text = "\n{}'s self-healing is increased by {}% by {} ({}), {} turns left" \
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
+                            self.name, self.turns) \
+                    if self.verbose else ''
+            else:
+                action.text = "\n{}'s self-healing is increased by {}% by {} ({})" \
+                    .format(self.holder.str_id, round(100 * self.up, 1), self.source.str_id,
+                            self.name) \
+                    if self.verbose else ''
+            self.source.game.actions.append(action)
+
+    def kill(self):
+        self.holder.self_healing_bonus -= self.up
+        super().kill()
+
+
 class Effect:
     dot = Dot
     heal = Heal
@@ -5736,6 +5768,7 @@ class Effect:
     damage_to_warriors = DamageToWarriors
     healing_up = HealingUp
     healing_received_down = HealingReceivedDown
+    self_healing_up =SelfHealingUp
 
 
 # Actions
@@ -5883,7 +5916,14 @@ class SilenceAction(ControlAction):
     pass
 
 
-class CleanseAction(BaseAction):
+class CleanseCCAction(BaseAction):
+    def __init__(self, source, target, name):
+        self.source = source
+        self.target = target
+        self.name = name
+
+
+class CleanseEffectsAction(BaseAction):
     def __init__(self, source, target, name):
         self.source = source
         self.target = target
@@ -6054,6 +6094,10 @@ class HealingReceivedDownAction(StatDownAction):
     pass
 
 
+class SelfHealingUpAction(StatUpAction):
+    pass
+
+
 class EnergyUpAction:
     def __init__(self, source, target, up, passive, name):
         self.source = source
@@ -6099,7 +6143,8 @@ class Action:
     stun = StunAction
     petrify = PetrifyAction
     freeze = FreezeAction
-    cleanse = CleanseAction
+    cleanse_cc = CleanseCCAction
+    cleanse_effects = CleanseEffectsAction
     attack_up = AttackUpAction
     attack_down = AttackDownAction
     hp_up = HpUpAction
@@ -6138,4 +6183,5 @@ class Action:
     damage_to_warriors = DamageToWarriorsAction
     healing_up = HealingUpAction
     healing_received_down = HealingReceivedDownAction
+    self_healing_up = SelfHealingUpAction
     die = DieAction

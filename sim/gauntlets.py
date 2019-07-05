@@ -10,15 +10,13 @@ from sim.models import Familiar, Artifact
 # Heroes settings
 new_heroes = {'Xexanoth': 0.2,
               'Lindberg': 0.2,
-              'Drow': 0.3,
-              'Valkyrie': 0.3,
-              'Phoenix': 0.4}
+              'Skuld': 0.1}
 
 heroes = [Hero.__dict__[key] for key in Hero.__dict__ if '__' not in key and 'empty' not in key]
 tanks = [Hero.abyss_lord, Hero.grand, Hero.lexar, Hero.minotaur, Hero.monkey_king, Hero.mulan,
          Hero.rlyeh, Hero.tiger_king, Hero.ultima, Hero.vegvisir,
          Hero.wolf_rider, Hero.wolnir]
-healers = [Hero.drow, Hero.megaw, Hero.phoenix, Hero.shudde_m_ell, Hero.vivienne]
+healers = [Hero.drow, Hero.megaw, Hero.phoenix, Hero.shudde_m_ell, Hero.vivienne, Hero.skuld]
 others = [h for h in heroes if h not in tanks and h not in healers]
 
 positions = dict(pd.read_excel('data/results_params.xlsx', index_col=0).pos)
