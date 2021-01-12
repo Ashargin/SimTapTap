@@ -1,1 +1,2 @@
-# Making a simulator for Tap Tap Heroes
+# SimTapTap
+Making a simulator for Tap Tap Heroes
